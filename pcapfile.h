@@ -46,6 +46,7 @@ public:
     void stop();
 
 	void setUseFilterDstPort(bool val);
+    void setSendingHost(const QString &ip);
 	void setSendingPort(ushort port);
 	void setDstPort(ushort port);
 
@@ -57,11 +58,12 @@ public:
 				   const u_char *pkt_data);
 
 signals:
-	void sendPacketString(QString);
+    void sendPacketString(quint64 num, uint id, QString);
 
 private:
 	pcap_t *mFP = nullptr;
     QString mFileName;
+    quint64 mNum = 0;
 
     bool mStarted = false;
 

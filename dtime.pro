@@ -1,6 +1,6 @@
 QT += network gui widgets
 
-CONFIG += c++11 console
+CONFIG += c++11
 CONFIG -= app_bundle
 
 INCLUDEPATH += $$PWD/3rdparty/Include

@@ -9,12 +9,15 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-	mPCap.reset(new PCapFile);
+    mPCap.reset(new PCapFile);
 
-	connect(mPCap.data(), SIGNAL(sendPacketString(QString)), this, SLOT(onReceivePacketString(QString)), Qt::QueuedConnection);
+    connect(mPCap.data(), SIGNAL(sendPacketString(quint64, uint, QString)),
+            this, SLOT(onReceivePacketString(quint64, uint, QString)), Qt::QueuedConnection);
 
     connect(&mTimer, SIGNAL(timeout()), this, SLOT(onTimeout()));
     mTimer.start(50);
+
+    mModel.setHorizontalHeaderLabels(QStringList() << "num" << "id" << "data");
 
     ui->lvOutput->setModel(&mModel);
 }
@@ -50,13 +53,17 @@ void MainWindow::on_pbStart_clicked()
 	mPCap->setUseFilterDstPort(ui->chbFilterDstPort->isChecked());
 	mPCap->setDstPort(ui->sbFilterDstPort->value());
 	mPCap->setSendingPort(ui->sbDstPort->value());
+    mPCap->setSendingHost(ui->leIp->text());
+
+    mModel.setHorizontalHeaderLabels(QStringList() << "num" << "id" << "data");
+    //ui->lvOutput->setColumnWidth(2, 600);
 
 	mPCap->start();
 }
 
-void MainWindow::onReceivePacketString(const QString &val)
+void MainWindow::onReceivePacketString(quint64 num, uint id, const QString &val)
 {
-    mPackets << val;
+    mPackets.push_back(udpdata(num, id, val));
     //ui->pteDebug->appendPlainText(val);
     //mModel.insertRow(mModel.rowCount(), new QStandardItem(val));
 }
@@ -75,11 +82,13 @@ void MainWindow::on_pbStop_clicked()
 void MainWindow::onTimeout()
 {
     int id = 0;
-    while(!mPackets.empty() && id++ < 20){
-        mModel.appendRow( new QStandardItem(mPackets.front()));
+    while(!mPackets.empty() && id++ < 40){
+        mModel.appendRow(mPackets.front().get());
         mPackets.pop_front();
     }
     ui->lvOutput->scrollToBottom();
+
+    ui->statusbar->showMessage("Packets left " +QString::number(mPackets.size()));
 }
 
 void MainWindow::on_pbClear_clicked()

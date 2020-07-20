@@ -142,6 +142,8 @@ void PCapFile::internalStart()
 
 	int res;
 
+    mNum = 0;
+
     while((res = pcap_next_ex(mFP, &header, &pkt_data)) >= 0 && !mDone && mStarted){
 		getpacket(header, pkt_data);
 	}
@@ -165,7 +167,12 @@ void PCapFile::openFile()
 
 void PCapFile::setUseFilterDstPort(bool val)
 {
-	mUseFilterDstPort = val;
+    mUseFilterDstPort = val;
+}
+
+void PCapFile::setSendingHost(const QString &ip)
+{
+    sendingHost = QHostAddress(ip);
 }
 
 void PCapFile::setSendingPort(ushort port)
@@ -239,10 +246,11 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
         }else if(DF && ID != 0){
 			buffer = ba.remove(0, 8);
             if(mDstPort == dstPort && ID != 0){
-				qDebug("ID %d sport %d dport %d size %d offset %d flags %d len %d",
-					   ID, mSrcPort, mDstPort, buffer.size(), off, Flags, len);
-                emit sendPacketString(QString::asprintf("ID %d ipsrc %s ipdst %s sport %d dport %d size %d -> dstport %d",
-                                                        ID, saddr, daddr, mSrcPort, mDstPort, buffer.size(), sendingPort));
+//				qDebug("ID %d sport %d dport %d size %d offset %d flags %d len %d",
+//					   ID, mSrcPort, mDstPort, buffer.size(), off, Flags, len);
+                emit sendPacketString(mNum++, ID, QString::asprintf("ipsrc %s ipdst %s sport %d dport %d size %d -> %s:%d",
+                                                        saddr, daddr, mSrcPort, mDstPort, buffer.size(),
+                                                        sendingHost.toString().toLatin1().data(), sendingPort));
 				sendToPort();
 			}
         }else if(ID != 0){
@@ -252,17 +260,18 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
 			buffer = mFragments[ID].buffer.remove(0, 8);
 
 			if(mFragments[ID].dport == dstPort){
-				qDebug("ID %d sport %d dport %d size %d offset %d flags %d len %d",
-					   ID, mFragments[ID].sport, mFragments[ID].dport, buffer.size(), off, Flags, len);
-                emit sendPacketString(QString::asprintf("ID %d ipsrc %s ipdst %s sport %d dport %d size %d -> dstport %d",
-                                                        ID,  saddr, daddr, mFragments[ID].sport, mFragments[ID].dport, buffer.size(), sendingPort));
+//				qDebug("ID %d sport %d dport %d size %d offset %d flags %d len %d",
+//					   ID, mFragments[ID].sport, mFragments[ID].dport, buffer.size(), off, Flags, len);
+                emit sendPacketString(mNum++, ID, QString::asprintf("ipsrc %s ipdst %s sport %d dport %d size %d -> %s:%d",
+                                                        saddr, daddr, mFragments[ID].sport, mFragments[ID].dport, buffer.size(),
+                                                        sendingHost.toString().toLatin1().data(), sendingPort));
 				sendToPort();
 			}
 
 			mFragments.remove(ID);
 		}
 	}else{
-		qDebug("ID %d sport %d dport %d off %d flags %d size %d", ID, mSrcPort, mDstPort, off, Flags, len);
+        //qDebug("ID %d sport %d dport %d off %d flags %d size %d", ID, mSrcPort, mDstPort, off, Flags, len);
 
 		if(MF){
 			if(!mFragments.contains(ID)){
@@ -272,18 +281,18 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
 			mFragments[ID].add(off, ba);
         }else if(DF && ID != 0){
 			buffer = ba.remove(0, 8);
-			qDebug("ID %d sport %d dport %d size %d off %d flags %d", ID, mSrcPort, mDstPort, buffer.size(), off, Flags);
-            emit sendPacketString(QString::asprintf("ID %d ipsrc %s ipdst %s sport %d dport %d size %d",
-                                                    ID, saddr, daddr, mSrcPort, mDstPort, buffer.size()));
+            //qDebug("ID %d sport %d dport %d size %d off %d flags %d", ID, mSrcPort, mDstPort, buffer.size(), off, Flags);
+            emit sendPacketString(mNum++, ID, QString::asprintf("ipsrc %s ipdst %s sport %d dport %d size %d",
+                                                    saddr, daddr, mSrcPort, mDstPort, buffer.size()));
         }else if(ID != 0){
 			mFragments[ID].add(off, ba);
 
 			buffer = mFragments[ID].buffer.remove(0, 8);
 
-			qDebug("ID %d sport %d dport %d size %d off %d flags %d size %d",
-				   ID, mFragments[ID].sport, mFragments[ID].dport, buffer.size(), off, Flags, len);
-            emit sendPacketString(QString::asprintf("ID %d ipsrc %s ipdst %s sport %d dport %d size %d flags %d",
-                                                    ID, saddr, daddr, mFragments[ID].sport, mFragments[ID].dport, buffer.size(), Flags));
+//			qDebug("ID %d sport %d dport %d size %d off %d flags %d size %d",
+//				   ID, mFragments[ID].sport, mFragments[ID].dport, buffer.size(), off, Flags, len);
+            emit sendPacketString(mNum++, ID, QString::asprintf("ipsrc %s ipdst %s sport %d dport %d size %d",
+                                                    saddr, daddr, mFragments[ID].sport, mFragments[ID].dport, buffer.size()));
 
 			mFragments.remove(ID);
 		}

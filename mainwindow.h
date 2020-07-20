@@ -9,6 +9,28 @@
 
 #include "pcapfile.h"
 
+struct udpdata{
+    quint64 num;
+    uint id;
+    QString val;
+
+    udpdata(){
+        num = id = 0;
+    }
+    udpdata(quint64 n, uint id, const QString &v){
+        num = n;
+        this->id = id;
+        val = v;
+    }
+    QList<QStandardItem*> get(){
+        QList<QStandardItem*> ret;
+        ret.push_back(new QStandardItem(QString::number(num)));
+        ret.push_back(new QStandardItem("ID " + QString::number(id)));
+        ret.push_back(new QStandardItem(val));
+        return ret;
+    }
+};
+
 namespace Ui {
 class MainWindow;
 }
@@ -26,7 +48,7 @@ private slots:
 
 	void on_pbStart_clicked();
 
-	void onReceivePacketString(const QString& val);
+    void onReceivePacketString(quint64 num, uint id, const QString& val);
 
     void on_actionOpen_triggered();
 
@@ -42,7 +64,7 @@ private:
 	QString mFileName;
     QStandardItemModel mModel;
     QTimer mTimer;
-    QStringList mPackets;
+    QList<udpdata> mPackets;
 
 	QScopedPointer<PCapFile> mPCap;
 };
