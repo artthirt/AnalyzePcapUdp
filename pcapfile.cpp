@@ -5,6 +5,8 @@
 #include <chrono>
 #include <thread>
 
+#include <WinSock2.h>
+
 /* 4 bytes IP address */
 typedef struct ip_address
 {
@@ -305,6 +307,13 @@ void PCapFile::sendToPort(){
 		socket.reset(new QUdpSocket);
 		socket->moveToThread(mThread.data());
 		socket->bind(30001);
+
+        #define SOCKET_BUFFER_SIZE	1024 * 1024
+
+        int bufLen = SOCKET_BUFFER_SIZE;
+        setsockopt(socket->socketDescriptor(), SOL_SOCKET, SO_RCVBUF, (char*)&bufLen, sizeof(bufLen));
+        setsockopt(socket->socketDescriptor(), SOL_SOCKET, SO_SNDBUF, (char*)&bufLen, sizeof(bufLen));
+
 	}
 
 	socket->writeDatagram(buffer, sendingHost, sendingPort);
