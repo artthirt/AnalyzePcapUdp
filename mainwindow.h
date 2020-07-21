@@ -10,22 +10,25 @@
 #include "pcapfile.h"
 
 struct udpdata{
-    quint64 num;
-    uint id;
+    quint64 num = 0;
+    uint id = 0;
     QString val;
+    uint size = 0;
 
     udpdata(){
         num = id = 0;
     }
-    udpdata(quint64 n, uint id, const QString &v){
+    udpdata(quint64 n, uint id, uint size, const QString &v){
         num = n;
         this->id = id;
         val = v;
+        this->size = size;
     }
     QList<QStandardItem*> get(){
         QList<QStandardItem*> ret;
         ret.push_back(new QStandardItem(QString::number(num)));
         ret.push_back(new QStandardItem("ID " + QString::number(id)));
+        ret.push_back(new QStandardItem(QString::number(size)));
         ret.push_back(new QStandardItem(val));
         return ret;
     }
@@ -48,7 +51,7 @@ private slots:
 
 	void on_pbStart_clicked();
 
-    void onReceivePacketString(quint64 num, uint id, const QString& val);
+    void onReceivePacketString(quint64 num, uint id, uint size, const QString& val);
 
     void on_actionOpen_triggered();
 
@@ -58,9 +61,12 @@ private slots:
 
     void on_pbClear_clicked();
 
+    void on_cbUseScrollDown_clicked(bool checked);
+
 private:
 	Ui::MainWindow *ui;
 
+    bool mUseScroll = false;
 	QString mFileName;
     QStandardItemModel mModel;
     QTimer mTimer;

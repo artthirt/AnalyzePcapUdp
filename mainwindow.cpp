@@ -11,13 +11,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mPCap.reset(new PCapFile);
 
-    connect(mPCap.data(), SIGNAL(sendPacketString(quint64, uint, QString)),
-            this, SLOT(onReceivePacketString(quint64, uint, QString)), Qt::QueuedConnection);
+    connect(mPCap.data(), SIGNAL(sendPacketString(quint64, uint, uint, QString)),
+            this, SLOT(onReceivePacketString(quint64, uint, uint, QString)), Qt::QueuedConnection);
 
     connect(&mTimer, SIGNAL(timeout()), this, SLOT(onTimeout()));
     mTimer.start(50);
 
-    mModel.setHorizontalHeaderLabels(QStringList() << "num" << "id" << "data");
+    mModel.setHorizontalHeaderLabels(QStringList() << "num" << "id" << "size" << "data");
 
     ui->lvOutput->setModel(&mModel);
 }
@@ -55,15 +55,15 @@ void MainWindow::on_pbStart_clicked()
 	mPCap->setSendingPort(ui->sbDstPort->value());
     mPCap->setSendingHost(ui->leIp->text());
 
-    mModel.setHorizontalHeaderLabels(QStringList() << "num" << "id" << "data");
+    mModel.setHorizontalHeaderLabels(QStringList() << "num" << "id" << "size" << "data");
     //ui->lvOutput->setColumnWidth(2, 600);
 
 	mPCap->start();
 }
 
-void MainWindow::onReceivePacketString(quint64 num, uint id, const QString &val)
+void MainWindow::onReceivePacketString(quint64 num, uint id, uint size, const QString &val)
 {
-    mPackets.push_back(udpdata(num, id, val));
+    mPackets.push_back(udpdata(num, id, size, val));
     //ui->pteDebug->appendPlainText(val);
     //mModel.insertRow(mModel.rowCount(), new QStandardItem(val));
 }
@@ -86,7 +86,10 @@ void MainWindow::onTimeout()
         mModel.appendRow(mPackets.front().get());
         mPackets.pop_front();
     }
-    ui->lvOutput->scrollToBottom();
+
+    if(mUseScroll){
+        ui->lvOutput->scrollToBottom();
+    }
 
     ui->statusbar->showMessage("Packets left " +QString::number(mPackets.size()));
 }
@@ -95,4 +98,9 @@ void MainWindow::on_pbClear_clicked()
 {
     mPackets.clear();
     mModel.clear();
+}
+
+void MainWindow::on_cbUseScrollDown_clicked(bool checked)
+{
+    mUseScroll = checked;
 }

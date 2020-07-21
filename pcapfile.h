@@ -58,7 +58,7 @@ public:
 				   const u_char *pkt_data);
 
 signals:
-    void sendPacketString(quint64 num, uint id, QString);
+    void sendPacketString(quint64 num, uint id, uint size, QString);
 
 private:
 	pcap_t *mFP = nullptr;
