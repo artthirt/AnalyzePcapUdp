@@ -1,5 +1,8 @@
 QT += network gui widgets
 
+TARGET = AnalyzePcapUdp
+TEMPLATE = app
+
 CONFIG += c++11
 CONFIG -= app_bundle
 
