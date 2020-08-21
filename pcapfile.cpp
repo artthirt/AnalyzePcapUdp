@@ -257,6 +257,10 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
 			}
         }else{
 			//qDebug("ID %d off %d size %d", ID, off, ba.size());
+			if(!mFragments.contains(ID)){
+				mFragments[ID].sport = mSrcPort;
+				mFragments[ID].dport = mDstPort;
+			}
 			mFragments[ID].add(off, ba);
 
 			buffer = mFragments[ID].buffer.remove(0, 8);
@@ -287,6 +291,10 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
             emit sendPacketString(mNum++, ID,  buffer.size(), QString::asprintf("ipsrc %s ipdst %s sport %d dport %d",
                                                     saddr, daddr, mSrcPort, mDstPort));
         }else{
+			if(!mFragments.contains(ID)){
+				mFragments[ID].sport = mSrcPort;
+				mFragments[ID].dport = mDstPort;
+			}
 			mFragments[ID].add(off, ba);
 
 			buffer = mFragments[ID].buffer.remove(0, 8);
