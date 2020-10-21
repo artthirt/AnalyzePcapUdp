@@ -104,6 +104,10 @@ void PCapFile::closeFile()
 
 void PCapFile::start()
 {
+	if(mPause){
+		mPause = false;
+		return;
+	}
 	QTimer::singleShot(0, this, [this](){
 		internalStart();
     });
@@ -111,7 +115,22 @@ void PCapFile::start()
 
 void PCapFile::stop()
 {
-    mStarted = false;
+	mStarted = false;
+}
+
+void PCapFile::pause()
+{
+	mPause = true;
+}
+
+bool PCapFile::isPause() const
+{
+	return mPause;
+}
+
+void PCapFile::setFilter(const QMap<ushort, Filter> &filters)
+{
+	mFilters = filters;
 }
 
 void PCapFile::internalStart()
@@ -147,6 +166,10 @@ void PCapFile::internalStart()
     mNum = 0;
 
     while((res = pcap_next_ex(mFP, &header, &pkt_data)) >= 0 && !mDone && mStarted){
+		if(mPause){
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			continue;
+		}
 		getpacket(header, pkt_data);
 	}
 
@@ -163,28 +186,8 @@ void PCapFile::openFile()
 
     mFP = pcap_open_offline(mFileName.toLocal8Bit().data(), (char*)errbuf);
 
-    if(mFP == NULL)
+	if(mFP == nullptr)
         return;
-}
-
-void PCapFile::setUseFilterDstPort(bool val)
-{
-    mUseFilterDstPort = val;
-}
-
-void PCapFile::setSendingHost(const QString &ip)
-{
-    sendingHost = QHostAddress(ip);
-}
-
-void PCapFile::setSendingPort(ushort port)
-{
-	sendingPort = port;
-}
-
-void PCapFile::setDstPort(ushort port)
-{
-	dstPort = port;
 }
 
 void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
@@ -238,7 +241,7 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
 	char* offs = (char*)uh;
 	ba.append(offs, len);
 
-    if(mUseFilterDstPort){
+	if(!mFilters.empty()){
 		if(MF){
 			if(!mFragments.contains(ID)){
 				mFragments[ID].sport = mSrcPort;
@@ -247,13 +250,14 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
 			mFragments[ID].add(off, ba);
         }else if(DF){
 			buffer = ba.remove(0, 8);
-            if(mDstPort == dstPort){
+			if(mFilters.contains(mDstPort)){
+				const Filter& flt = mFilters[mDstPort];
 //				qDebug("ID %d sport %d dport %d size %d offset %d flags %d len %d",
 //					   ID, mSrcPort, mDstPort, buffer.size(), off, Flags, len);
                 emit sendPacketString(mNum++, ID,  buffer.size(), QString::asprintf("ipsrc %s ipdst %s sport %d dport %d -> %s:%d",
                                                         saddr, daddr, mSrcPort, mDstPort,
-                                                        sendingHost.toString().toLatin1().data(), sendingPort));
-				sendToPort();
+														flt.sndHost.toString().toLatin1().data(), flt.sndPort));
+				sendToPort(flt);
 			}
         }else{
 			//qDebug("ID %d off %d size %d", ID, off, ba.size());
@@ -265,13 +269,14 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
 
 			buffer = mFragments[ID].buffer.remove(0, 8);
 
-			if(mFragments[ID].dport == dstPort){
+			if(mFilters.contains(mFragments[ID].dport)){
+				const Filter& flt = mFilters[mFragments[ID].dport];
 //				qDebug("ID %d sport %d dport %d size %d offset %d flags %d len %d",
 //					   ID, mFragments[ID].sport, mFragments[ID].dport, buffer.size(), off, Flags, len);
                 emit sendPacketString(mNum++, ID,  buffer.size(), QString::asprintf("ipsrc %s ipdst %s sport %d dport %d -> %s:%d",
                                                         saddr, daddr, mFragments[ID].sport, mFragments[ID].dport,
-                                                        sendingHost.toString().toLatin1().data(), sendingPort));
-				sendToPort();
+														flt.sndHost.toString().toLatin1().data(), flt.sndPort));
+				sendToPort(flt);
 			}
 
 			mFragments.remove(ID);
@@ -309,7 +314,7 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
 	}
 }
 
-void PCapFile::sendToPort(){
+void PCapFile::sendToPort(const Filter& flt){
 
 	if(!socket){
 		socket.reset(new QUdpSocket);
@@ -324,7 +329,7 @@ void PCapFile::sendToPort(){
 
 	}
 
-	socket->writeDatagram(buffer, sendingHost, sendingPort);
+	socket->writeDatagram(buffer, flt.sndHost, flt.sndPort);
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(mTimeout));
 }

@@ -63,6 +63,8 @@ private slots:
 
     void on_cbUseScrollDown_clicked(bool checked);
 
+	void on_pbPause_clicked();
+
 private:
 	Ui::MainWindow *ui;
 
@@ -73,6 +75,9 @@ private:
     QList<udpdata> mPackets;
 
 	QScopedPointer<PCapFile> mPCap;
+
+	void loadSettings();
+	void saveSettings();
 };
 
 #endif // MAINWINDOW_H

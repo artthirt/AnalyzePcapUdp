@@ -13,6 +13,12 @@ extern "C"{
 #include "pcap.h"
 }
 
+struct Filter{
+	ushort dstPort;
+	QHostAddress sndHost;
+	ushort sndPort;
+};
+
 struct IPF{
 	QByteArray buffer;
 	ushort sport;
@@ -44,11 +50,11 @@ public:
 
 	void start();
     void stop();
+	void pause();
 
-	void setUseFilterDstPort(bool val);
-    void setSendingHost(const QString &ip);
-	void setSendingPort(ushort port);
-	void setDstPort(ushort port);
+	bool isPause() const;
+
+	void setFilter(const QMap<ushort, Filter>& filters);
 
 	void setTimeout(uint val){
 		mTimeout = val;
@@ -66,10 +72,11 @@ private:
     quint64 mNum = 0;
 
     bool mStarted = false;
+	bool mPause = false;
 
 	bool mDone = false;
 	QScopedPointer<QThread> mThread;
-	bool mUseFilterDstPort = false;
+	QMap<ushort, Filter> mFilters;
 
 	QMap<int, IPF> mFragments;
 
@@ -80,15 +87,11 @@ private:
 
 	ushort ID = 0;
 	QByteArray buffer;
-	ushort dstPort = 10031;
 	bool isCurrentPort = false;
 
 	uint mTimeout = 32;
 
-	ushort sendingPort = 10031;
-	QHostAddress sendingHost = QHostAddress("127.0.0.1");
-
-	void sendToPort();
+	void sendToPort(const Filter &flt);
 	void internalStart();
     void openFile();
 
