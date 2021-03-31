@@ -93,7 +93,9 @@ void MainWindow::on_pbStart_clicked()
 
 void MainWindow::onReceivePacketString(quint64 num, uint id, uint size, const QString &val)
 {
-    mPackets.push_back(udpdata(num, id, size, val));
+    if(ui->chbShowPackets->isChecked()){
+        mPackets.push_back(udpdata(num, id, size, val));
+    }
     //ui->pteDebug->appendPlainText(val);
     //mModel.insertRow(mModel.rowCount(), new QStandardItem(val));
 }
@@ -112,16 +114,22 @@ void MainWindow::on_pbStop_clicked()
 void MainWindow::onTimeout()
 {
     int id = 0;
-    while(!mPackets.empty() && id++ < 40){
-        mModel.appendRow(mPackets.front().get());
-        mPackets.pop_front();
+    if(ui->chbShowPackets->isChecked()){
+        while(!mPackets.empty() && id++ < 40){
+            mModel.appendRow(mPackets.front().get());
+            mPackets.pop_front();
+        }
+    }else{
+
     }
 
     if(mUseScroll){
         ui->lvOutput->scrollToBottom();
     }
 
-    ui->statusbar->showMessage("Packets left " +QString::number(mPackets.size()));
+    if(mPCap){
+        ui->statusbar->showMessage("Packets left " +QString::number(mPCap->packetsCount()));
+    }
 }
 
 void MainWindow::on_pbClear_clicked()
@@ -210,4 +218,11 @@ void MainWindow::on_pbPause_clicked()
 	if(mPCap){
 		mPCap->pause();
 	}
+}
+
+void MainWindow::on_sbTimeout_valueChanged(int arg1)
+{
+    if(mPCap){
+        mPCap->setTimeout(arg1);
+    }
 }

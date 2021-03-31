@@ -65,6 +65,8 @@ private slots:
 
 	void on_pbPause_clicked();
 
+    void on_sbTimeout_valueChanged(int arg1);
+
 private:
 	Ui::MainWindow *ui;
 

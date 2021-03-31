@@ -331,5 +331,5 @@ void PCapFile::sendToPort(const Filter& flt){
 
 	socket->writeDatagram(buffer, flt.sndHost, flt.sndPort);
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(mTimeout));
+    std::this_thread::sleep_for(std::chrono::nanoseconds(mTimeout));
 }

@@ -60,6 +60,8 @@ public:
 		mTimeout = val;
 	}
 
+    size_t packetsCount() const { return mNum; }
+
 	void getpacket(const struct pcap_pkthdr *header,
 				   const u_char *pkt_data);
 
@@ -89,7 +91,7 @@ private:
 	QByteArray buffer;
 	bool isCurrentPort = false;
 
-	uint mTimeout = 32;
+    uint mTimeout = 32 * 1000000;
 
 	void sendToPort(const Filter &flt);
 	void internalStart();
