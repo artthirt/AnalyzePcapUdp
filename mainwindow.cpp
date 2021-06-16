@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QMap>
 #include <QSettings>
 
@@ -38,7 +39,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pbSelect_clicked()
 {
-	QString fn = QFileDialog::getOpenFileName(nullptr, "Open File...", "../../", "*.pcap");
+    QFileInfo fi(mFileName);
+
+    QString fn = QFileDialog::getOpenFileName(nullptr, "Open File...", fi.path(), "*.pcap");
 
 	if(fn.isEmpty())
 		return;
