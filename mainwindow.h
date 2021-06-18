@@ -11,6 +11,7 @@
 
 struct udpdata{
     quint64 num = 0;
+    quint64 timestamp = 0;
     uint id = 0;
     QString val;
     uint size = 0;
@@ -18,8 +19,9 @@ struct udpdata{
     udpdata(){
         num = id = 0;
     }
-    udpdata(quint64 n, uint id, uint size, const QString &v){
+    udpdata(quint64 n, quint64 t, uint id, uint size, const QString &v){
         num = n;
+        timestamp = t;
         this->id = id;
         val = v;
         this->size = size;
@@ -27,6 +29,7 @@ struct udpdata{
     QList<QStandardItem*> get(){
         QList<QStandardItem*> ret;
         ret.push_back(new QStandardItem(QString::number(num)));
+        ret.push_back(new QStandardItem(QString::number(1. * timestamp / 1e+6, 'f', 6)));
         ret.push_back(new QStandardItem("ID " + QString::number(id)));
         ret.push_back(new QStandardItem(QString::number(size)));
         ret.push_back(new QStandardItem(val));
@@ -51,7 +54,7 @@ private slots:
 
 	void on_pbStart_clicked();
 
-    void onReceivePacketString(quint64 num, uint id, uint size, const QString& val);
+    void onReceivePacketString(quint64 num, quint64 timestamp, uint id, uint size, const QString& val);
 
     void on_actionOpen_triggered();
 

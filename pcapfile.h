@@ -23,6 +23,7 @@ struct IPF{
 	QByteArray buffer;
 	ushort sport;
 	ushort dport;
+    uint64_t timestamp = 0;
 
 	IPF(){
 		sport = 0;
@@ -37,6 +38,15 @@ struct IPF{
 		}
 		memcpy(buffer.data() + offset, data.data(), data.size());
 	}
+    uint64_t fromTimeval(const timeval& v){
+        timestamp = v.tv_sec * 1000000 + v.tv_usec;
+        return timestamp;
+    }
+
+    static uint64_t sfromTimeval(const timeval& v){
+        auto timestamp = v.tv_sec * 1000000 + v.tv_usec;
+        return timestamp;
+    }
 };
 
 class PCapFile: public QObject{
@@ -66,12 +76,14 @@ public:
 				   const u_char *pkt_data);
 
 signals:
-    void sendPacketString(quint64 num, uint id, uint size, QString);
+    void sendPacketString(quint64 num, quint64 timestamp, uint id, uint size, QString);
 
 private:
 	pcap_t *mFP = nullptr;
     QString mFileName;
     quint64 mNum = 0;
+    quint64 mBeginTimestamp = 0;
+    quint64 mPrevTimestamp = 0;
 
     bool mStarted = false;
 	bool mPause = false;
@@ -93,7 +105,7 @@ private:
 
     uint mTimeout = 32 * 1000000;
 
-	void sendToPort(const Filter &flt);
+    void sendToPort(const Filter &flt, quint64 deltatime);
 	void internalStart();
     void openFile();
 

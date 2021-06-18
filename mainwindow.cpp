@@ -14,13 +14,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mPCap.reset(new PCapFile);
 
-    connect(mPCap.data(), SIGNAL(sendPacketString(quint64, uint, uint, QString)),
-            this, SLOT(onReceivePacketString(quint64, uint, uint, QString)), Qt::QueuedConnection);
+    connect(mPCap.data(), SIGNAL(sendPacketString(quint64, quint64, uint, uint, QString)),
+            this, SLOT(onReceivePacketString(quint64, quint64, uint, uint, QString)), Qt::QueuedConnection);
 
     connect(&mTimer, SIGNAL(timeout()), this, SLOT(onTimeout()));
     mTimer.start(50);
 
-    mModel.setHorizontalHeaderLabels(QStringList() << "num" << "id" << "size" << "data");
+    mModel.setHorizontalHeaderLabels(QStringList() << "num" << "timestamp" << "id" << "size" << "data");
 
 	ui->splitter->setStretchFactor(0, 1);
 	ui->splitter->setStretchFactor(1, 3);
@@ -94,10 +94,10 @@ void MainWindow::on_pbStart_clicked()
 	mPCap->start();
 }
 
-void MainWindow::onReceivePacketString(quint64 num, uint id, uint size, const QString &val)
+void MainWindow::onReceivePacketString(quint64 num, quint64 timestamp, uint id, uint size, const QString &val)
 {
     if(ui->chbShowPackets->isChecked()){
-        mPackets.push_back(udpdata(num, id, size, val));
+        mPackets.push_back(udpdata(num, timestamp, id, size, val));
     }
     //ui->pteDebug->appendPlainText(val);
     //mModel.insertRow(mModel.rowCount(), new QStandardItem(val));
