@@ -72,7 +72,7 @@ void MainWindow::on_pbStart_clicked()
 
 	mPCap->openFile(mFileName);
 
-	mPCap->setTimeout(ui->sbTimeout->value());
+    updateTimeout();
 
 	QMap<ushort, Filter> filters;
 	setFilter(filters, ui->chbFilterDstPort, ui->sbFilterDstPort, ui->leIp, ui->sbDstPort);
@@ -182,7 +182,14 @@ void MainWindow::loadSettings()
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "org");
 
 	mFileName = settings.value("filename").toString();
+    qint64 timeout = settings.value("timeout", 32).toInt();
+    qint64 index = settings.value("index", 2).toInt();
+
 	ui->lbSelectedFile->setText(mFileName);
+    ui->cbSelectTimeout->setCurrentIndex(index);
+    ui->sbTimeout->setValue(timeout);
+
+    updateTimeout();
 
 	getFilterFromSettings(settings, "flt1", ui->chbFilterDstPort, ui->sbFilterDstPort, ui->leIp, ui->sbDstPort);
 	getFilterFromSettings(settings, "flt2", ui->chbFilterDstPort_2, ui->sbFilterDstPort_2, ui->leIp_2, ui->sbDstPort_2);
@@ -201,6 +208,8 @@ void MainWindow::saveSettings()
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "org");
 
 	settings.setValue("filename", mFileName);
+    settings.setValue("timeout", ui->sbTimeout->value());
+    settings.setValue("index", ui->cbSelectTimeout->currentIndex());
 
 	setFilterToSettings(settings, "flt1", ui->chbFilterDstPort, ui->sbFilterDstPort, ui->leIp, ui->sbDstPort);
 	setFilterToSettings(settings, "flt2", ui->chbFilterDstPort_2, ui->sbFilterDstPort_2, ui->leIp_2, ui->sbDstPort_2);
@@ -225,7 +234,21 @@ void MainWindow::on_pbPause_clicked()
 
 void MainWindow::on_sbTimeout_valueChanged(int arg1)
 {
+    updateTimeout();
+}
+
+void MainWindow::on_cbSelectTimeout_currentIndexChanged(int index)
+{
+    updateTimeout();
+}
+
+void MainWindow::updateTimeout()
+{
+    qint64 timeout = ui->sbTimeout->value();
+    int index = ui->cbSelectTimeout->currentIndex();
     if(mPCap){
-        mPCap->setTimeout(arg1);
+        mPCap->setTimeoutType(static_cast<PCapFile::TimeoutType>(index));
+        mPCap->setTimeout(timeout);
     }
 }
+

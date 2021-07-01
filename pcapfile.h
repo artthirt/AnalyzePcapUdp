@@ -52,6 +52,8 @@ struct IPF{
 class PCapFile: public QObject{
 	Q_OBJECT
 public:
+    enum TimeoutType {NS, US, MS};
+
 	PCapFile();
 	~PCapFile();
 
@@ -66,14 +68,15 @@ public:
 
 	void setFilter(const QMap<ushort, Filter>& filters);
 
-	void setTimeout(uint val){
-		mTimeout = val;
-	}
+    void setTimeout(qint64 val);
 
     size_t packetsCount() const { return mNum; }
 
 	void getpacket(const struct pcap_pkthdr *header,
 				   const u_char *pkt_data);
+
+    TimeoutType timeoutType() const     { return mTimeoutType; }
+    void setTimeoutType(TimeoutType tp) { mTimeoutType = tp; }
 
 signals:
     void sendPacketString(quint64 num, quint64 timestamp, uint id, uint size, QString);
@@ -103,7 +106,8 @@ private:
 	QByteArray buffer;
 	bool isCurrentPort = false;
 
-    uint mTimeout = 32 * 1000000;
+    qint64 mTimeout = 32;
+    TimeoutType mTimeoutType = MS;
 
     void sendToPort(const Filter &flt, quint64 deltatime);
 	void internalStart();

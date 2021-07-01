@@ -70,6 +70,8 @@ private slots:
 
     void on_sbTimeout_valueChanged(int arg1);
 
+    void on_cbSelectTimeout_currentIndexChanged(int index);
+
 private:
 	Ui::MainWindow *ui;
 
@@ -80,6 +82,8 @@ private:
     QList<udpdata> mPackets;
 
 	QScopedPointer<PCapFile> mPCap;
+
+    void updateTimeout();
 
 	void loadSettings();
 	void saveSettings();

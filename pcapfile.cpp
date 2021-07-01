@@ -133,6 +133,11 @@ void PCapFile::setFilter(const QMap<ushort, Filter> &filters)
 	mFilters = filters;
 }
 
+void PCapFile::setTimeout(qint64 val)
+{
+    mTimeout = val;
+}
+
 void PCapFile::internalStart()
 {
     openFile();
@@ -351,5 +356,16 @@ void PCapFile::sendToPort(const Filter& flt, quint64 deltatime){
 
     qint64 delay = /*delta * */mTimeout;
 
-    std::this_thread::sleep_for(std::chrono::nanoseconds(delay));
+    switch (mTimeoutType) {
+    case NS:
+        std::this_thread::sleep_for(std::chrono::nanoseconds(delay));
+        break;
+    case US:
+        std::this_thread::sleep_for(std::chrono::microseconds(delay));
+        break;
+    case MS:
+        std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+        break;
+    }
+
 }
