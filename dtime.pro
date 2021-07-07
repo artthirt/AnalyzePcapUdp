@@ -30,3 +30,8 @@ HEADERS += \
 
 FORMS += \
     mainwindow.ui
+
+MOC_DIR     = tmp/moc
+OBJECTS_DIR = tmp/obj
+UI_DIR      = tmp/ui
+RCC_DIR     = tmp/rcc

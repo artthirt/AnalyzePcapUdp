@@ -2,6 +2,8 @@
 
 #include <QTimer>
 
+#include <WinSock2.h>
+
 UdpWorker::UdpWorker(QObject *parent) : QThread(parent)
 {
     moveToThread(this);
@@ -63,6 +65,12 @@ void UdpWorker::binding()
             readyRead();
         });
     }
+
+    const int SOCKET_BUFFER_SIZE = 1024 * 1024;
+
+    int bufLen = SOCKET_BUFFER_SIZE;
+    setsockopt(mSocket->socketDescriptor(), SOL_SOCKET, SO_RCVBUF, (char*)&bufLen, sizeof(bufLen));
+    setsockopt(mSocket->socketDescriptor(), SOL_SOCKET, SO_SNDBUF, (char*)&bufLen, sizeof(bufLen));
 }
 
 void UdpWorker::readyRead()
