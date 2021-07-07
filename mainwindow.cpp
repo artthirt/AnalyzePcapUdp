@@ -14,6 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mPCap.reset(new PCapFile);
 
+    mNetworker.reset(new Networker);
+
     connect(mPCap.data(), SIGNAL(sendPacketString(quint64, quint64, uint, uint, QString)),
             this, SLOT(onReceivePacketString(quint64, quint64, uint, uint, QString)), Qt::QueuedConnection);
 
@@ -27,12 +29,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->lvOutput->setModel(&mModel);
 
+    ui->twWorkspace->setCurrentIndex(0);
+
 	loadSettings();
 }
 
 MainWindow::~MainWindow()
 {
 	saveSettings();
+
+    mNetworker.reset();
 
 	delete ui;
 }
@@ -74,17 +80,7 @@ void MainWindow::on_pbStart_clicked()
 
     updateTimeout();
 
-	QMap<ushort, Filter> filters;
-	setFilter(filters, ui->chbFilterDstPort, ui->sbFilterDstPort, ui->leIp, ui->sbDstPort);
-	setFilter(filters, ui->chbFilterDstPort_2, ui->sbFilterDstPort_2, ui->leIp_2, ui->sbDstPort_2);
-	setFilter(filters, ui->chbFilterDstPort_3, ui->sbFilterDstPort_3, ui->leIp_3, ui->sbDstPort_3);
-	setFilter(filters, ui->chbFilterDstPort_4, ui->sbFilterDstPort_4, ui->leIp_4, ui->sbDstPort_4);
-	setFilter(filters, ui->chbFilterDstPort_5, ui->sbFilterDstPort_5, ui->leIp_5, ui->sbDstPort_5);
-	setFilter(filters, ui->chbFilterDstPort_6, ui->sbFilterDstPort_6, ui->leIp_6, ui->sbDstPort_6);
-	setFilter(filters, ui->chbFilterDstPort_7, ui->sbFilterDstPort_7, ui->leIp_7, ui->sbDstPort_7);
-	setFilter(filters, ui->chbFilterDstPort_8, ui->sbFilterDstPort_8, ui->leIp_8, ui->sbDstPort_8);
-	setFilter(filters, ui->chbFilterDstPort_9, ui->sbFilterDstPort_9, ui->leIp_9, ui->sbDstPort_9);
-	setFilter(filters, ui->chbFilterDstPort_10, ui->sbFilterDstPort_10, ui->leIp_10, ui->sbDstPort_10);
+    QMap<ushort, Filter> filters = getFilters();
 
 	mPCap->setFilter(filters);
 
@@ -114,6 +110,21 @@ void MainWindow::on_pbStop_clicked()
     mPackets.clear();
 }
 
+QString getSize(qint64 size)
+{
+    QString res;
+
+    if(size < 1e+3)
+        return QString("%1 B").arg(size);
+    if(size < 1e+6)
+        return QString("%1 KB").arg(size / 1.e+3, 0, 'f', 2);
+    if(size < 1e+9)
+        return QString("%1 MB").arg(size / 1.e+6, 0, 'f', 2);
+    return QString("%1 GB").arg(size / 1.e+9, 0, 'f', 2);
+
+    return res;
+}
+
 void MainWindow::onTimeout()
 {
     int id = 0;
@@ -133,6 +144,15 @@ void MainWindow::onTimeout()
     if(mPCap){
         ui->statusbar->showMessage("Packets left " +QString::number(mPCap->packetsCount()));
     }
+
+    QString out;
+    for(int i = 0; i < mNetworker->sizeWorkers(); ++i){
+        auto p = mNetworker->worker(i);
+        out += QString("Destination Port:\t%1\n").arg(p->bindingPort());
+        out += QString("  Received bytes:\t%1\n").arg(getSize(p->receivedSize()));
+        out += QString("  Sended bytes:\t%1\n\n").arg(getSize(p->sendedSize()));
+    }
+    ui->lbNetOut->setText(out);
 }
 
 void MainWindow::on_pbClear_clicked()
@@ -189,6 +209,8 @@ void MainWindow::loadSettings()
     ui->cbSelectTimeout->setCurrentIndex(index);
     ui->sbTimeout->setValue(timeout);
 
+    ui->twWorkspace->setCurrentIndex(settings.value("workspace", 0).toInt());
+
     updateTimeout();
 
 	getFilterFromSettings(settings, "flt1", ui->chbFilterDstPort, ui->sbFilterDstPort, ui->leIp, ui->sbDstPort);
@@ -210,6 +232,8 @@ void MainWindow::saveSettings()
 	settings.setValue("filename", mFileName);
     settings.setValue("timeout", ui->sbTimeout->value());
     settings.setValue("index", ui->cbSelectTimeout->currentIndex());
+
+    settings.setValue("workspace", ui->twWorkspace->currentIndex());
 
 	setFilterToSettings(settings, "flt1", ui->chbFilterDstPort, ui->sbFilterDstPort, ui->leIp, ui->sbDstPort);
 	setFilterToSettings(settings, "flt2", ui->chbFilterDstPort_2, ui->sbFilterDstPort_2, ui->leIp_2, ui->sbDstPort_2);
@@ -250,5 +274,44 @@ void MainWindow::updateTimeout()
         mPCap->setTimeoutType(static_cast<PCapFile::TimeoutType>(index));
         mPCap->setTimeout(timeout);
     }
+}
+
+
+void MainWindow::on_pbNetStart_clicked()
+{
+    mNetworker->stopSending();
+
+    auto filters = getFilters();
+    for(auto &a: filters){
+        mNetworker->addWorker(a.sndHost, a.sndPort, a.dstPort);
+    }
+}
+
+
+void MainWindow::on_pbNetStop_clicked()
+{
+    mNetworker->stopSending();
+}
+
+QMap<ushort, Filter> MainWindow::getFilters()
+{
+    QMap<ushort, Filter> filters;
+    setFilter(filters, ui->chbFilterDstPort, ui->sbFilterDstPort, ui->leIp, ui->sbDstPort);
+    setFilter(filters, ui->chbFilterDstPort_2, ui->sbFilterDstPort_2, ui->leIp_2, ui->sbDstPort_2);
+    setFilter(filters, ui->chbFilterDstPort_3, ui->sbFilterDstPort_3, ui->leIp_3, ui->sbDstPort_3);
+    setFilter(filters, ui->chbFilterDstPort_4, ui->sbFilterDstPort_4, ui->leIp_4, ui->sbDstPort_4);
+    setFilter(filters, ui->chbFilterDstPort_5, ui->sbFilterDstPort_5, ui->leIp_5, ui->sbDstPort_5);
+    setFilter(filters, ui->chbFilterDstPort_6, ui->sbFilterDstPort_6, ui->leIp_6, ui->sbDstPort_6);
+    setFilter(filters, ui->chbFilterDstPort_7, ui->sbFilterDstPort_7, ui->leIp_7, ui->sbDstPort_7);
+    setFilter(filters, ui->chbFilterDstPort_8, ui->sbFilterDstPort_8, ui->leIp_8, ui->sbDstPort_8);
+    setFilter(filters, ui->chbFilterDstPort_9, ui->sbFilterDstPort_9, ui->leIp_9, ui->sbDstPort_9);
+    setFilter(filters, ui->chbFilterDstPort_10, ui->sbFilterDstPort_10, ui->leIp_10, ui->sbDstPort_10);
+    return filters;
+}
+
+
+void MainWindow::on_pushButton_clicked()
+{
+    mNetworker->clearStatistic();
 }
 

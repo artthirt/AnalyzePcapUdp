@@ -8,6 +8,7 @@
 #include <QTimer>
 
 #include "pcapfile.h"
+#include "networker.h"
 
 struct udpdata{
     quint64 num = 0;
@@ -72,6 +73,12 @@ private slots:
 
     void on_cbSelectTimeout_currentIndexChanged(int index);
 
+    void on_pbNetStart_clicked();
+
+    void on_pbNetStop_clicked();
+
+    void on_pushButton_clicked();
+
 private:
 	Ui::MainWindow *ui;
 
@@ -82,6 +89,10 @@ private:
     QList<udpdata> mPackets;
 
 	QScopedPointer<PCapFile> mPCap;
+
+    QScopedPointer<Networker> mNetworker;
+
+    QMap<ushort, Filter> getFilters();
 
     void updateTimeout();
 
