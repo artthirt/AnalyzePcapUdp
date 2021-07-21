@@ -6,9 +6,14 @@ TEMPLATE = app
 CONFIG += c++11
 CONFIG -= app_bundle
 
-INCLUDEPATH += $$PWD/3rdparty/Include
+win32{
 
-LIBS += -L$$PWD/3rdparty/Lib/x64 -lPacket -lwpcap -lWS2_32
+    INCLUDEPATH += $$PWD/3rdparty/Include
+
+    LIBS += -L$$PWD/3rdparty/Lib/x64 -lPacket -lwpcap -lWS2_32
+}else{
+    LIBS += -lpcap
+}
 
 SOURCES += \
         main.cpp \

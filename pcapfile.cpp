@@ -5,7 +5,12 @@
 #include <chrono>
 #include <thread>
 
+#ifdef Q_OS_LINUX
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#else
 #include <WinSock2.h>
+#endif
 
 /* 4 bytes IP address */
 typedef struct ip_address

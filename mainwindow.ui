@@ -56,8 +56,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>396</height>
+             <width>663</width>
+             <height>428</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -91,6 +91,12 @@
                </item>
                <item row="6" column="5">
                 <widget class="QLineEdit" name="leIp_6">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="maximumSize">
                   <size>
                    <width>200</width>
@@ -186,6 +192,12 @@
                </item>
                <item row="0" column="5">
                 <widget class="QLineEdit" name="leIp">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="maximumSize">
                   <size>
                    <width>200</width>
@@ -425,6 +437,12 @@
                </item>
                <item row="3" column="5">
                 <widget class="QLineEdit" name="leIp_4">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="maximumSize">
                   <size>
                    <width>200</width>
@@ -448,6 +466,12 @@
                </item>
                <item row="9" column="5">
                 <widget class="QLineEdit" name="leIp_9">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="maximumSize">
                   <size>
                    <width>200</width>
@@ -525,6 +549,12 @@
                </item>
                <item row="4" column="5">
                 <widget class="QLineEdit" name="leIp_5">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="maximumSize">
                   <size>
                    <width>200</width>
@@ -573,6 +603,12 @@
                </item>
                <item row="8" column="5">
                 <widget class="QLineEdit" name="leIp_8">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="maximumSize">
                   <size>
                    <width>200</width>
@@ -663,6 +699,12 @@
                </item>
                <item row="7" column="5">
                 <widget class="QLineEdit" name="leIp_7">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="maximumSize">
                   <size>
                    <width>200</width>
@@ -814,6 +856,12 @@
                </item>
                <item row="1" column="5">
                 <widget class="QLineEdit" name="leIp_2">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="maximumSize">
                   <size>
                    <width>200</width>
@@ -1021,6 +1069,12 @@
                </item>
                <item row="2" column="5">
                 <widget class="QLineEdit" name="leIp_3">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="maximumSize">
                   <size>
                    <width>200</width>
@@ -1453,7 +1507,7 @@
      <x>0</x>
      <y>0</y>
      <width>1132</width>
-     <height>21</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

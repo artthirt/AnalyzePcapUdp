@@ -2,7 +2,12 @@
 
 #include <QTimer>
 
+#ifdef Q_OS_LINUX
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#else
 #include <WinSock2.h>
+#endif
 
 UdpWorker::UdpWorker(QObject *parent) : QThread(parent)
 {
