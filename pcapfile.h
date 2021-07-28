@@ -64,6 +64,8 @@ public:
     void stop();
 	void pause();
 
+    void setRepeat(bool b);
+
 	bool isPause() const;
 
 	void setFilter(const QMap<ushort, Filter>& filters);
@@ -90,6 +92,7 @@ private:
 
     bool mStarted = false;
 	bool mPause = false;
+    bool mRepeat = false;
 
 	bool mDone = false;
 	QScopedPointer<QThread> mThread;
@@ -111,6 +114,7 @@ private:
 
     void sendToPort(const Filter &flt, quint64 deltatime);
 	void internalStart();
+    void preparePcap();
     void openFile();
 
 };

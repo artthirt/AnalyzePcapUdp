@@ -125,7 +125,12 @@ void PCapFile::stop()
 
 void PCapFile::pause()
 {
-	mPause = true;
+    mPause = true;
+}
+
+void PCapFile::setRepeat(bool b)
+{
+    mRepeat = b;
 }
 
 bool PCapFile::isPause() const
@@ -148,25 +153,8 @@ void PCapFile::internalStart()
     openFile();
 
     mStarted = true;
-	u_int netmask = 0xffffff;
-	char packet_filter[] = "ip and udp";
-	struct bpf_program fcode;
 
-	//compile the filter
-	if (pcap_compile(mFP, &fcode, packet_filter, 1, netmask) < 0 )
-	{
-		fprintf(stderr,"\nUnable to compile the packet filter. Check the syntax.\n");
-		/* Free the device list */
-		return;
-	}
-
-	//set the filter
-	if (pcap_setfilter(mFP, &fcode)<0)
-	{
-		fprintf(stderr,"\nError setting the filter.\n");
-		/* Free the device list */
-		return;
-	}
+    preparePcap();
 
 	struct pcap_pkthdr *header;
 	const u_char *pkt_data;
@@ -175,17 +163,47 @@ void PCapFile::internalStart()
 
     mNum = 0;
 
-    while((res = pcap_next_ex(mFP, &header, &pkt_data)) >= 0 && !mDone && mStarted){
-		if(mPause){
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-			continue;
-		}
-		getpacket(header, pkt_data);
-	}
+    do{
+        while((res = pcap_next_ex(mFP, &header, &pkt_data)) >= 0 && !mDone && mStarted){
+            if(mPause){
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                continue;
+            }
+            getpacket(header, pkt_data);
+        }
+
+        if(mRepeat){
+            openFile();
+            preparePcap();
+        }
+    }while(mRepeat && !mDone);
 
 	socket.reset();
 
     //pcap_loop(mFP, 0, dispatcher_handler, (u_char*)this);
+}
+
+void PCapFile::preparePcap()
+{
+    u_int netmask = 0xffffff;
+    char packet_filter[] = "ip and udp";
+    struct bpf_program fcode;
+
+    //compile the filter
+    if (pcap_compile(mFP, &fcode, packet_filter, 1, netmask) < 0 )
+    {
+        fprintf(stderr,"\nUnable to compile the packet filter. Check the syntax.\n");
+        /* Free the device list */
+        return;
+    }
+
+    //set the filter
+    if (pcap_setfilter(mFP, &fcode)<0)
+    {
+        fprintf(stderr,"\nError setting the filter.\n");
+        /* Free the device list */
+        return;
+    }
 }
 
 void PCapFile::openFile()

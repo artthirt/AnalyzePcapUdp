@@ -56,8 +56,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>663</width>
-             <height>428</height>
+             <width>631</width>
+             <height>357</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1130,7 +1130,7 @@
            <enum>QTabWidget::West</enum>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -1274,6 +1274,13 @@
                 </widget>
                </item>
               </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="chbRepeat">
+              <property name="text">
+               <string>Repeat</string>
+              </property>
              </widget>
             </item>
             <item>
@@ -1507,7 +1514,7 @@
      <x>0</x>
      <y>0</y>
      <width>1132</width>
-     <height>30</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

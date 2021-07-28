@@ -79,6 +79,8 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_chbRepeat_clicked(bool checked);
+
 private:
 	Ui::MainWindow *ui;
 

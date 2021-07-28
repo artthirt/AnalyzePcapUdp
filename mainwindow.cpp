@@ -315,3 +315,11 @@ void MainWindow::on_pushButton_clicked()
     mNetworker->clearStatistic();
 }
 
+
+void MainWindow::on_chbRepeat_clicked(bool checked)
+{
+    if(mPCap){
+        mPCap->setRepeat(checked);
+    }
+}
+
