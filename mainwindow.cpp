@@ -106,6 +106,7 @@ void MainWindow::on_actionOpen_triggered()
 
 void MainWindow::on_pbStop_clicked()
 {
+    ui->chbRepeat->setChecked(false);
     mPCap->stop();
     mPackets.clear();
 }
@@ -199,7 +200,7 @@ void setFilterToSettings(QSettings& settings, const QString& num, QCheckBox* cb,
 
 void MainWindow::loadSettings()
 {
-	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "org");
+    QSettings settings("settings.ini", QSettings::IniFormat);
 
 	mFileName = settings.value("filename").toString();
     qint64 timeout = settings.value("timeout", 32).toInt();
@@ -227,7 +228,7 @@ void MainWindow::loadSettings()
 
 void MainWindow::saveSettings()
 {
-	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "org");
+    QSettings settings("settings.ini", QSettings::IniFormat);
 
 	settings.setValue("filename", mFileName);
     settings.setValue("timeout", ui->sbTimeout->value());

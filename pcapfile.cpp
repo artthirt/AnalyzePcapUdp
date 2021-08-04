@@ -120,6 +120,7 @@ void PCapFile::start()
 
 void PCapFile::stop()
 {
+    mRepeat = false;
 	mStarted = false;
 }
 
