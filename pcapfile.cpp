@@ -230,11 +230,12 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
 	udp_header *uh;
 	u_int ip_len;
 	u_short sport,dport;
-	time_t local_tv_sec;
+    time_t local_tv_sec;
 
+    int offtop = mTypeOfPCap == SLL? 16 : 14;
 	/* retireve the position of the ip header */
 	ih = (ip_header *) (pkt_data +
-						14); //length of ethernet header
+                        offtop); //length of ethernet header
 
 	/* retireve the position of the udp header */
 	ip_len = (ih->ver_ihl & 0xf) * 4;

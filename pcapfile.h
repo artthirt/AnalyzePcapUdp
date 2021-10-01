@@ -53,6 +53,7 @@ class PCapFile: public QObject{
 	Q_OBJECT
 public:
     enum TimeoutType {NS, US, MS};
+    enum TOP{ETHERNET_FRAME, SLL};
 
 	PCapFile();
 	~PCapFile();
@@ -80,6 +81,14 @@ public:
     TimeoutType timeoutType() const     { return mTimeoutType; }
     void setTimeoutType(TimeoutType tp) { mTimeoutType = tp; }
 
+    /**
+     * @brief setTypeOfPCap
+     * @param val
+     * ethernet frame - header 14 bytes
+     * SLL            - header 16 bytes
+     */
+    void setTypeOfPCap(TOP val) { mTypeOfPCap = val; }
+
 signals:
     void sendPacketString(quint64 num, quint64 timestamp, uint id, uint size, QString);
 
@@ -89,6 +98,8 @@ private:
     quint64 mNum = 0;
     quint64 mBeginTimestamp = 0;
     quint64 mPrevTimestamp = 0;
+
+    TOP mTypeOfPCap = ETHERNET_FRAME;
 
     bool mStarted = false;
 	bool mPause = false;
