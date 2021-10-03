@@ -76,8 +76,6 @@ void MainWindow::on_pbStart_clicked()
 	if(!mPCap.data())
 		return;
 
-    mPCap->setTypeOfPCap(static_cast<PCapFile::TOP>(ui->cbUseTypeOfPCap->currentIndex()));
-
 	mPCap->openFile(mFileName);
 
     updateTimeout();
@@ -212,8 +210,6 @@ void MainWindow::loadSettings()
     ui->cbSelectTimeout->setCurrentIndex(index);
     ui->sbTimeout->setValue(timeout);
 
-    ui->cbUseTypeOfPCap->setCurrentIndex(settings.value("typeofpcap", 0).toInt());
-
     ui->twWorkspace->setCurrentIndex(settings.value("workspace", 0).toInt());
 
     updateTimeout();
@@ -237,7 +233,6 @@ void MainWindow::saveSettings()
 	settings.setValue("filename", mFileName);
     settings.setValue("timeout", ui->sbTimeout->value());
     settings.setValue("index", ui->cbSelectTimeout->currentIndex());
-    settings.setValue("typeofpcap", ui->cbUseTypeOfPCap->currentIndex());
 
     settings.setValue("workspace", ui->twWorkspace->currentIndex());
 

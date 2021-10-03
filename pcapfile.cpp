@@ -21,6 +21,20 @@ typedef struct ip_address
 	u_char byte4;
 }ip_address;
 
+struct eth_header{
+    uchar dst[6];
+    uchar src[6];
+    ushort type;
+};
+
+struct sll_header{
+    ushort pkt_type;
+    ushort arphrd_type;
+    ushort ll_adrlen;
+    uchar ll_addr[8];
+    ushort ptype;
+};
+
 /* IPv4 header */
 typedef struct ip_header
 {
@@ -47,6 +61,12 @@ typedef struct udp_header
 }udp_header;
 
 void dispatcher_handler(u_char *, const struct pcap_pkthdr *, const u_char *);
+
+ushort Inv(ushort v)
+{
+    ushort res = (v >> 8) | (v << 8);
+    return  res;
+}
 
 uint Inv(uint v)
 {
@@ -231,6 +251,17 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
 	u_int ip_len;
 	u_short sport,dport;
     time_t local_tv_sec;
+    eth_header *eth;
+    sll_header *slh;
+
+    eth = (eth_header*) pkt_data;
+    slh = (sll_header*) pkt_data;
+
+    mTypeOfPCap = ETHERNET_FRAME;
+
+    if(Inv(slh->arphrd_type) == 1 && Inv(slh->ll_adrlen) < 9){
+        mTypeOfPCap = SLL;
+    }
 
     int offtop = mTypeOfPCap == SLL? 16 : 14;
 	/* retireve the position of the ip header */
