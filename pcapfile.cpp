@@ -259,7 +259,8 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
 
     mTypeOfPCap = ETHERNET_FRAME;
 
-    if(Inv(slh->arphrd_type) == 1 && Inv(slh->ll_adrlen) < 9){
+    if(Inv(slh->pkt_type) >= 0 && Inv(slh->pkt_type) <= 4
+            && Inv(slh->arphrd_type) == 1 && Inv(slh->ll_adrlen) <=8){
         mTypeOfPCap = SLL;
     }
 
@@ -306,7 +307,7 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
         mBeginTimestamp = IPF::sfromTimeval(header->ts);
     }
 
-    auto timestamp = IPF::sfromTimeval(header->ts) - mBeginTimestamp;
+    int64_t timestamp = IPF::sfromTimeval(header->ts);
 
 	if(!mFilters.empty()){
 		if(MF){

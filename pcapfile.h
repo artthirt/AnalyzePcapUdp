@@ -23,7 +23,7 @@ struct IPF{
 	QByteArray buffer;
 	ushort sport;
 	ushort dport;
-    uint64_t timestamp = 0;
+    int64_t timestamp = 0;
 
 	IPF(){
 		sport = 0;
@@ -38,13 +38,13 @@ struct IPF{
 		}
 		memcpy(buffer.data() + offset, data.data(), data.size());
 	}
-    uint64_t fromTimeval(const timeval& v){
-        timestamp = v.tv_sec * 1000000 + v.tv_usec;
+    int64_t fromTimeval(const timeval& v){
+        timestamp = (int64_t)v.tv_sec * 1000 + (int64_t)v.tv_usec / 1000;
         return timestamp;
     }
 
-    static uint64_t sfromTimeval(const timeval& v){
-        auto timestamp = v.tv_sec * 1000000 + v.tv_usec;
+    static int64_t sfromTimeval(const timeval& v){
+        int64_t timestamp = (int64_t)v.tv_sec * 1000 + (int64_t)v.tv_usec / 1000;
         return timestamp;
     }
 };
@@ -96,8 +96,8 @@ private:
 	pcap_t *mFP = nullptr;
     QString mFileName;
     quint64 mNum = 0;
-    quint64 mBeginTimestamp = 0;
-    quint64 mPrevTimestamp = 0;
+    qint64 mBeginTimestamp = 0;
+    qint64 mPrevTimestamp = 0;
 
     TOP mTypeOfPCap = ETHERNET_FRAME;
 

@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
+#include <QDateTime>
 #include <QScopedPointer>
 #include <QStandardItemModel>
 #include <QTimer>
@@ -30,7 +30,9 @@ struct udpdata{
     QList<QStandardItem*> get(){
         QList<QStandardItem*> ret;
         ret.push_back(new QStandardItem(QString::number(num)));
-        ret.push_back(new QStandardItem(QString::number(1. * timestamp / 1e+6, 'f', 6)));
+        QDateTime t = QDateTime::fromMSecsSinceEpoch(timestamp);
+        ret.push_back(new QStandardItem(QString::number(1. * timestamp / 1e+3, 'f', 3)
+                                        + QString(" (%1").arg(t.toString("yyyy-MM-dd hh:mm:ss:zzz"))));
         ret.push_back(new QStandardItem("ID " + QString::number(id)));
         ret.push_back(new QStandardItem(QString::number(size)));
         ret.push_back(new QStandardItem(val));

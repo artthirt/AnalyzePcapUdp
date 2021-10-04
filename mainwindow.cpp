@@ -84,7 +84,7 @@ void MainWindow::on_pbStart_clicked()
 
 	mPCap->setFilter(filters);
 
-    mModel.setHorizontalHeaderLabels(QStringList() << "num" << "id" << "size" << "data");
+    mModel.setHorizontalHeaderLabels(QStringList() << "num" << "timestamp" << "id" << "size" << "data");
     //ui->lvOutput->setColumnWidth(2, 600);
 
 	mPCap->start();
