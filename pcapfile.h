@@ -14,7 +14,8 @@ extern "C"{
 }
 
 struct Filter{
-	ushort dstPort;
+    QHostAddress dstHost;
+    ushort dstPort;
 	QHostAddress sndHost;
 	ushort sndPort;
 };
@@ -23,6 +24,7 @@ struct IPF{
 	QByteArray buffer;
 	ushort sport;
 	ushort dport;
+    uint dstip = 0;
     int64_t timestamp = 0;
 
 	IPF(){

@@ -13,12 +13,10 @@
 #endif
 
 /* 4 bytes IP address */
-typedef struct ip_address
+typedef union ip_address
 {
-	u_char byte1;
-	u_char byte2;
-	u_char byte3;
-	u_char byte4;
+    u_char byte[4];
+    uint32_t ip;
 }ip_address;
 
 struct eth_header{
@@ -294,8 +292,8 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
 	ID = htons(ih->identification);
 
     char saddr[30], daddr[30];
-    sprintf(saddr, "%d.%d.%d.%d", ih->saddr.byte1, ih->saddr.byte2, ih->saddr.byte3,ih->saddr.byte4);
-    sprintf(daddr, "%d.%d.%d.%d", ih->daddr.byte1, ih->daddr.byte2, ih->daddr.byte3,ih->daddr.byte4);
+    sprintf(saddr, "%d.%d.%d.%d", ih->saddr.byte[0], ih->saddr.byte[1], ih->saddr.byte[2],ih->saddr.byte[3]);
+    sprintf(daddr, "%d.%d.%d.%d", ih->daddr.byte[0], ih->daddr.byte[1], ih->daddr.byte[2],ih->daddr.byte[3]);
 
 	int len = 0;
 	QByteArray ba;
@@ -314,6 +312,7 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
 			if(!mFragments.contains(ID)){
 				mFragments[ID].sport = mSrcPort;
 				mFragments[ID].dport = mDstPort;
+                mFragments[ID].dstip = ih->daddr.ip;
                 mFragments[ID].timestamp = timestamp;
 			}
 			mFragments[ID].add(off, ba);
@@ -321,20 +320,28 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
 			buffer = ba.remove(0, 8);
 			if(mFilters.contains(mDstPort)){
 				const Filter& flt = mFilters[mDstPort];
-//				qDebug("ID %d sport %d dport %d size %d offset %d flags %d len %d",
-//					   ID, mSrcPort, mDstPort, buffer.size(), off, Flags, len);
-                emit sendPacketString(mNum++, timestamp, ID,  buffer.size(), QString::asprintf("ipsrc %s ipdst %s sport %d dport %d -> %s:%d",
-                                                        saddr, daddr, mSrcPort, mDstPort,
-														flt.sndHost.toString().toLatin1().data(), flt.sndPort));
-                sendToPort(flt, timestamp - mPrevTimestamp);
+                bool send = true;
+                if(!flt.dstHost.isNull()){
+                    uint ipflt = flt.dstHost.toIPv4Address();
+                    send = ipflt == mFragments[ID].dstip;
+                }
+                if(send){
+    //				qDebug("ID %d sport %d dport %d size %d offset %d flags %d len %d",
+    //					   ID, mSrcPort, mDstPort, buffer.size(), off, Flags, len);
+                    emit sendPacketString(mNum++, timestamp, ID,  buffer.size(), QString::asprintf("ipsrc %s ipdst %s sport %d dport %d -> %s:%d",
+                                                            saddr, daddr, mSrcPort, mDstPort,
+                                                            flt.sndHost.toString().toLatin1().data(), flt.sndPort));
+                    sendToPort(flt, timestamp - mPrevTimestamp);
 
-                mPrevTimestamp = timestamp;
+                    mPrevTimestamp = timestamp;
+                }
 			}
         }else{
 			//qDebug("ID %d off %d size %d", ID, off, ba.size());
 			if(!mFragments.contains(ID)){
 				mFragments[ID].sport = mSrcPort;
 				mFragments[ID].dport = mDstPort;
+                mFragments[ID].dstip = ih->daddr.ip;
                 mFragments[ID].timestamp = timestamp;
 			}
 			mFragments[ID].add(off, ba);
@@ -343,14 +350,21 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
 
 			if(mFilters.contains(mFragments[ID].dport)){
 				const Filter& flt = mFilters[mFragments[ID].dport];
-//				qDebug("ID %d sport %d dport %d size %d offset %d flags %d len %d",
-//					   ID, mFragments[ID].sport, mFragments[ID].dport, buffer.size(), off, Flags, len);
-                emit sendPacketString(mNum++, mFragments[ID].timestamp, ID,  buffer.size(), QString::asprintf("ipsrc %s ipdst %s sport %d dport %d -> %s:%d",
-                                                        saddr, daddr, mFragments[ID].sport, mFragments[ID].dport,
-														flt.sndHost.toString().toLatin1().data(), flt.sndPort));
-                sendToPort(flt, mFragments[ID].timestamp - mPrevTimestamp);
+                bool send = true;
+                if(!flt.dstHost.isNull()){
+                    uint ipflt = flt.dstHost.toIPv4Address();
+                    send = ipflt == mFragments[ID].dstip;
+                }
+                if(send){
+    //				qDebug("ID %d sport %d dport %d size %d offset %d flags %d len %d",
+    //					   ID, mFragments[ID].sport, mFragments[ID].dport, buffer.size(), off, Flags, len);
+                    emit sendPacketString(mNum++, mFragments[ID].timestamp, ID,  buffer.size(), QString::asprintf("ipsrc %s ipdst %s sport %d dport %d -> %s:%d",
+                                                            saddr, daddr, mFragments[ID].sport, mFragments[ID].dport,
+                                                            flt.sndHost.toString().toLatin1().data(), flt.sndPort));
+                    sendToPort(flt, mFragments[ID].timestamp - mPrevTimestamp);
 
-                mPrevTimestamp = mFragments[ID].timestamp;
+                    mPrevTimestamp = mFragments[ID].timestamp;
+                }
 			}
 
 			mFragments.remove(ID);
@@ -362,6 +376,7 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
 			if(!mFragments.contains(ID)){
 				mFragments[ID].sport = mSrcPort;
 				mFragments[ID].dport = mDstPort;
+                mFragments[ID].dstip = ih->daddr.ip;
                 mFragments[ID].fromTimeval(header->ts);
 			}
 			mFragments[ID].add(off, ba);
@@ -374,6 +389,7 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
 			if(!mFragments.contains(ID)){
 				mFragments[ID].sport = mSrcPort;
 				mFragments[ID].dport = mDstPort;
+                mFragments[ID].dstip = ih->daddr.ip;
                 mFragments[ID].fromTimeval(header->ts);
 			}
 			mFragments[ID].add(off, ba);

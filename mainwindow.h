@@ -10,6 +10,11 @@
 #include "pcapfile.h"
 #include "networker.h"
 
+class QCheckBox;
+class QSpinBox;
+class QLineEdit;
+class QLabel;
+
 struct udpdata{
     quint64 num = 0;
     quint64 timestamp = 0;
@@ -95,6 +100,19 @@ private:
 	QScopedPointer<PCapFile> mPCap;
 
     QScopedPointer<Networker> mNetworker;
+
+    struct UiFilter{
+        QCheckBox* chk = nullptr;
+        QLineEdit* dstIp = nullptr;
+        QSpinBox* dstPort = nullptr;
+        QLineEdit* outIp = nullptr;
+        QSpinBox* outPort = nullptr;
+    };
+
+    QVector<UiFilter> mUiFilters;
+    int mUiFiltersCount = 10;
+
+    void initUiFilters();
 
     QMap<ushort, Filter> getFilters();
 
