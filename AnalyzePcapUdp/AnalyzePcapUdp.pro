@@ -44,7 +44,7 @@ HEADERS += \
 FORMS += \
     mainwindow.ui
 
-RC_ICONS = $$PWD\assets\images\logo.ico
+RC_ICONS = $$PWD\assets\images\icon-ethernet-Freepik_black.ico
 
 MOC_DIR     = tmp/moc
 OBJECTS_DIR = tmp/obj
