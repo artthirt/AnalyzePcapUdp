@@ -60,6 +60,7 @@ win32{
         DESTFILE = $$DESTDIR/$$TARGET$$EXT
         DESTFILE=\"$$quote($$shell_path($$DESTFILE))\"
         QMAKE_POST_LINK += $$[QT_INSTALL_BINS]/windeployqt $$DESTFILE $$escape_expand(\\n\\t)
+        export(QMAKE_POST_LINK)
     }
     deployApp()
 }
