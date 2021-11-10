@@ -10,7 +10,7 @@ win32{
 
     INCLUDEPATH += $$PWD/3rdparty/Include
 
-    LIBS += -L$$PWD/3rdparty/Lib/x64 -lPacket -lwpcap -lWS2_32
+    LIBS += -L$$PWD/3rdparty/Lib -lPacket -lwpcap -lWS2_32
 }else{
     LIBS += -lpcap
 }
