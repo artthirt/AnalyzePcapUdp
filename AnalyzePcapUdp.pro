@@ -1,6 +1,11 @@
 TEMPLATE = subdirs
 
-SUBDIRS += \
-    3rdparty/packet \
-    3rdparty/winpcap \
-    AnalyzePcapUdp
+win32{
+    SUBDIRS += \
+        3rdparty/packet \
+        3rdparty/winpcap \
+        AnalyzePcapUdp
+}else{
+    SUBDIRS += \
+        AnalyzePcapUdp
+}

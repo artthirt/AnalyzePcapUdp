@@ -53,3 +53,13 @@ RCC_DIR     = tmp/rcc
 
 RESOURCES += \
     assets.qrc
+
+win32{
+    defineTest(deployApp){
+        EXT = .exe
+        DESTFILE = $$DESTDIR/$$TARGET$$EXT
+        DESTFILE=\"$$quote($$shell_path($$DESTFILE))\"
+        QMAKE_POST_LINK += $$[QT_INSTALL_BINS]/windeployqt $$DESTFILE $$escape_expand(\\n\\t)
+    }
+    deployApp()
+}
