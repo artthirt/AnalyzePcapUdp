@@ -77,6 +77,8 @@ public:
 
     size_t packetsCount() const { return mNum; }
 
+    float position() const;
+
 	void getpacket(const struct pcap_pkthdr *header,
 				   const u_char *pkt_data);
 

@@ -167,6 +167,11 @@ void PCapFile::setTimeout(qint64 val)
     mTimeout = val;
 }
 
+float PCapFile::position() const
+{
+    return pcap_offline_position(mFP);
+}
+
 void PCapFile::internalStart()
 {
     openFile();

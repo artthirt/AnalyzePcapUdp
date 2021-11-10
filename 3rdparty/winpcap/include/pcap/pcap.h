@@ -301,6 +301,7 @@ LIBPCAP_EXPORTS int	pcap_dispatch(pcap_t *, int, pcap_handler, u_char *);
 LIBPCAP_EXPORTS const u_char*
 	pcap_next(pcap_t *, struct pcap_pkthdr *);
 LIBPCAP_EXPORTS int 	pcap_next_ex(pcap_t *, struct pcap_pkthdr **, const u_char **);
+LIBPCAP_EXPORTS float 	pcap_offline_position(pcap_t *);
 LIBPCAP_EXPORTS void	pcap_breakloop(pcap_t *);
 LIBPCAP_EXPORTS int	pcap_stats(pcap_t *, struct pcap_stat *);
 LIBPCAP_EXPORTS int	pcap_setfilter(pcap_t *, struct bpf_program *);

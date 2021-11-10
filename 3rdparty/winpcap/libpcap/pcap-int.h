@@ -112,6 +112,7 @@ struct pcap_sf {
 	int version_major;
 	int version_minor;
 	u_char *base;
+    size_t fileSize;
 };
 
 /*

@@ -38,6 +38,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->lvOutput->setVisible(false);
 
+    QList<int> szs = QList<int>() << 200 << 500;
+    ui->splitterMain->setSizes(szs);
+
     initUiFilters();
 
 	loadSettings();
@@ -153,6 +156,10 @@ void MainWindow::onTimeout()
 
     if(mPCap){
         ui->statusbar->showMessage("Packets left " +QString::number(mPCap->packetsCount()));
+
+        float pos = mPCap->position();
+
+        ui->hsFilePosition->setValue(pos * ui->hsFilePosition->maximum());
     }
 
     QString out;

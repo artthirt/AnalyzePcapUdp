@@ -1190,6 +1190,10 @@ pcap_fopen_offline(FILE *fp, char *errbuf)
 	bpf_u_int32 magic;
 	int linklen;
 
+    fseek(fp, 0L, SEEK_END);
+    size_t fileSize = ftell(fp);
+    fseek(fp, 0L, SEEK_SET);
+
 	p = (pcap_t *)malloc(sizeof(*p));
 	if (p == NULL) {
 		strlcpy(errbuf, "out of swap", PCAP_ERRBUF_SIZE);
@@ -1275,6 +1279,7 @@ pcap_fopen_offline(FILE *fp, char *errbuf)
 		p->snapshot += 14;
 	}
 	p->sf.rfile = fp;
+    p->sf.fileSize = fileSize;
 #ifndef WIN32
 	p->bufsize = hdr.snaplen;
 #else

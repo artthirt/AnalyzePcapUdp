@@ -449,6 +449,17 @@ pcap_next_ex(pcap_t *p, struct pcap_pkthdr **pkt_header,
 	return (p->read_op(p, 1, pcap_fakecallback, (u_char *)&s));
 }
 
+float
+pcap_offline_position(pcap_t *p)
+{
+    float pos = 0;
+    if (p && p->sf.rfile != NULL && p->sf.fileSize) {
+        size_t posi = ftell(p->sf.rfile);
+        pos = 1.f * posi / p->sf.fileSize;
+    }
+    return pos;
+}
+
 /*
  * Force the loop in "pcap_read()" or "pcap_read_offline()" to terminate.
  */
