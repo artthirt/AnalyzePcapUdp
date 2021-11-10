@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(onReceivePacketString(quint64, quint64, uint, uint, QString)), Qt::QueuedConnection);
 
     connect(&mTimer, SIGNAL(timeout()), this, SLOT(onTimeout()));
-    mTimer.start(50);
+    mTimer.start(16);
 
     mModel.setHorizontalHeaderLabels(QStringList() << "num" << "timestamp" << "id" << "size" << "data");
 
@@ -35,6 +35,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->lvOutput->setModel(&mModel);
 
     ui->twWorkspace->setCurrentIndex(0);
+
+    ui->lvOutput->setVisible(false);
 
     initUiFilters();
 
@@ -138,16 +140,15 @@ void MainWindow::onTimeout()
 {
     int id = 0;
     if(ui->chbShowPackets->isChecked()){
-        while(!mPackets.empty() && id++ < 40){
+        while(!mPackets.empty() && id++ < 10000){
             mModel.appendRow(mPackets.front().get());
             mPackets.pop_front();
         }
+        if(mUseScroll){
+            ui->lvOutput->scrollToBottom();
+        }
     }else{
 
-    }
-
-    if(mUseScroll){
-        ui->lvOutput->scrollToBottom();
     }
 
     if(mPCap){
@@ -367,5 +368,15 @@ void MainWindow::initUiFilters()
 
         mUiFilters.push_back(ui);
     }
+}
+
+void MainWindow::on_pbHide_clicked()
+{
+    if(ui->lvOutput->isVisible()){
+        ui->pbHide->setText("▼");
+    }else{
+        ui->pbHide->setText("▲");
+    }
+    ui->lvOutput->setVisible(!ui->lvOutput->isVisible());
 }
 

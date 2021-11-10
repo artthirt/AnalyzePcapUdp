@@ -88,6 +88,8 @@ private slots:
 
     void on_chbRepeat_clicked(bool checked);
 
+    void on_pbHide_clicked();
+
 private:
 	Ui::MainWindow *ui;
 
