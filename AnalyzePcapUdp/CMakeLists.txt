@@ -23,6 +23,12 @@ set(SRC
     pcapfile.h
     mainwindow.h
     udpworker.h
+    parserfactory.h
+    parserfactory.cpp
+    pcapngparser.h
+    pcapngparser.cpp
+    pcapparser.h
+    pcapparser.cpp
     assets.qrc
     )
 
@@ -31,6 +37,7 @@ qt6_wrap_ui(SRC mainwindow.ui)
 
 add_definitions(
     "-DLIBPCAP_EXPORTS=__declspec(dllimport)"
+    "-DLIBPACKET_EXPORTS=__declspec(dllimport)"
     )
 
 include_directories(
@@ -39,13 +46,14 @@ include_directories(
     ../3rdparty/winpcap/include/pcap/
     ../3rdparty/winpcap/libpcap
     ../3rdparty/winpcap/libpcap/Win32/include
+    ../3rdparty/libpcapng/include
     )
 
 add_executable(AnalyzePcapUdp ${SRC})
 
 target_link_libraries(AnalyzePcapUdp PRIVATE
     Qt6::Network Qt6::Widgets
-    winpcap)
+    winpcap libpcapng)
 
 set_target_properties(AnalyzePcapUdp
     PROPERTIES
