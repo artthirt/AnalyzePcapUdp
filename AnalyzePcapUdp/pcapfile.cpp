@@ -58,7 +58,7 @@ typedef struct udp_header
 	u_short crc;			// Checksum
 }udp_header;
 
-void dispatcher_handler(u_char *, const struct pcap_pkthdr *, const u_char *);
+//void dispatcher_handler(u_char *, const struct pcap_pkthdr *, const u_char *);
 
 ushort Inv(ushort v)
 {
@@ -76,14 +76,14 @@ uint Inv(uint v)
 	return (uint)((d << 24) | (c << 16) | (b << 8) | a );
 }
 
-void dispatcher_handler(u_char *temp1,
-						const struct pcap_pkthdr *header,
-						const u_char *pkt_data)
-{
-	PCapFile *that = reinterpret_cast<PCapFile*>(temp1);
+//void dispatcher_handler(u_char *temp1,
+//						const struct pcap_pkthdr *header,
+//						const u_char *pkt_data)
+//{
+//	PCapFile *that = reinterpret_cast<PCapFile*>(temp1);
 
-	that->getpacket(header, pkt_data);
-}
+//	that->getpacket(header, pkt_data);
+//}
 
 ///////////////////////////////
 
@@ -118,9 +118,8 @@ void PCapFile::openFile(const QString &fileName)
 
 void PCapFile::closeFile()
 {
-	if(mFP){
-		pcap_close(mFP);
-		mFP = nullptr;
+    if(mParser){
+        mParser.reset();
 	}
     mFragments.clear();
 }
@@ -169,7 +168,8 @@ void PCapFile::setTimeout(qint64 val)
 
 float PCapFile::position() const
 {
-    return pcap_offline_position(mFP);
+    if(mParser)
+        return mParser->position();
 }
 
 void PCapFile::internalStart()
@@ -178,27 +178,25 @@ void PCapFile::internalStart()
 
     mStarted = true;
 
-    preparePcap();
-
-	struct pcap_pkthdr *header;
-	const u_char *pkt_data;
-
 	int res;
 
     mNum = 0;
 
+    Pkt pkt;
+
     do{
-        while((res = pcap_next_ex(mFP, &header, &pkt_data)) >= 0 && !mDone && mStarted){
+        while((res = mParser->next_packet(pkt)) >= 0 && !mDone && mStarted){
             if(mPause){
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 continue;
             }
-            getpacket(header, pkt_data);
+            if(res > 0){
+                getpacket(pkt);
+            }
         }
 
         if(mRepeat){
             openFile();
-            preparePcap();
         }
     }while(mRepeat && !mDone);
 
@@ -207,42 +205,19 @@ void PCapFile::internalStart()
     //pcap_loop(mFP, 0, dispatcher_handler, (u_char*)this);
 }
 
-void PCapFile::preparePcap()
-{
-    u_int netmask = 0xffffff;
-    char packet_filter[] = "ip and udp";
-    struct bpf_program fcode;
-
-    //compile the filter
-    if (pcap_compile(mFP, &fcode, packet_filter, 1, netmask) < 0 )
-    {
-        fprintf(stderr,"\nUnable to compile the packet filter. Check the syntax.\n");
-        /* Free the device list */
-        return;
-    }
-
-    //set the filter
-    if (pcap_setfilter(mFP, &fcode)<0)
-    {
-        fprintf(stderr,"\nError setting the filter.\n");
-        /* Free the device list */
-        return;
-    }
-}
-
 void PCapFile::openFile()
 {
     closeFile();
 
-    char* errbuf[PCAP_ERRBUF_SIZE];
+    mParser = ParserFactory::getParser(mFileName);
 
-    mFP = pcap_open_offline(mFileName.toLocal8Bit().data(), (char*)errbuf);
-
-	if(mFP == nullptr)
+    if(mParser == nullptr)
         return;
+
+    mParser->open(mFileName);
 }
 
-void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
+void PCapFile::getpacket(const Pkt pkt)
 {
 	if(mDone)
 		return;
@@ -257,8 +232,8 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
     eth_header *eth;
     sll_header *slh;
 
-    eth = (eth_header*) pkt_data;
-    slh = (sll_header*) pkt_data;
+    eth = (eth_header*) pkt.data.data();
+    slh = (sll_header*) pkt.data.data();
 
     mTypeOfPCap = ETHERNET_FRAME;
 
@@ -269,7 +244,7 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
 
     int offtop = mTypeOfPCap == SLL? 16 : 14;
 	/* retireve the position of the ip header */
-	ih = (ip_header *) (pkt_data +
+    ih = (ip_header *) (pkt.data.data() +
                         offtop); //length of ethernet header
 
 	/* retireve the position of the udp header */
@@ -307,10 +282,10 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
 	ba.append(offs, len);
 
     if(!mBeginTimestamp){
-        mBeginTimestamp = IPF::sfromTimeval(header->ts);
+        mBeginTimestamp = IPF::sfromTimeval(pkt.ts);
     }
 
-    int64_t timestamp = IPF::sfromTimeval(header->ts);
+    int64_t timestamp = IPF::sfromTimeval(pkt.ts);
 
 	if(!mFilters.empty()){
 		if(MF){
@@ -382,7 +357,7 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
 				mFragments[ID].sport = mSrcPort;
 				mFragments[ID].dport = mDstPort;
                 mFragments[ID].dstip = ih->daddr.ip;
-                mFragments[ID].fromTimeval(header->ts);
+                mFragments[ID].fromTimeval(pkt.ts);
 			}
 			mFragments[ID].add(off, ba);
         }else if(DF){
@@ -395,7 +370,7 @@ void PCapFile::getpacket(const pcap_pkthdr *header, const u_char *pkt_data)
 				mFragments[ID].sport = mSrcPort;
 				mFragments[ID].dport = mDstPort;
                 mFragments[ID].dstip = ih->daddr.ip;
-                mFragments[ID].fromTimeval(header->ts);
+                mFragments[ID].fromTimeval(pkt.ts);
 			}
 			mFragments[ID].add(off, ba);
 

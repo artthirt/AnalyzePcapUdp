@@ -7,6 +7,7 @@ CONFIG += c++11
 CONFIG -= app_bundle
 
 DEFINES += LIBPCAP_EXPORTS=__declspec(dllimport)
+DEFINES += LIBPACKET_EXPORTS=__declspec(dllimport)
 
 include(../common.pri)
 
@@ -16,18 +17,24 @@ win32{
         $$PWD/../3rdparty/winpcap/include \
         $$PWD/../3rdparty/winpcap/include/pcap/ \
         $$PWD/../3rdparty/winpcap/libpcap \
-        $$PWD/../3rdparty/winpcap/libpcap/Win32/include
+        $$PWD/../3rdparty/winpcap/libpcap/Win32/include \
+        $$PWD/../3rdparty/libpcapng/include
 
-    LIBS += -L$$PWD/3rdparty/Lib -lwinpcap -lWS2_32
+    LIBS += -L$$PWD/3rdparty/Lib -lwinpcap -llibpcapng -lWS2_32
 }else{
-    LIBS += -lpcap
+    INCLUDEPATH += $$PWD/../3rdparty/libpcapng/include
+
+    LIBS += -lpcap -llibpcapng
 }
 
 SOURCES += \
         main.cpp \
     networker.cpp \
+    parserfactory.cpp \
     pcapfile.cpp \
     mainwindow.cpp \
+    pcapngparser.cpp \
+    pcapparser.cpp \
     udpworker.cpp
 
 # Default rules for deployment.
@@ -37,8 +44,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     networker.h \
+    parserfactory.h \
     pcapfile.h \
     mainwindow.h \
+    pcapngparser.h \
+    pcapparser.h \
     udpworker.h
 
 FORMS += \

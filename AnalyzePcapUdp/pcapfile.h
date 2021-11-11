@@ -9,9 +9,7 @@
 #include <QList>
 #include <QMap>
 
-extern "C"{
-#include "pcap.h"
-}
+#include "parserfactory.h"
 
 struct Filter{
     QHostAddress dstHost;
@@ -79,8 +77,7 @@ public:
 
     float position() const;
 
-	void getpacket(const struct pcap_pkthdr *header,
-				   const u_char *pkt_data);
+    void getpacket(const Pkt pkt);
 
     TimeoutType timeoutType() const     { return mTimeoutType; }
     void setTimeoutType(TimeoutType tp) { mTimeoutType = tp; }
@@ -97,7 +94,7 @@ signals:
     void sendPacketString(quint64 num, quint64 timestamp, uint id, uint size, QString);
 
 private:
-	pcap_t *mFP = nullptr;
+    QSharedPointer<Parser> mParser;
     QString mFileName;
     quint64 mNum = 0;
     qint64 mBeginTimestamp = 0;
@@ -129,7 +126,6 @@ private:
 
     void sendToPort(const Filter &flt, quint64 deltatime);
 	void internalStart();
-    void preparePcap();
     void openFile();
 
 };

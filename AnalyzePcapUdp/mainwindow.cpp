@@ -59,7 +59,7 @@ void MainWindow::on_pbSelect_clicked()
 {
     QFileInfo fi(mFileName);
 
-    QString fn = QFileDialog::getOpenFileName(nullptr, "Open File...", fi.path(), "*.pcap");
+    QString fn = QFileDialog::getOpenFileName(nullptr, "Open File...", fi.path(), "*.pcap;*.pcapng");
 
 	if(fn.isEmpty())
 		return;
