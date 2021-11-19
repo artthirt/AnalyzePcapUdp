@@ -9,7 +9,11 @@ set(AUTOMOC ON)
 set(AUTORCC ON)
 set(AUTOUIC ON)
 
-find_package(Qt6 COMPONENTS Widgets Network REQUIRED)
+find_package(Qt6 COMPONENTS Widgets Network)
+if (NOT Qt6_FOUND)
+    find_package(Qt5 5.15 COMPONENTS Core Widgets Network REQUIRED)
+endif()
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(SRC
@@ -52,7 +56,7 @@ include_directories(
 add_executable(AnalyzePcapUdp ${SRC})
 
 target_link_libraries(AnalyzePcapUdp PRIVATE
-    Qt6::Network Qt6::Widgets
+    Qt::Core Qt::Network Qt::Widgets
     winpcap libpcapng)
 
 set_target_properties(AnalyzePcapUdp
@@ -61,5 +65,59 @@ set_target_properties(AnalyzePcapUdp
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
     )
 
-execute_process(COMMAND "windeployqt" "AnalyzePcapUdp"
-    WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
+#execute_process(COMMAND "windeployqt" "AnalyzePcapUdp"
+#    WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
+
+#set(QT_DIR "${_qt_cmake_dir}/../../plugins/platforms")
+
+#file(GLOB DLL_FILES "${QT_DIR}/*.*")
+#file(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
+#file(MAKE_DIRECTORY bin\\platforms)
+
+#foreach(IT ${DLL_FILES})
+#    message("info: " ${IT})
+#    add_custom_command(
+#        TARGET AnalyzePcapUdp POST_BUILD
+#        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#            ${IT}
+#            $<TARGET_FILE_DIR:AnalyzePcapUdp>/platforms/
+#    )
+#endforeach()
+
+if(Qt6_FOUND)
+    add_custom_command(
+        TARGET AnalyzePcapUdp POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:Qt6::Widgets>
+            $<TARGET_FILE_DIR:AnalyzePcapUdp>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:Qt6::Core>
+            $<TARGET_FILE_DIR:AnalyzePcapUdp>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:Qt6::Network>
+            $<TARGET_FILE_DIR:AnalyzePcapUdp>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:Qt6::Gui>
+            $<TARGET_FILE_DIR:AnalyzePcapUdp>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${CMAKE_CURRENT_BINARY_DIR}/../3rdparty/libpcapng/libpcapng.dll
+            $<TARGET_FILE_DIR:AnalyzePcapUdp>
+    )
+else()
+    add_custom_command(
+        TARGET AnalyzePcapUdp POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:Qt5::Widgets>
+            $<TARGET_FILE_DIR:AnalyzePcapUdp>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:Qt5::Core>
+            $<TARGET_FILE_DIR:AnalyzePcapUdp>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:Qt5::Network>
+            $<TARGET_FILE_DIR:AnalyzePcapUdp>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:Qt5::Gui>
+            $<TARGET_FILE_DIR:AnalyzePcapUdp>
+    )
+endif()
+
