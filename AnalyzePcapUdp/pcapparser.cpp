@@ -77,7 +77,11 @@ public:
 
     float position()
     {
+#ifdef _MSC_VER
         return pcap_offline_position(mFP);
+#else
+        return 0;
+#endif
     }
 };
 

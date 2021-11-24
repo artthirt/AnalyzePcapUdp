@@ -6,8 +6,13 @@ TEMPLATE = app
 CONFIG += c++11
 CONFIG -= app_bundle
 
-DEFINES += LIBPCAP_EXPORTS=__declspec(dllimport)
-DEFINES += LIBPACKET_EXPORTS=__declspec(dllimport)
+win32{
+    DEFINES += LIBPCAP_EXPORTS=__declspec(dllimport)
+    DEFINES += LIBPACKET_EXPORTS=__declspec(dllimport)
+}else{
+    DEFINES += LIBPCAP_EXPORTS=
+    DEFINES += LIBPACKET_EXPORTS=
+}
 
 include(../common.pri)
 

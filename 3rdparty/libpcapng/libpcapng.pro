@@ -2,7 +2,11 @@ TEMPLATE = lib
 
 include(../../common.pri)
 
-DEFINES += \"LIBPACKET_EXPORTS=__declspec(dllexport)\"
+win32{
+    DEFINES += \"LIBPACKET_EXPORTS=__declspec(dllexport)\"
+}else{
+    DEFINES += \"LIBPACKET_EXPORTS=__attribute__((visibility(\\\"default\\\")))\"
+}
 
 INCLUDEPATH += src \
                include
