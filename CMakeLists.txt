@@ -7,7 +7,9 @@ message("--->" ${CMAKE_INSTALL_PREFIX})
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
 
-add_subdirectory(3rdparty/packet)
-add_subdirectory(3rdparty/winpcap)
+if(WIN32)
+    add_subdirectory(3rdparty/packet)
+    add_subdirectory(3rdparty/winpcap)
+endif()
 add_subdirectory(3rdparty/libpcapng)
 add_subdirectory(AnalyzePcapUdp)

@@ -26,14 +26,21 @@ set(SRC
 include_directories(src/
     include/)
 
-add_definitions(
-    "-DLIBPACKET_EXPORTS=__declspec(dllexport)")
+if(WIN32)
+    add_definitions(
+        "-DLIBPACKET_EXPORTS=__declspec(dllexport)"
+        )
+else()
+    add_definitions(
+        "-DLIBPACKET_EXPORTS=__attribute__((visibility(\"default\")))"
+        )
+endif()
 
 add_library(libpcapng SHARED ${SRC})
 
 #target_link_libraries(libpcapng )
 
-set_target_properties(packet
+set_target_properties(libpcapng
     PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin

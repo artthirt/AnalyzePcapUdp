@@ -9,9 +9,14 @@ set(AUTOMOC ON)
 set(AUTORCC ON)
 set(AUTOUIC ON)
 
-find_package(Qt6 COMPONENTS Widgets Network)
-if (NOT Qt6_FOUND)
-    find_package(Qt5 5.15 COMPONENTS Core Widgets Network REQUIRED)
+if(WIN32)
+    find_package(Qt6 COMPONENTS Widgets Network)
+    if (NOT Qt6_FOUND)
+        find_package(Qt5 5.15 COMPONENTS Core Widgets Network REQUIRED)
+    endif()
+else()
+    find_package(Qt5 5 COMPONENTS Core Widgets Network REQUIRED)
+    set(Qt6_FOUND OFF)
 endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -36,28 +41,52 @@ set(SRC
     assets.qrc
     )
 
-qt6_wrap_cpp(SRC mainwindow.h pcapfile.h)
-qt6_wrap_ui(SRC mainwindow.ui)
+if (NOT Qt6_FOUND)
+    qt5_wrap_cpp(SRC mainwindow.h pcapfile.h)
+    qt5_wrap_ui(SRC mainwindow.ui)
+else()
+    qt6_wrap_cpp(SRC mainwindow.h pcapfile.h)
+    qt6_wrap_ui(SRC mainwindow.ui)
+endif()
 
-add_definitions(
-    "-DLIBPCAP_EXPORTS=__declspec(dllimport)"
-    "-DLIBPACKET_EXPORTS=__declspec(dllimport)"
-    )
 
-include_directories(
-    ${CMAKE_BINARY_DIR}
-    ../3rdparty/winpcap/include
-    ../3rdparty/winpcap/include/pcap/
-    ../3rdparty/winpcap/libpcap
-    ../3rdparty/winpcap/libpcap/Win32/include
-    ../3rdparty/libpcapng/include
-    )
+if(WIN32)
+    add_definitions(
+        "-DLIBPCAP_EXPORTS=__declspec(dllimport)"
+        "-DLIBPACKET_EXPORTS=__declspec(dllimport)"
+        )
+else()
+    add_definitions(
+        "-DLIBPCAP_EXPORTS="
+        "-DLIBPACKET_EXPORTS="
+        )
+endif()
+
+set(LIBS)
+
+if(WIN32)
+    include_directories(
+        ${CMAKE_BINARY_DIR}
+        ../3rdparty/winpcap/include
+        ../3rdparty/winpcap/include/pcap/
+        ../3rdparty/winpcap/libpcap
+        ../3rdparty/winpcap/libpcap/Win32/include
+        ../3rdparty/libpcapng/include
+        )
+    set(LIBS ${LIBS} winpcap)
+else()
+    include_directories(
+        ${CMAKE_BINARY_DIR}
+        ../3rdparty/libpcapng/include
+        )
+    set(LIBS ${LIBS} pcap)
+endif()
 
 add_executable(AnalyzePcapUdp ${SRC})
 
 target_link_libraries(AnalyzePcapUdp PRIVATE
     Qt::Core Qt::Network Qt::Widgets
-    winpcap libpcapng)
+    ${LIBS} libpcapng)
 
 set_target_properties(AnalyzePcapUdp
     PROPERTIES
