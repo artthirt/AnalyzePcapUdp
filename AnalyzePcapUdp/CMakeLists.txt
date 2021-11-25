@@ -84,9 +84,15 @@ endif()
 
 add_executable(AnalyzePcapUdp ${SRC})
 
-target_link_libraries(AnalyzePcapUdp PRIVATE
-    Qt::Core Qt::Network Qt::Widgets
-    ${LIBS} libpcapng)
+if (NOT Qt6_FOUND)
+    target_link_libraries(AnalyzePcapUdp PRIVATE
+        Qt5::Core Qt5::Network Qt5::Widgets
+        ${LIBS} libpcapng)
+else()
+    target_link_libraries(AnalyzePcapUdp PRIVATE
+        Qt::Core Qt::Network Qt::Widgets
+        ${LIBS} libpcapng)
+endif()
 
 set_target_properties(AnalyzePcapUdp
     PROPERTIES
