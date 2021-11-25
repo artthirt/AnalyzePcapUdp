@@ -170,6 +170,7 @@ float PCapFile::position() const
 {
     if(mParser)
         return mParser->position();
+    return 0;
 }
 
 void PCapFile::internalStart()
