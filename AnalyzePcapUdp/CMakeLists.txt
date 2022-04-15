@@ -82,7 +82,7 @@ else()
     set(LIBS ${LIBS} pcap)
 endif()
 
-add_executable(AnalyzePcapUdp ${SRC})
+add_executable(AnalyzePcapUdp WIN32 ${SRC} resource.rc)
 
 if (NOT Qt6_FOUND)
     target_link_libraries(AnalyzePcapUdp PRIVATE

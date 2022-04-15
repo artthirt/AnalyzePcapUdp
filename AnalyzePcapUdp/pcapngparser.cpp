@@ -13,7 +13,7 @@ public:
     }
 
     bool open(const QString &fileName){
-        mFP = light_pcapng_open_read(fileName.toLatin1().data(), LIGHT_TRUE);
+        mFP = light_pcapng_open_read(fileName.toLocal8Bit().data(), LIGHT_TRUE);
         return mFP != nullptr;
     }
     int next_packet(Pkt &pkt){
@@ -43,7 +43,11 @@ public:
         return res;
     }
     void close(){
+        if(!mFP){
+            return;
+        }
         light_pcapng_close(mFP);
+        mFP = nullptr;
     }
     float position(){
         return 0;
