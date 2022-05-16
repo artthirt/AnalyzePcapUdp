@@ -50,6 +50,9 @@ public:
         mFP = nullptr;
     }
     float position(){
+        uint64_t pos = 0, size = 1;
+        light_get_packet_position(mFP, &pos, &size);
+        return 1.f * pos / size;
         return 0;
     }
 };

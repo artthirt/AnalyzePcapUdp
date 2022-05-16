@@ -43,6 +43,8 @@ struct _light_pcapng {
 	uint32_t block_total_lenght;
 	uint32_t *block_body;
 	struct _light_option *options;
+    uint64_t position;
+    uint64_t size;
 	struct _light_pcapng *next_block;
 };
 

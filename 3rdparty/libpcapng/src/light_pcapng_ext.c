@@ -526,3 +526,16 @@ void light_pcapng_close(light_pcapng_t *pcapng)
 	light_free_file_info(pcapng->file_info);
 	free(pcapng);
 }
+
+int light_get_packet_position(light_pcapng_t *pcapng, uint64_t *position, uint64_t *size)
+{
+    uint32_t type = LIGHT_UNKNOWN_DATA_BLOCK;
+
+    if (pcapng == NULL || pcapng->pcapng_iter == NULL || position == NULL || size == NULL)
+        return 0;
+
+    light_get_pos_block(pcapng->pcapng_iter, position, size);
+
+    return 1;
+
+}

@@ -95,6 +95,8 @@ LIBPACKET_EXPORTS void light_write_packet(light_pcapng_t *pcapng, const light_pa
 
 LIBPACKET_EXPORTS void light_pcapng_close(light_pcapng_t *pcapng);
 
+LIBPACKET_EXPORTS int light_get_packet_position(light_pcapng_t *pcapng, uint64_t *position, uint64_t *size);
+
 #ifdef __cplusplus
 }
 #endif

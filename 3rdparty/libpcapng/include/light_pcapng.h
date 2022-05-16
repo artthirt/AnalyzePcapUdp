@@ -92,6 +92,7 @@ LIBPACKET_EXPORTS uint32_t light_get_block_count(const light_pcapng pcapng);
 LIBPACKET_EXPORTS light_pcapng light_get_block(const light_pcapng pcapng, uint32_t index);
 LIBPACKET_EXPORTS light_pcapng light_next_block(const light_pcapng pcapng);
 LIBPACKET_EXPORTS size_t light_get_size(const light_pcapng pcapng);
+LIBPACKET_EXPORTS int light_get_pos_block(const light_pcapng pcapng, uint64_t *pos, uint64_t *size);
 LIBPACKET_EXPORTS void light_pcapng_historgram(const light_pcapng pcapng, uint32_t (*key_master)(const light_pcapng),
 		light_pair **hist, size_t *size, size_t *rejected);
 LIBPACKET_EXPORTS int light_get_block_info(const light_pcapng pcapng, light_info info_flag, void *info_data, size_t *data_size);

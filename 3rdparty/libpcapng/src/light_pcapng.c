@@ -247,6 +247,9 @@ static size_t __parse_mem_copy(struct _light_pcapng **iter, const uint32_t *memo
 		// Block total length.
 		DCHECK_ASSERT((bytes_read = *local_data++), current->block_total_lenght, light_stop);
 
+        current->position = size - remaining;
+        current->size = size;
+
 		bytes_read = current->block_total_lenght;
 		remaining -= bytes_read;
 		memory += bytes_read / sizeof(*memory);
@@ -487,6 +490,17 @@ size_t light_get_size(const light_pcapng pcapng)
 	}
 
 	return size;
+}
+
+int light_get_pos_block(const light_pcapng pcapng, uint64_t *pos, uint64_t *size)
+{
+    if(pcapng && pos && size){
+        *pos = pcapng->position;
+        *size = pcapng->size;
+        return 1;
+    }
+
+    return 0;
 }
 
 int light_iterate(const light_pcapng pcapng, light_boolean (*stop_fn)(const light_pcapng, void *), void *args)
