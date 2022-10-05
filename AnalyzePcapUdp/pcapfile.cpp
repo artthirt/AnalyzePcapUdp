@@ -233,20 +233,25 @@ void PCapFile::getpacket(const Pkt pkt)
     eth_header *eth;
     sll_header *slh;
 
+    int* begeth = (int*)pkt.data.data();
     eth = (eth_header*) pkt.data.data();
     slh = (sll_header*) pkt.data.data();
 
     mTypeOfPCap = ETHERNET_FRAME;
 
-    if(Inv(slh->pkt_type) >= 0 && Inv(slh->pkt_type) <= 4
-            && Inv(slh->arphrd_type) == 1 && Inv(slh->ll_adrlen) <=8){
-        mTypeOfPCap = SLL;
-    }
+    if(begeth[0] == 2){
+        ih = (ip_header *) (pkt.data.data() + 4);
+    }else{
+        if(Inv(slh->pkt_type) >= 0 && Inv(slh->pkt_type) <= 4
+                && Inv(slh->arphrd_type) == 1 && Inv(slh->ll_adrlen) <=8){
+            mTypeOfPCap = SLL;
+        }
 
-    int offtop = mTypeOfPCap == SLL? 16 : 14;
-	/* retireve the position of the ip header */
-    ih = (ip_header *) (pkt.data.data() +
-                        offtop); //length of ethernet header
+        int offtop = mTypeOfPCap == SLL? 16 : 14;
+        /* retireve the position of the ip header */
+        ih = (ip_header *) (pkt.data.data() +
+                            offtop); //length of ethernet header
+    }
 
 	/* retireve the position of the udp header */
 	ip_len = (ih->ver_ihl & 0xf) * 4;
