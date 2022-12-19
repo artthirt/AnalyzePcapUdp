@@ -4,6 +4,9 @@
 
 #include <chrono>
 #include <thread>
+#include <ostream>
+
+#include "utils.h"
 
 #ifdef Q_OS_LINUX
 #include <sys/socket.h>
@@ -161,7 +164,7 @@ void PCapFile::setFilter(const QMap<ushort, Filter> &filters)
 	mFilters = filters;
 }
 
-void PCapFile::setTimeout(qint64 val)
+void PCapFile::setTimeout(double val)
 {
     mTimeout = val;
 }
@@ -185,14 +188,47 @@ void PCapFile::internalStart()
 
     Pkt pkt;
 
+    double freq = 1000. / mTimeout;
+    qDebug("Numbers of packet by second %f", freq);
+    auto start = getNow();
+    int pkts = 0;
+    double Delay = 1000;
+    while(freq > 10 && Delay > 20){
+        freq /= 2;
+        Delay/= 2;
+    }
+    qDebug("freq %f on timeout %f", freq, Delay);
     do{
-        while((res = mParser->next_packet(pkt)) >= 0 && !mDone && mStarted){
+        while(!mDone && mStarted){
+
             if(mPause){
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 continue;
             }
+            double duration = getDuration(start);
+            if(duration < Delay){
+                if(pkts >= freq){
+                    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                    continue;
+                }
+            }else{
+                start = getNow();
+                if(pkts){
+                    qDebug("packet sended %d by timeout %f, packets by second %f", pkts, duration, 1000. * pkts / duration);
+                    pkts = 0;
+                }
+            }
+
+            res = mParser->next_packet(pkt);
             if(res > 0){
-                getpacket(pkt);
+                res = getpacket(pkt);
+                if(res > 0){
+                    pkts++;
+                }
+            }else{
+                if( res < 0){
+                    break;
+                }
             }
         }
 
@@ -218,10 +254,11 @@ void PCapFile::openFile()
     mParser->open(mFileName);
 }
 
-void PCapFile::getpacket(const Pkt pkt)
+int PCapFile::getpacket(const Pkt pkt)
 {
+    int ret = 0;
 	if(mDone)
-		return;
+        return ret;
 
 	struct tm *ltime;
 	char timestr[16];
@@ -312,7 +349,7 @@ void PCapFile::getpacket(const Pkt pkt)
                     emit sendPacketString(mNum++, timestamp, ID,  buffer.size(), QString::asprintf("ipsrc %s ipdst %s sport %d dport %d -> %s:%d",
                                                             saddr, daddr, mSrcPort, mDstPort,
                                                             flt.sndHost.toString().toLatin1().data(), flt.sndPort));
-                    sendToPort(flt, timestamp - mPrevTimestamp);
+                    ret = sendToPort(buffer, flt, timestamp - mPrevTimestamp);
 
                     mPrevTimestamp = timestamp;
                 }
@@ -342,7 +379,7 @@ void PCapFile::getpacket(const Pkt pkt)
                     emit sendPacketString(mNum++, mFragments[ID].timestamp, ID,  buffer.size(), QString::asprintf("ipsrc %s ipdst %s sport %d dport %d -> %s:%d",
                                                             saddr, daddr, mFragments[ID].sport, mFragments[ID].dport,
                                                             flt.sndHost.toString().toLatin1().data(), flt.sndPort));
-                    sendToPort(flt, mFragments[ID].timestamp - mPrevTimestamp);
+                    ret = sendToPort(buffer, flt, mFragments[ID].timestamp - mPrevTimestamp);
 
                     mPrevTimestamp = mFragments[ID].timestamp;
                 }
@@ -385,11 +422,12 @@ void PCapFile::getpacket(const Pkt pkt)
 			mFragments.remove(ID);
 		}
 	}
+    return ret;
 }
 
-void PCapFile::sendToPort(const Filter& flt, quint64 deltatime){
-
-	if(!socket){
+int PCapFile::sendToPort(const QByteArray& buffer, const Filter& flt, quint64 deltatime)
+{
+    if(!socket){
 		socket.reset(new QUdpSocket);
 		socket->moveToThread(mThread.data());
 		socket->bind(30001);
@@ -406,20 +444,25 @@ void PCapFile::sendToPort(const Filter& flt, quint64 deltatime){
 
 	socket->writeDatagram(buffer, flt.sndHost, flt.sndPort);
 
+//    auto start = getNow();
+
+//    while(getDuration(start) < mTimeout){
+        //std::this_thread::sleep_for(std::chrono::nanoseconds(1));
+//    }
     //float delta = 1. * deltatime / 1000;
 
-    qint64 delay = /*delta * */mTimeout;
+//    qint64 delay = /*delta * */mTimeout;
 
-    switch (mTimeoutType) {
-    case NS:
-        std::this_thread::sleep_for(std::chrono::nanoseconds(delay));
-        break;
-    case US:
-        std::this_thread::sleep_for(std::chrono::microseconds(delay));
-        break;
-    case MS:
-        std::this_thread::sleep_for(std::chrono::milliseconds(delay));
-        break;
-    }
-
+//    switch (mTimeoutType) {
+//    case NS:
+//        std::this_thread::sleep_for(std::chrono::nanoseconds(delay));
+//        break;
+//    case US:
+//        std::this_thread::sleep_for(std::chrono::microseconds(delay));
+//        break;
+//    case MS:
+//        std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+//        break;
+//    }
+    return buffer.size();
 }

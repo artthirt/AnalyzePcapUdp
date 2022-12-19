@@ -54,7 +54,8 @@ HEADERS += \
     mainwindow.h \
     pcapngparser.h \
     pcapparser.h \
-    udpworker.h
+    udpworker.h \
+    utils.h
 
 FORMS += \
     mainwindow.ui

@@ -223,12 +223,11 @@ void MainWindow::loadSettings()
     QSettings settings("settings.ini", QSettings::IniFormat);
 
 	mFileName = settings.value("filename").toString();
-    qint64 timeout = settings.value("timeout", 32).toInt();
+    double timeout = settings.value("timeout", 32).toDouble();
     qint64 index = settings.value("index", 2).toInt();
 
 	ui->lbSelectedFile->setText(mFileName);
-    ui->cbSelectTimeout->setCurrentIndex(index);
-    ui->sbTimeout->setValue(timeout);
+    ui->dsbDelay->setValue(timeout);
 
     ui->twWorkspace->setCurrentIndex(settings.value("workspace", 0).toInt());
 
@@ -245,8 +244,7 @@ void MainWindow::saveSettings()
     QSettings settings("settings.ini", QSettings::IniFormat);
 
 	settings.setValue("filename", mFileName);
-    settings.setValue("timeout", ui->sbTimeout->value());
-    settings.setValue("index", ui->cbSelectTimeout->currentIndex());
+    settings.setValue("timeout", ui->dsbDelay->value());
 
     settings.setValue("workspace", ui->twWorkspace->currentIndex());
 
@@ -277,10 +275,8 @@ void MainWindow::on_cbSelectTimeout_currentIndexChanged(int index)
 
 void MainWindow::updateTimeout()
 {
-    qint64 timeout = ui->sbTimeout->value();
-    int index = ui->cbSelectTimeout->currentIndex();
+    double timeout = ui->dsbDelay->value();
     if(mPCap){
-        mPCap->setTimeoutType(static_cast<PCapFile::TimeoutType>(index));
         mPCap->setTimeout(timeout);
     }
 }
@@ -385,5 +381,11 @@ void MainWindow::on_pbHide_clicked()
         ui->pbHide->setText("▲");
     }
     ui->lvOutput->setVisible(!ui->lvOutput->isVisible());
+}
+
+
+void MainWindow::on_dsbDelay_valueChanged(double arg1)
+{
+
 }
 

@@ -90,6 +90,8 @@ private slots:
 
     void on_pbHide_clicked();
 
+    void on_dsbDelay_valueChanged(double arg1);
+
 private:
 	Ui::MainWindow *ui;
 

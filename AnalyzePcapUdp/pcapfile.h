@@ -71,16 +71,17 @@ public:
 
 	void setFilter(const QMap<ushort, Filter>& filters);
 
-    void setTimeout(qint64 val);
+    void setTimeout(double val);
 
     size_t packetsCount() const { return mNum; }
 
     float position() const;
-
-    void getpacket(const Pkt pkt);
-
-    TimeoutType timeoutType() const     { return mTimeoutType; }
-    void setTimeoutType(TimeoutType tp) { mTimeoutType = tp; }
+    /**
+     * @brief getpacket
+     * @param pkt
+     * @return size of packet if packet sended to network, else 0
+     */
+    int getpacket(const Pkt pkt);
 
     /**
      * @brief setTypeOfPCap
@@ -121,10 +122,9 @@ private:
 	QByteArray buffer;
 	bool isCurrentPort = false;
 
-    qint64 mTimeout = 32;
-    TimeoutType mTimeoutType = MS;
+    double mTimeout = 32;
 
-    void sendToPort(const Filter &flt, quint64 deltatime);
+    int sendToPort(const QByteArray &buffer, const Filter &flt, quint64 deltatime);
 	void internalStart();
     void openFile();
 
