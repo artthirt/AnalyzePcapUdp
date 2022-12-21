@@ -6,6 +6,7 @@
 #include <QScopedPointer>
 #include <QStandardItemModel>
 #include <QTimer>
+#include <QLabel>
 
 #include "pcapfile.h"
 #include "networker.h"
@@ -43,6 +44,30 @@ struct udpdata{
         ret.push_back(new QStandardItem(val));
         return ret;
     }
+};
+
+struct UiFilter{
+    using shared_label = std::shared_ptr<QLabel>;
+
+    std::shared_ptr<QCheckBox> chk;
+    std::shared_ptr<QLineEdit> dstIp;
+    std::shared_ptr<QSpinBox> dstPort;
+    std::shared_ptr<QLineEdit> outIp;
+    std::shared_ptr<QSpinBox> outPort;
+
+    std::vector< shared_label > labels;
+    QLabel* newQLabel(const QString& text){
+        shared_label sl{new QLabel(text)};
+        labels.push_back(sl);
+        return sl.get();
+    }
+};
+struct CfFilter{
+    bool use{};
+    int filter_port{};
+    int port{};
+    QString ip{};
+    QString dst_ip{};
 };
 
 namespace Ui {
@@ -92,6 +117,10 @@ private slots:
 
     void on_dsbDelay_valueChanged(double arg1);
 
+    void on_sbNumFilters_valueChanged(int arg1);
+
+    void on_pbApply_clicked();
+
 private:
 	Ui::MainWindow *ui;
 
@@ -105,18 +134,10 @@ private:
 
     QScopedPointer<Networker> mNetworker;
 
-    struct UiFilter{
-        QCheckBox* chk = nullptr;
-        QLineEdit* dstIp = nullptr;
-        QSpinBox* dstPort = nullptr;
-        QLineEdit* outIp = nullptr;
-        QSpinBox* outPort = nullptr;
-    };
-
     QVector<UiFilter> mUiFilters;
-    int mUiFiltersCount = 10;
+    QVector<CfFilter> mFilters;
 
-    void initUiFilters();
+    void initUiFilters(int nums);
 
     QMap<ushort, Filter> getFilters();
 

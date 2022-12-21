@@ -41,8 +41,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QList<int> szs = QList<int>() << 200 << 500;
     ui->splitterMain->setSizes(szs);
 
-    initUiFilters();
-
 	loadSettings();
 }
 
@@ -183,37 +181,46 @@ void MainWindow::on_cbUseScrollDown_clicked(bool checked)
 	mUseScroll = checked;
 }
 
-void getFilterFromSettings(QSettings& settings, const QString& num, QCheckBox* cb, QLineEdit* dstIp, QSpinBox *sb, QLineEdit* le, QSpinBox* sb2)
+bool getFilterFromSettings(QSettings& settings, const QString& num, CfFilter& flt)
 {
 	settings.beginGroup(num);
 
-	ushort val = settings.value("filter_port").toUInt();
-	ushort val2 = settings.value("port").toUInt();
-	QString str = settings.value("ip").toString();
-    QString strD = settings.value("dst.ip").toString();
+    if(!settings.contains("use")){
+        return false;
+    }
 
-	cb->setChecked(settings.value("use").toBool());
-	if(val)
-		sb->setValue(val);
-	if(!str.isEmpty())
-		le->setText(str);
-    if(!strD.isEmpty())
-        dstIp->setText(strD);
-    if(val2)
-		sb2->setValue(val2);
+    bool use = settings.value("use").toBool();
+
+    QString dst_ip = settings.value("dst.ip").toString();
+    ushort filter_port = settings.value("filter_port").toUInt();
+
+    QString ip = settings.value("ip").toString();
+    ushort port = settings.value("port").toUInt();
+
+    flt.use = use;
+
+    flt.dst_ip = dst_ip;
+    flt.filter_port = filter_port;
+
+    flt.ip = ip;
+    flt.port = port;
 
 	settings.endGroup();
+
+    return true;
 }
 
-void setFilterToSettings(QSettings& settings, const QString& num, QCheckBox* cb, QLineEdit* dstIp, QSpinBox *sb, QLineEdit* le, QSpinBox* sb2)
+void setFilterToSettings(QSettings& settings, const QString& num, const CfFilter& flt)
 {
-	settings.beginGroup(num);
+    settings.beginGroup(num);
 
-	settings.setValue("use", cb->isChecked());
-	settings.setValue("filter_port", sb->value());
-	settings.setValue("ip", le->text());
-    settings.setValue("dst.ip", dstIp->text());
-    settings.setValue("port", sb2->value());
+    settings.setValue("use", flt.use);
+
+    settings.setValue("dst.ip", flt.dst_ip);
+    settings.setValue("filter_port", flt.filter_port);
+
+    settings.setValue("ip", flt.ip);
+    settings.setValue("port", flt.port);
 
 	settings.endGroup();
 }
@@ -222,9 +229,10 @@ void MainWindow::loadSettings()
 {
     QSettings settings("settings.ini", QSettings::IniFormat);
 
-	mFileName = settings.value("filename").toString();
-    double timeout = settings.value("timeout", 32).toDouble();
-    qint64 index = settings.value("index", 2).toInt();
+    mFileName       = settings.value("filename").toString();
+    double timeout  = settings.value("timeout", 32).toDouble();
+    qint64 index    = settings.value("index", 2).toInt();
+    int nums        = settings.value("num_filters", 1).toInt();
 
 	ui->lbSelectedFile->setText(mFileName);
     ui->dsbDelay->setValue(timeout);
@@ -233,10 +241,19 @@ void MainWindow::loadSettings()
 
     updateTimeout();
 
-    for(int i = 0; i < mUiFilters.size(); ++i){
-        auto &It = mUiFilters[i];
-        getFilterFromSettings(settings,  "flt" + QString::number(i), It.chk, It.dstIp, It.dstPort, It.outIp, It.outPort);
+    int i = 0;
+    mFilters.clear();
+    while(true){
+        QString grp = "flt" + QString::number(i);
+        CfFilter flt;
+        if(!getFilterFromSettings(settings,  grp, flt)){
+            break;
+        }
+        mFilters.push_back(flt);
+        ++i;
     }
+    ui->sbNumFilters->setValue(nums);
+    initUiFilters(nums);
 }
 
 void MainWindow::saveSettings()
@@ -245,12 +262,25 @@ void MainWindow::saveSettings()
 
 	settings.setValue("filename", mFileName);
     settings.setValue("timeout", ui->dsbDelay->value());
+    settings.setValue("num_filters", mUiFilters.size());
 
     settings.setValue("workspace", ui->twWorkspace->currentIndex());
 
-    for(int i = 0; i < mUiFilters.size(); ++i){
-        auto &It = mUiFilters[i];
-        setFilterToSettings(settings, "flt" + QString::number(i), It.chk, It.dstIp, It.dstPort, It.outIp, It.outPort);
+    int cnt = min(mUiFilters.size(), mFilters.size());
+    for(int i = 0; i < cnt; ++i){
+        auto &a1 = mUiFilters[i];
+        auto &a2 = mFilters[i];
+
+        a2.use = a1.chk->isChecked();
+        a2.dst_ip = a1.dstIp->text();
+        a2.filter_port = a1.dstPort->value();
+        a2.ip = a1.outIp->text();
+        a2.port = a1.outPort->value();
+    }
+
+    for(int i = 0; i < mFilters.size(); ++i){
+        auto &It = mFilters[i];
+        setFilterToSettings(settings, "flt" + QString::number(i), It);
     }
 
 	settings.sync();
@@ -303,7 +333,7 @@ QMap<ushort, Filter> MainWindow::getFilters()
     QMap<ushort, Filter> filters;
     for(int i = 0; i < mUiFilters.size(); ++i){
         auto &It = mUiFilters[i];
-        setFilter(filters, It.chk, It.dstIp, It.dstPort, It.outIp, It.outPort);
+        setFilter(filters, It.chk.get(), It.dstIp.get(), It.dstPort.get(), It.outIp.get(), It.outPort.get());
     }
     return filters;
 }
@@ -322,54 +352,58 @@ void MainWindow::on_chbRepeat_clicked(bool checked)
     }
 }
 
-void MainWindow::initUiFilters()
+void MainWindow::initUiFilters(int nums)
 {
     QGridLayout* gl = dynamic_cast<QGridLayout*>(ui->groupBoxFilters->layout());
     if(!gl)
         return;
 
-    for(auto &it: mUiFilters){
-        if(it.chk) delete it.chk;
-        if(it.dstIp) delete it.dstIp;
-        if(it.dstPort) delete it.dstPort;
-        if(it.outIp) delete it.outIp;
-        if(it.outPort) delete it.outPort;
-    }
     mUiFilters.clear();
 
     ushort port = 10000;
-    for(int i = 0; i < mUiFiltersCount; ++i){
-        UiFilter ui;
-        ui.chk = new QCheckBox(this);
+    mUiFilters.resize(nums);
+    for(int i = 0; i < mUiFilters.size(); ++i){
+        UiFilter &ui = mUiFilters[i];
+        CfFilter flt;
+        if(i < mFilters.size()){
+            flt = mFilters[i];
+        }
 
-        ui.dstIp = new QLineEdit(this);
-        ui.dstIp->setInputMask("999.999.999.999");
+        ui.chk.reset(new QCheckBox());
+
+        ui.dstIp.reset(new QLineEdit());
+        //ui.dstIp->setInputMask("999.999.999.999");
         ui.dstIp->setText("");
 
-        ui.dstPort = new QSpinBox(this);
+        ui.dstPort.reset(new QSpinBox());
         ui.dstPort->setMaximum(65535);
         ui.dstPort->setValue(port);
 
-        ui.outIp = new QLineEdit(this);
-        ui.outIp->setInputMask("999.999.999.999");
+        ui.outIp.reset(new QLineEdit());
+        //ui.outIp->setInputMask("999.999.999.999");
         ui.outIp->setText("127.0.0.1");
 
-        ui.outPort = new QSpinBox(this);
+        ui.outPort.reset(new QSpinBox());
         ui.outPort->setMaximum(65535);
         ui.outPort->setValue(port++);
 
-        gl->addWidget(new QLabel(QString("%1. Use").arg(i + 1)), i, 0);
-        gl->addWidget(ui.chk, i, 1);
-        gl->addWidget(new QLabel("DestIp"), i, 2);
-        gl->addWidget(ui.dstIp, i, 3);
-        gl->addWidget(new QLabel("DestPort"), i, 4);
-        gl->addWidget(ui.dstPort, i, 5);
-        gl->addWidget(new QLabel("OutIp"), i, 6);
-        gl->addWidget(ui.outIp, i, 7);
-        gl->addWidget(new QLabel("OutPort"), i, 8);
-        gl->addWidget(ui.outPort, i, 9);
+        gl->addWidget(ui.newQLabel(QString("%1. Use").arg(i + 1)), i, 0);
+        gl->addWidget(ui.chk.get(), i, 1);
+        gl->addWidget(ui.newQLabel("DestIp(in packet)"), i, 2);
+        gl->addWidget(ui.dstIp.get(), i, 3);
+        gl->addWidget(ui.newQLabel("DestPort(in packet)"), i, 4);
+        gl->addWidget(ui.dstPort.get(), i, 5);
+        gl->addWidget(ui.newQLabel("| OutIp"), i, 6);
+        gl->addWidget(ui.outIp.get(), i, 7);
+        gl->addWidget(ui.newQLabel("OutPort"), i, 8);
+        gl->addWidget(ui.outPort.get(), i, 9);
 
-        mUiFilters.push_back(ui);
+        ui.chk->setChecked(flt.use);
+        ui.dstIp->setText(flt.dst_ip);
+        ui.dstPort->setValue(flt.filter_port);
+        ui.outIp->setText(flt.ip);
+        ui.outPort->setValue(flt.port);
+        //mUiFilters.push_back(ui);
     }
 }
 
@@ -386,6 +420,17 @@ void MainWindow::on_pbHide_clicked()
 
 void MainWindow::on_dsbDelay_valueChanged(double arg1)
 {
+    if(mPCap){
+        mPCap->setTimeout(arg1);
+    }
+}
 
+void MainWindow::on_sbNumFilters_valueChanged(int arg1)
+{
+}
+
+void MainWindow::on_pbApply_clicked()
+{
+    initUiFilters(ui->sbNumFilters->value());
 }
 

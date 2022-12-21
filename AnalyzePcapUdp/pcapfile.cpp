@@ -13,7 +13,11 @@
 #include <arpa/inet.h>
 #else
 #include <WinSock2.h>
+#include <timeapi.h>
+#pragma comment(lib, "Winmm.lib")
 #endif
+
+#define INLINE_DELAY    0
 
 /* 4 bytes IP address */
 typedef union ip_address
@@ -188,33 +192,45 @@ void PCapFile::internalStart()
 
     Pkt pkt;
 
-    double freq = 1000. / mTimeout;
-    qDebug("Numbers of packet by second %f", freq);
+    double timeout = mTimeout;
+    double freq = 1000. / timeout;
     auto start = getNow();
     int pkts = 0;
+    int pktsInMsCnt = 0;
     double Delay = 1000;
-    while(freq > 10 && Delay > 20){
-        freq /= 2;
-        Delay/= 2;
-    }
-    qDebug("freq %f on timeout %f", freq, Delay);
+    double pktsInMs = freq / 1000;
+    qDebug("Numbers of packet by second %f", freq);
+    qDebug("freq %.2f on timeout %.2f, packets in ms %.2f", freq, Delay, pktsInMs);
+
+#if _MSC_VER
+    timeBeginPeriod(1);
+#endif
     do{
         while(!mDone && mStarted){
+
+            if(fabs(timeout - mTimeout) > 1e-16){
+                timeout = mTimeout;
+                freq = 1000. / timeout;
+                pktsInMs = freq / 1000;
+            }
 
             if(mPause){
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 continue;
             }
-            double duration = getDuration(start);
-            if(duration < Delay){
-                if(pkts >= freq){
+
+            if(pktsInMsCnt > pktsInMs){
+                pktsInMsCnt = 0;
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            }
+            if(pkts >= freq){
+                double dur = getDuration(start);
+                if(dur < Delay){
                     std::this_thread::sleep_for(std::chrono::milliseconds(1));
                     continue;
-                }
-            }else{
-                start = getNow();
-                if(pkts){
-                    qDebug("packet sended %d by timeout %f, packets by second %f", pkts, duration, 1000. * pkts / duration);
+                }else{
+                    qDebug("packets in %f = %d (%.2f packets/sec)", Delay, pkts, 1000. * pkts / Delay);
+                    start = getNow();
                     pkts = 0;
                 }
             }
@@ -224,6 +240,7 @@ void PCapFile::internalStart()
                 res = getpacket(pkt);
                 if(res > 0){
                     pkts++;
+                    pktsInMsCnt++;
                 }
             }else{
                 if( res < 0){
@@ -236,6 +253,10 @@ void PCapFile::internalStart()
             openFile();
         }
     }while(mRepeat && !mDone);
+
+#if _MSC_VER
+    timeEndPeriod(1);
+#endif
 
 	socket.reset();
 
@@ -437,7 +458,7 @@ int PCapFile::sendToPort(const QByteArray& buffer, const Filter& flt, quint64 de
 		socket->moveToThread(mThread.data());
 		socket->bind(30001);
 
-        #define SOCKET_BUFFER_SIZE	3 * 1024 * 1024
+        #define SOCKET_BUFFER_SIZE	2 * 1024 * 1024
 
         int bufLen = SOCKET_BUFFER_SIZE;
         setsockopt(socket->socketDescriptor(), SOL_SOCKET, SO_RCVBUF, (char*)&bufLen, sizeof(bufLen));
@@ -449,11 +470,12 @@ int PCapFile::sendToPort(const QByteArray& buffer, const Filter& flt, quint64 de
 
 	socket->writeDatagram(buffer, flt.sndHost, flt.sndPort);
 
-//    auto start = getNow();
-
-//    while(getDuration(start) < mTimeout){
+#if INLINE_DELAY == 1
+    auto start = getNow();
+    while(getDuration(start) < mTimeout){
         //std::this_thread::sleep_for(std::chrono::nanoseconds(1));
-//    }
+    }
+#endif
     //float delta = 1. * deltatime / 1000;
 
 //    qint64 delay = /*delta * */mTimeout;

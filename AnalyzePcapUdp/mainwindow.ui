@@ -399,15 +399,45 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>228</width>
+              <width>272</width>
               <height>319</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_2">
              <item>
+              <layout class="QHBoxLayout" name="horizontalLayout">
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label">
+                 <property name="text">
+                  <string>Number of filters</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="sbNumFilters"/>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pbApply">
+                 <property name="maximumSize">
+                  <size>
+                   <width>150</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Apply</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
               <widget class="QGroupBox" name="groupBoxFilters">
                <property name="title">
-                <string>Ports Parameters</string>
+                <string>Filter Ports Parameters </string>
                </property>
                <layout class="QGridLayout" name="gridLayout_2"/>
               </widget>
