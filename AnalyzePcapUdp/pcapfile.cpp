@@ -202,7 +202,7 @@ void PCapFile::internalStart()
     qDebug("Numbers of packet by second %f", freq);
     qDebug("freq %.2f on timeout %.2f, packets in ms %.2f", freq, Delay, pktsInMs);
 
-#if _MSC_VER
+#ifdef _MSC_VER
     timeBeginPeriod(1);
 #endif
     do{
@@ -254,7 +254,7 @@ void PCapFile::internalStart()
         }
     }while(mRepeat && !mDone);
 
-#if _MSC_VER
+#ifdef _MSC_VER
     timeEndPeriod(1);
 #endif
 
