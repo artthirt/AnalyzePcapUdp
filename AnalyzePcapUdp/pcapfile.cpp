@@ -138,6 +138,7 @@ PCapFile::PCapFile(){
 
 	mThread.reset(new QThread);
 	mThread->setObjectName("pcapfile");
+    mThread->setPriority(QThread::HighestPriority);
 	mThread->moveToThread(mThread.data());
 
 	moveToThread(mThread.data());
