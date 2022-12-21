@@ -15,6 +15,46 @@
 #include <WinSock2.h>
 #include <timeapi.h>
 #pragma comment(lib, "Winmm.lib")
+
+class WaitableTimer
+{
+public:
+
+    WaitableTimer()
+    {
+        m_timer = ::CreateWaitableTimer(NULL, FALSE, NULL);
+        if (!m_timer)
+            throw std::runtime_error("Failed to create waitable time (CreateWaitableTimer), error:" + std::to_string(::GetLastError()));
+    }
+
+    ~WaitableTimer()
+    {
+        ::CloseHandle(m_timer);
+        m_timer = NULL;
+    }
+
+    void SetAndWait(unsigned relativeTime100Ns)
+    {
+        LARGE_INTEGER dueTime = { 0 };
+        dueTime.QuadPart = static_cast<LONGLONG>(relativeTime100Ns) * -1;
+
+        BOOL res = ::SetWaitableTimer(m_timer, &dueTime, 0, NULL, NULL, FALSE);
+        if (!res)
+            throw std::runtime_error("SetAndWait: failed set waitable time (SetWaitableTimer), error:" + std::to_string(::GetLastError()));
+
+        DWORD waitRes = ::WaitForSingleObject(m_timer, INFINITE);
+        if (waitRes == WAIT_FAILED)
+            throw std::runtime_error("SetAndWait: failed wait for waitable time (WaitForSingleObject)" + std::to_string(::GetLastError()));
+    }
+
+    void SleepMs(unsigned Ms){
+        SetAndWait(Ms * 10000);
+    }
+
+private:
+    HANDLE m_timer;
+};
+
 #endif
 
 #define INLINE_DELAY    0
@@ -203,7 +243,11 @@ void PCapFile::internalStart()
     qDebug("freq %.2f on timeout %.2f, packets in ms %.2f", freq, Delay, pktsInMs);
 
 #ifdef _MSC_VER
+    WaitableTimer wTimer;
     timeBeginPeriod(1);
+#define SleepX(x) wTimer.SleepMs(x)
+#else
+#define SleepX(x) std::this_thread::sleep_for(std::chrono::milliseconds(1))
 #endif
     do{
         while(!mDone && mStarted){
@@ -221,12 +265,12 @@ void PCapFile::internalStart()
 
             if(pktsInMsCnt > pktsInMs){
                 pktsInMsCnt = 0;
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                SleepX(1);
             }
             if(pkts >= freq){
                 double dur = getDuration(start);
                 if(dur < Delay){
-                    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                    SleepX(1);
                     continue;
                 }else{
                     qDebug("packets in %f = %d (%.2f packets/sec)", Delay, pkts, 1000. * pkts / Delay);
