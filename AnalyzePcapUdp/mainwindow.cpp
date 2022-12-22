@@ -270,7 +270,7 @@ void MainWindow::saveSettings()
 
     settings.setValue("workspace", ui->twWorkspace->currentIndex());
 
-    int cnt = min(mUiFilters.size(), mFilters.size());
+    int cnt = std::min<int>(mUiFilters.size(), mFilters.size());
     for(int i = 0; i < cnt; ++i){
         auto &a1 = mUiFilters[i];
         auto &a2 = mFilters[i];
