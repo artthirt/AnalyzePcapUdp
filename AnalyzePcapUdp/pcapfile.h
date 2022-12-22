@@ -127,7 +127,7 @@ private:
 
     int sendToPort(const QByteArray &buffer, const Filter &flt, quint64 deltatime);
 	void internalStart();
-    void openFile();
+    bool openFile();
 
 };
 

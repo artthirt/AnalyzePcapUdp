@@ -296,9 +296,10 @@ void PCapFile::internalStart()
             }
         }
 
-        if(mRepeat){
-            openFile();
+        if(mRepeat && !openFile()){
+            break;
         }
+        res = 0;
     }while(mRepeat && !mDone);
 
 	socket.reset();
@@ -306,16 +307,16 @@ void PCapFile::internalStart()
     //pcap_loop(mFP, 0, dispatcher_handler, (u_char*)this);
 }
 
-void PCapFile::openFile()
+bool PCapFile::openFile()
 {
     closeFile();
 
     mParser = ParserFactory::getParser(mFileName);
 
     if(mParser == nullptr)
-        return;
+        return false;
 
-    mParser->open(mFileName);
+    return mParser->open(mFileName);
 }
 
 int PCapFile::getpacket(const Pkt pkt)
