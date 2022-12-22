@@ -119,54 +119,56 @@ set_target_properties(AnalyzePcapUdp
 #    )
 #endforeach()
 
-if(Qt6_FOUND)
-    add_custom_command(
-        TARGET AnalyzePcapUdp POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:Qt6::Widgets>
-            $<TARGET_FILE_DIR:AnalyzePcapUdp>
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:Qt6::Core>
-            $<TARGET_FILE_DIR:AnalyzePcapUdp>
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:Qt6::Network>
-            $<TARGET_FILE_DIR:AnalyzePcapUdp>
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:Qt6::Gui>
-            $<TARGET_FILE_DIR:AnalyzePcapUdp>
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${CMAKE_CURRENT_BINARY_DIR}/../3rdparty/libpcapng/libpcapng.dll
-            $<TARGET_FILE_DIR:AnalyzePcapUdp>
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:Qt6::QWindowsIntegrationPlugin>
-            $<TARGET_FILE_DIR:AnalyzePcapUdp>/platforms/
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:Qt6::QWindowsVistaStylePlugin>
-            $<TARGET_FILE_DIR:AnalyzePcapUdp>/styles/
-    )
-else()
-    add_custom_command(
-        TARGET AnalyzePcapUdp POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:AnalyzePcapUdp>/platforms
-        COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:AnalyzePcapUdp>/styles/
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:Qt5::Widgets>
-            $<TARGET_FILE_DIR:AnalyzePcapUdp>
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:Qt5::Core>
-            $<TARGET_FILE_DIR:AnalyzePcapUdp>
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:Qt5::Network>
-            $<TARGET_FILE_DIR:AnalyzePcapUdp>
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:Qt5::Gui>
-            $<TARGET_FILE_DIR:AnalyzePcapUdp>
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:Qt5::QWindowsIntegrationPlugin>
-            $<TARGET_FILE_DIR:AnalyzePcapUdp>/platforms/
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:Qt5::QWindowsVistaStylePlugin>
-            $<TARGET_FILE_DIR:AnalyzePcapUdp>/styles/
-    )
+if(WIN32)
+    if(Qt6_FOUND)
+        add_custom_command(
+            TARGET AnalyzePcapUdp POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_FILE:Qt6::Widgets>
+                $<TARGET_FILE_DIR:AnalyzePcapUdp>
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_FILE:Qt6::Core>
+                $<TARGET_FILE_DIR:AnalyzePcapUdp>
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_FILE:Qt6::Network>
+                $<TARGET_FILE_DIR:AnalyzePcapUdp>
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_FILE:Qt6::Gui>
+                $<TARGET_FILE_DIR:AnalyzePcapUdp>
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${CMAKE_CURRENT_BINARY_DIR}/../3rdparty/libpcapng/libpcapng.dll
+                $<TARGET_FILE_DIR:AnalyzePcapUdp>
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_FILE:Qt6::QWindowsIntegrationPlugin>
+                $<TARGET_FILE_DIR:AnalyzePcapUdp>/platforms/
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_FILE:Qt6::QWindowsVistaStylePlugin>
+                $<TARGET_FILE_DIR:AnalyzePcapUdp>/styles/
+        )
+    else()
+        add_custom_command(
+            TARGET AnalyzePcapUdp POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:AnalyzePcapUdp>/platforms
+            COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:AnalyzePcapUdp>/styles/
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_FILE:Qt5::Widgets>
+                $<TARGET_FILE_DIR:AnalyzePcapUdp>
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_FILE:Qt5::Core>
+                $<TARGET_FILE_DIR:AnalyzePcapUdp>
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_FILE:Qt5::Network>
+                $<TARGET_FILE_DIR:AnalyzePcapUdp>
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_FILE:Qt5::Gui>
+                $<TARGET_FILE_DIR:AnalyzePcapUdp>
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_FILE:Qt5::QWindowsIntegrationPlugin>
+                $<TARGET_FILE_DIR:AnalyzePcapUdp>/platforms/
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_FILE:Qt5::QWindowsVistaStylePlugin>
+                $<TARGET_FILE_DIR:AnalyzePcapUdp>/styles/
+        )
+    endif()
 endif()
 
