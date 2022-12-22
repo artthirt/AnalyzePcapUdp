@@ -8,6 +8,7 @@
 #include <QThread>
 #include <QList>
 #include <QMap>
+#include <deque>
 
 #include "parserfactory.h"
 
@@ -81,7 +82,7 @@ public:
      * @param pkt
      * @return size of packet if packet sended to network, else 0
      */
-    int getpacket(const Pkt pkt);
+    int getpacket(const Pkt &pkt);
 
     /**
      * @brief setTypeOfPCap
@@ -101,6 +102,7 @@ private:
     qint64 mBeginTimestamp = 0;
     qint64 mPrevTimestamp = 0;
     double mAverageDuration1Ms = 1;
+    float mPosition = 0;
 
     TOP mTypeOfPCap = ETHERNET_FRAME;
 
@@ -123,11 +125,16 @@ private:
 	QByteArray buffer;
 	bool isCurrentPort = false;
 
+    std::deque<Pkt> mStoredPackets;
+    int64_t mPacketIndex = 0;
+
     double mTimeout = 32;
 
     int sendToPort(const QByteArray &buffer, const Filter &flt, quint64 deltatime);
 	void internalStart();
     bool openFile();
+
+    void loadToRam();
 
 };
 

@@ -7,6 +7,7 @@ extern "C"{
 class PrivPCapNg{
 public:
     light_pcapng_t *mFP = nullptr;
+    QString mFileName;
 
     ~PrivPCapNg(){
         close();
@@ -14,7 +15,11 @@ public:
 
     bool open(const QString &fileName){
         mFP = light_pcapng_open_read(fileName.toLocal8Bit().data(), LIGHT_TRUE);
+        mFileName = fileName;
         return mFP != nullptr;
+    }
+    QString getFileName() const{
+        return mFileName;
     }
     int next_packet(Pkt &pkt){
         if(!mFP)
@@ -93,4 +98,9 @@ float PCapNGParser::position()
 bool PCapNGParser::canOpen(const QString &fileName)
 {
     return fileName.toLower().endsWith(".pcapng");
+}
+
+QString PCapNGParser::getFileName() const
+{
+    return mD->getFileName();
 }

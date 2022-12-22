@@ -189,6 +189,9 @@ PCapFile::~PCapFile()
 
 void PCapFile::openFile(const QString &fileName)
 {   
+    if(mFileName != fileName){
+        mStoredPackets.clear();
+    }
     mFileName = fileName;
 }
 
@@ -244,14 +247,16 @@ void PCapFile::setTimeout(double val)
 
 float PCapFile::position() const
 {
-    if(mParser)
-        return mParser->position();
-    return 0;
+    return mPosition;
 }
 
 void PCapFile::internalStart()
 {
-    openFile();
+    loadToRam();
+
+    if(mStoredPackets.empty()){
+        return;
+    }
 
     mStarted = true;
 
@@ -263,10 +268,8 @@ void PCapFile::internalStart()
     double timeout = mTimeout;
     getTimeVals(mAverageDuration1Ms, mTimeout, DelayMs, group_pkts);
 
-    Pkt pkt;
     do{
-        while(!mDone && mStarted && res >= 0){
-
+        for(int it = 0; it < mStoredPackets.size() && !mDone && mStarted && res >= 0; ++it){
             if(timeout != mTimeout){
                 timeout = mTimeout;
                 getTimeVals(mAverageDuration1Ms, mTimeout, DelayMs, group_pkts);
@@ -277,27 +280,14 @@ void PCapFile::internalStart()
                 continue;
             }
 
-            for(int i = 0; i < group_pkts && res >= 0; ++i){
-                res = mParser->next_packet(pkt);
-                if(res > 0){
-                    res = getpacket(pkt);
-//                    if(res > 0){
-//                        pkts++;
-//                        pktsInMsCnt++;
-//                    }
-                }else{
-                    if( res < 0){
-                        break;
-                    }
-                }
+            for(int i = 0; i < group_pkts && it < mStoredPackets.size() && res >= 0; ++i, ++it){
+                Pkt& pkt = mStoredPackets[it];
+                mPosition = 1. * it / mStoredPackets.size();
+                res = getpacket(pkt);
             }
             if(!mFilters.empty()){
                 SleepX(DelayMs);
             }
-        }
-
-        if(mRepeat && !openFile()){
-            break;
         }
         res = 0;
     }while(mRepeat && !mDone);
@@ -319,7 +309,36 @@ bool PCapFile::openFile()
     return mParser->open(mFileName);
 }
 
-int PCapFile::getpacket(const Pkt pkt)
+void PCapFile::loadToRam()
+{
+    if(!mStoredPackets.empty()){
+        return;
+    }
+
+    auto start = getNow();
+    qDebug("Begin Load to Ram");
+
+    openFile();
+
+    Pkt pkt;
+    int res = 0;
+    while(!mDone && res >= 0){
+
+        res = mParser->next_packet(pkt);
+        if(res > 0){
+            mStoredPackets.push_back(pkt);
+        }else{
+            if( res < 0){
+                break;
+            }
+        }
+    }
+    closeFile();
+
+    qDebug("End Load To Ram: %f ms", getDuration(start));
+}
+
+int PCapFile::getpacket(const Pkt& pkt)
 {
     int ret = 0;
 	if(mDone)

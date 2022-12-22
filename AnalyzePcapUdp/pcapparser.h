@@ -16,6 +16,7 @@ public:
     void close();
     float position();
     bool canOpen(const QString &fileName);
+    virtual QString getFileName() const;
 
 private:
     QSharedPointer<PrivPCapParser> mD;

@@ -7,6 +7,7 @@ extern "C"{
 class PrivPCapParser{
 public:
     pcap_t *mFP = nullptr;
+    QString mFileName;
 
     ~PrivPCapParser(){
 
@@ -16,6 +17,10 @@ public:
             pcap_close(mFP);
             mFP = nullptr;
         }
+    }
+
+    QString getFileName() const{
+        return mFileName;
     }
 
     void preparePcap()
@@ -51,6 +56,8 @@ public:
 
         if(mFP == nullptr)
             return false;
+
+        mFileName = fileName;
 
         preparePcap();
 
@@ -122,4 +129,9 @@ float PCapParser::position()
 bool PCapParser::canOpen(const QString &fileName)
 {
     return fileName.toLower().endsWith(".pcap");
+}
+
+QString PCapParser::getFileName() const
+{
+    return mD->getFileName();
 }

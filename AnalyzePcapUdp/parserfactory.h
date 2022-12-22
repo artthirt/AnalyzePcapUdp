@@ -25,6 +25,7 @@ public:
     virtual void close() = 0;
     virtual float position() = 0;
     virtual bool canOpen(const QString& fileName) = 0;
+    virtual QString getFileName() const = 0;
 
 };
 
