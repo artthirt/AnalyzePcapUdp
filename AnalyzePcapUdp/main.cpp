@@ -15,6 +15,9 @@ int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 
+    //double ms;
+    //getAverageMsDuration(100, 1, ms);
+    //qDebug("set 1 ms == %f", ms);
 //	QDateTime dtt(QDate(1999, 8, 22), QTime( 0, 0, 0));
 //	quint64 ct = 0;
 //	QDateTime dt;

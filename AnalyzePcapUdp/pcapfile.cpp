@@ -134,7 +134,35 @@ uint Inv(uint v)
 
 ///////////////////////////////
 
-PCapFile::PCapFile(){
+#define SleepX(x) std::this_thread::sleep_for(std::chrono::milliseconds(x))
+
+void getAverageMsDuration(int count, double desireMs, double& outMs)
+{
+    auto start = getNow();
+    for(int i = 0; i < count; ++i){
+        SleepX(1);
+    }
+    double duration = getDuration(start);
+    outMs = duration / count;
+}
+
+void getTimeVals(double mAverageDuration1Ms, double mTimeout, int &DelayMs, int &group_pkts)
+{
+    double cntIn1Sec = 1000. / mAverageDuration1Ms;
+    double freq = 1000. / mTimeout;
+    if(freq > cntIn1Sec){
+        group_pkts = freq / cntIn1Sec;
+    }else{
+        DelayMs = mTimeout;
+    }
+}
+
+//////////////////////////////////////////////////
+
+PCapFile::PCapFile()
+{
+    getAverageMsDuration(100, 1, mAverageDuration1Ms);
+    qDebug("set 1 ms == %f ms", mAverageDuration1Ms);
 
 	mThread.reset(new QThread);
 	mThread->setObjectName("pcapfile");
@@ -227,36 +255,21 @@ void PCapFile::internalStart()
 
     mStarted = true;
 
-	int res;
+    int res = 0;
+    int group_pkts = 1;
 
     mNum = 0;
+    int DelayMs = 1;
+    double timeout = mTimeout;
+    getTimeVals(mAverageDuration1Ms, mTimeout, DelayMs, group_pkts);
 
     Pkt pkt;
-
-    double timeout = mTimeout;
-    double freq = 1000. / timeout;
-    auto start = getNow();
-    int pkts = 0;
-    int pktsInMsCnt = 0;
-    double Delay = 1000;
-    double pktsInMs = freq / 1000;
-    qDebug("Numbers of packet by second %f", freq);
-    qDebug("freq %.2f on timeout %.2f, packets in ms %.2f", freq, Delay, pktsInMs);
-
-#ifdef _MSC_VER
-    WaitableTimer wTimer;
-    timeBeginPeriod(1);
-#define SleepX(x) wTimer.SleepMs(x)
-#else
-#define SleepX(x) std::this_thread::sleep_for(std::chrono::milliseconds(1))
-#endif
     do{
-        while(!mDone && mStarted){
+        while(!mDone && mStarted && res >= 0){
 
-            if(fabs(timeout - mTimeout) > 1e-16){
+            if(timeout != mTimeout){
                 timeout = mTimeout;
-                freq = 1000. / timeout;
-                pktsInMs = freq / 1000;
+                getTimeVals(mAverageDuration1Ms, mTimeout, DelayMs, group_pkts);
             }
 
             if(mPause){
@@ -264,33 +277,22 @@ void PCapFile::internalStart()
                 continue;
             }
 
-            if(pktsInMsCnt > pktsInMs){
-                pktsInMsCnt = 0;
-                SleepX(1);
-            }
-            if(pkts >= freq){
-                double dur = getDuration(start);
-                if(dur < Delay){
-                    SleepX(1);
-                    continue;
-                }else{
-                    qDebug("packets in %f = %d (%.2f packets/sec)", Delay, pkts, 1000. * pkts / Delay);
-                    start = getNow();
-                    pkts = 0;
-                }
-            }
-
-            res = mParser->next_packet(pkt);
-            if(res > 0){
-                res = getpacket(pkt);
+            for(int i = 0; i < group_pkts && res >= 0; ++i){
+                res = mParser->next_packet(pkt);
                 if(res > 0){
-                    pkts++;
-                    pktsInMsCnt++;
+                    res = getpacket(pkt);
+//                    if(res > 0){
+//                        pkts++;
+//                        pktsInMsCnt++;
+//                    }
+                }else{
+                    if( res < 0){
+                        break;
+                    }
                 }
-            }else{
-                if( res < 0){
-                    break;
-                }
+            }
+            if(!mFilters.empty()){
+                SleepX(DelayMs);
             }
         }
 
@@ -298,10 +300,6 @@ void PCapFile::internalStart()
             openFile();
         }
     }while(mRepeat && !mDone);
-
-#ifdef _MSC_VER
-    timeEndPeriod(1);
-#endif
 
 	socket.reset();
 

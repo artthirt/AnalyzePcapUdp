@@ -61,51 +61,11 @@
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_3">
                 <item>
+                 <widget class="QLineEdit" name="leFileField"/>
+                </item>
+                <item>
                  <layout class="QGridLayout" name="gridLayout_3">
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="label_2">
-                    <property name="text">
-                     <string>Selected File</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
-                   <widget class="QLabel" name="lbSelectedFile">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>100</width>
-                      <height>0</height>
-                     </size>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="0">
-                   <widget class="QCheckBox" name="cbUseScrollDown">
-                    <property name="text">
-                     <string>Use scroll down</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="0">
-                   <widget class="QCheckBox" name="chbShowPackets">
-                    <property name="text">
-                     <string>Show packets</string>
-                    </property>
-                    <property name="checked">
-                     <bool>false</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="2">
+                  <item row="1" column="2">
                    <widget class="QPushButton" name="pbSelect">
                     <property name="maximumSize">
                      <size>
@@ -114,7 +74,24 @@
                      </size>
                     </property>
                     <property name="text">
-                     <string>Select</string>
+                     <string>Select File</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="4" column="1">
+                   <widget class="QCheckBox" name="cbUseScrollDown">
+                    <property name="text">
+                     <string>Use scroll down</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="5" column="1">
+                   <widget class="QCheckBox" name="chbShowPackets">
+                    <property name="text">
+                     <string>Show packets</string>
+                    </property>
+                    <property name="checked">
+                     <bool>false</bool>
                     </property>
                    </widget>
                   </item>
@@ -151,13 +128,6 @@
                      </property>
                     </spacer>
                    </item>
-                   <item row="2" column="0">
-                    <widget class="QLabel" name="label_3">
-                     <property name="text">
-                      <string>Timeout (ms)</string>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="2" column="1">
                     <widget class="QDoubleSpinBox" name="dsbDelay">
                      <property name="decimals">
@@ -165,6 +135,13 @@
                      </property>
                      <property name="maximum">
                       <double>9999999.000000000000000</double>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QLabel" name="label_3">
+                     <property name="text">
+                      <string>Timeout (ms)</string>
                      </property>
                     </widget>
                    </item>
@@ -399,7 +376,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>272</width>
+              <width>354</width>
               <height>319</height>
              </rect>
             </property>

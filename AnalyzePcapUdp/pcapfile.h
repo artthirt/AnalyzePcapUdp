@@ -100,6 +100,7 @@ private:
     quint64 mNum = 0;
     qint64 mBeginTimestamp = 0;
     qint64 mPrevTimestamp = 0;
+    double mAverageDuration1Ms = 1;
 
     TOP mTypeOfPCap = ETHERNET_FRAME;
 
@@ -129,6 +130,9 @@ private:
     void openFile();
 
 };
+
+void getAverageMsDuration(int count, double desireMs, double& outMs);
+void getTimeVals(double mAverageDuration1Ms, double mTimeout, int &DelayMs, int &group_pkts);
 
 
 #endif // PCAPFILE_H

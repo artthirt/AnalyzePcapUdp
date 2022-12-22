@@ -11,6 +11,81 @@
 #include <QSpinBox>
 #include <QCheckBox>
 
+/////////////////////////////////
+
+void setFilter(QMap<ushort, Filter>& filters, QCheckBox* cb, QLineEdit* dstIp, QSpinBox* dstPort, QLineEdit* ip, QSpinBox* dstPort2)
+{
+    if(cb->isChecked()){
+        Filter flt;
+        flt.dstHost = QHostAddress(dstIp->text());
+        flt.dstPort = dstPort->value();
+        flt.sndHost = QHostAddress(ip->text());
+        flt.sndPort = dstPort2->value();
+        filters[flt.dstPort] = flt;
+    }
+}
+
+bool getFilterFromSettings(QSettings& settings, const QString& num, CfFilter& flt)
+{
+    settings.beginGroup(num);
+
+    if(!settings.contains("use")){
+        return false;
+    }
+
+    bool use = settings.value("use").toBool();
+
+    QString dst_ip = settings.value("dst.ip").toString();
+    ushort filter_port = settings.value("filter_port").toUInt();
+
+    QString ip = settings.value("ip").toString();
+    ushort port = settings.value("port").toUInt();
+
+    flt.use = use;
+
+    flt.dst_ip = dst_ip;
+    flt.filter_port = filter_port;
+
+    flt.ip = ip;
+    flt.port = port;
+
+    settings.endGroup();
+
+    return true;
+}
+
+void setFilterToSettings(QSettings& settings, const QString& num, const CfFilter& flt)
+{
+    settings.beginGroup(num);
+
+    settings.setValue("use", flt.use);
+
+    settings.setValue("dst.ip", flt.dst_ip);
+    settings.setValue("filter_port", flt.filter_port);
+
+    settings.setValue("ip", flt.ip);
+    settings.setValue("port", flt.port);
+
+    settings.endGroup();
+}
+
+QString getSize(qint64 size)
+{
+    QString res;
+
+    if(size < 1e+3)
+        return QString("%1 B").arg(size);
+    if(size < 1e+6)
+        return QString("%1 KB").arg(size / 1.e+3, 0, 'f', 2);
+    if(size < 1e+9)
+        return QString("%1 MB").arg(size / 1.e+6, 0, 'f', 2);
+    return QString("%1 GB").arg(size / 1.e+9, 0, 'f', 2);
+
+    return res;
+}
+
+/////////////////////////////////
+
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow)
@@ -38,7 +113,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->lvOutput->setVisible(false);
 
-    QList<int> szs = QList<int>() << 200 << 500;
+    QList<int> szs = QList<int>() << 100 << 600;
     ui->splitterMain->setSizes(szs);
 
 	loadSettings();
@@ -62,26 +137,14 @@ void MainWindow::on_pbSelect_clicked()
 	if(fn.isEmpty())
 		return;
 
-	mFileName = fn;
-
-	ui->lbSelectedFile->setText(fn);
-}
-
-void setFilter(QMap<ushort, Filter>& filters, QCheckBox* cb, QLineEdit* dstIp, QSpinBox* dstPort, QLineEdit* ip, QSpinBox* dstPort2)
-{
-	if(cb->isChecked()){
-		Filter flt;
-        flt.dstHost = QHostAddress(dstIp->text());
-		flt.dstPort = dstPort->value();
-		flt.sndHost = QHostAddress(ip->text());
-		flt.sndPort = dstPort2->value();
-		filters[flt.dstPort] = flt;
-	}
+    ui->leFileField->setText(fn);
 }
 
 void MainWindow::on_pbStart_clicked()
 {
-	if(mFileName.isEmpty() || !QFile::exists(mFileName))
+    mFileName = ui->leFileField->text();
+
+    if(mFileName.isEmpty() || !QFile::exists(mFileName))
 		return;
 
 	if(!mPCap.data())
@@ -120,21 +183,6 @@ void MainWindow::on_pbStop_clicked()
     ui->chbRepeat->setChecked(false);
     mPCap->stop();
     mPackets.clear();
-}
-
-QString getSize(qint64 size)
-{
-    QString res;
-
-    if(size < 1e+3)
-        return QString("%1 B").arg(size);
-    if(size < 1e+6)
-        return QString("%1 KB").arg(size / 1.e+3, 0, 'f', 2);
-    if(size < 1e+9)
-        return QString("%1 MB").arg(size / 1.e+6, 0, 'f', 2);
-    return QString("%1 GB").arg(size / 1.e+9, 0, 'f', 2);
-
-    return res;
 }
 
 void MainWindow::onTimeout()
@@ -181,50 +229,6 @@ void MainWindow::on_cbUseScrollDown_clicked(bool checked)
 	mUseScroll = checked;
 }
 
-bool getFilterFromSettings(QSettings& settings, const QString& num, CfFilter& flt)
-{
-	settings.beginGroup(num);
-
-    if(!settings.contains("use")){
-        return false;
-    }
-
-    bool use = settings.value("use").toBool();
-
-    QString dst_ip = settings.value("dst.ip").toString();
-    ushort filter_port = settings.value("filter_port").toUInt();
-
-    QString ip = settings.value("ip").toString();
-    ushort port = settings.value("port").toUInt();
-
-    flt.use = use;
-
-    flt.dst_ip = dst_ip;
-    flt.filter_port = filter_port;
-
-    flt.ip = ip;
-    flt.port = port;
-
-	settings.endGroup();
-
-    return true;
-}
-
-void setFilterToSettings(QSettings& settings, const QString& num, const CfFilter& flt)
-{
-    settings.beginGroup(num);
-
-    settings.setValue("use", flt.use);
-
-    settings.setValue("dst.ip", flt.dst_ip);
-    settings.setValue("filter_port", flt.filter_port);
-
-    settings.setValue("ip", flt.ip);
-    settings.setValue("port", flt.port);
-
-	settings.endGroup();
-}
-
 void MainWindow::loadSettings()
 {
     QSettings settings("settings.ini", QSettings::IniFormat);
@@ -234,7 +238,7 @@ void MainWindow::loadSettings()
     qint64 index    = settings.value("index", 2).toInt();
     int nums        = settings.value("num_filters", 1).toInt();
 
-	ui->lbSelectedFile->setText(mFileName);
+    ui->leFileField->setText(mFileName);
     ui->dsbDelay->setValue(timeout);
 
     ui->twWorkspace->setCurrentIndex(settings.value("workspace", 0).toInt());
@@ -260,7 +264,7 @@ void MainWindow::saveSettings()
 {
     QSettings settings("settings.ini", QSettings::IniFormat);
 
-	settings.setValue("filename", mFileName);
+    settings.setValue("filename", ui->leFileField->text());
     settings.setValue("timeout", ui->dsbDelay->value());
     settings.setValue("num_filters", mUiFilters.size());
 
@@ -374,6 +378,7 @@ void MainWindow::initUiFilters(int nums)
         ui.dstIp.reset(new QLineEdit());
         //ui.dstIp->setInputMask("999.999.999.999");
         ui.dstIp->setText("");
+        ui.dstIp->setPlaceholderText("Can be Empty");
 
         ui.dstPort.reset(new QSpinBox());
         ui.dstPort->setMaximum(65535);
@@ -382,6 +387,7 @@ void MainWindow::initUiFilters(int nums)
         ui.outIp.reset(new QLineEdit());
         //ui.outIp->setInputMask("999.999.999.999");
         ui.outIp->setText("127.0.0.1");
+        ui.outIp->setPlaceholderText("Need to be set if using");
 
         ui.outPort.reset(new QSpinBox());
         ui.outPort->setMaximum(65535);
