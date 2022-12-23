@@ -96,8 +96,22 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mNetworker.reset(new Networker);
 
+    mLabStatus1 = new QLabel(this);
+    mLabStatus1->setMinimumWidth(150);
+    mLabStatus2 = new QLabel(this);
+    mLabStatus2->setMinimumWidth(150);
+    mLabStatus3 = new QLabel(this);
+    mLabStatus3->setMinimumWidth(150);
+    ui->statusbar->addWidget(mLabStatus1);
+    ui->statusbar->addWidget(mLabStatus2);
+    ui->statusbar->addWidget(mLabStatus3);
+
     connect(mPCap.data(), SIGNAL(sendPacketString(quint64, quint64, uint, uint, QString)),
             this, SLOT(onReceivePacketString(quint64, quint64, uint, uint, QString)), Qt::QueuedConnection);
+
+    connect(mPCap.data(), &PCapFile::sendStatus, this, [this](QString text){
+        mLabStatus2->setText(text);
+    });
 
     connect(&mTimer, SIGNAL(timeout()), this, SLOT(onTimeout()));
     mTimer.start(16);
@@ -201,9 +215,11 @@ void MainWindow::onTimeout()
     }
 
     if(mPCap){
-        ui->statusbar->showMessage("Packets left " +QString::number(mPCap->packetsCount()));
+        mLabStatus1->setText("Packets left " +QString::number(mPCap->packetsCount()));
 
         float pos = mPCap->position();
+
+        mLabStatus3->setText(QString("Bitrate %1 Kb/s").arg(mPCap->bitrate() / 1000, 0, 'f', 2));
 
         ui->hsFilePosition->setValue(pos * ui->hsFilePosition->maximum());
     }

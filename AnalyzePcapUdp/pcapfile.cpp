@@ -268,6 +268,10 @@ void PCapFile::internalStart()
     double timeout = mTimeout;
     getTimeVals(mAverageDuration1Ms, mTimeout, DelayMs, group_pkts);
 
+    emit sendStatus("Begin work");
+
+    mStartPeriod = getNow();
+    mBytesSendByPeriod = 0;
     do{
         for(int it = 0; it < mStoredPackets.size() && !mDone && mStarted && res >= 0; ++it){
             if(timeout != mTimeout){
@@ -284,13 +288,17 @@ void PCapFile::internalStart()
                 Pkt& pkt = mStoredPackets[it];
                 mPosition = 1. * it / mStoredPackets.size();
                 res = getpacket(pkt);
+                mBytesSendByPeriod += res;
             }
+            calcBitrate();
             if(!mFilters.empty()){
                 SleepX(DelayMs);
             }
         }
         res = 0;
     }while(mRepeat && !mDone);
+
+    emit sendStatus("End work");
 
 	socket.reset();
 
@@ -314,9 +322,10 @@ void PCapFile::loadToRam()
     if(!mStoredPackets.empty()){
         return;
     }
+    emit sendStatus("Load packets to RAM");
 
     auto start = getNow();
-    qDebug("Begin Load to Ram");
+    qDebug("Begin Load Packets to Ram");
 
     openFile();
 
@@ -335,7 +344,21 @@ void PCapFile::loadToRam()
     }
     closeFile();
 
+    emit sendStatus(QString("End Load Packets To RAM: %1 ms").arg(getDuration(start)));
+
     qDebug("End Load To Ram: %f ms", getDuration(start));
+}
+
+void PCapFile::calcBitrate()
+{
+    double dur = getDuration(mStartPeriod);
+    if(dur >= 1000){
+        double bitrate = (1000. * mBytesSendByPeriod / dur) * 8;
+        mBitrate = bitrate;
+
+        mStartPeriod = getNow();
+        mBytesSendByPeriod = 0;
+    }
 }
 
 int PCapFile::getpacket(const Pkt& pkt)

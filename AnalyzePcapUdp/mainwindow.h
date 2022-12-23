@@ -129,6 +129,9 @@ private:
     QStandardItemModel mModel;
     QTimer mTimer;
     QList<udpdata> mPackets;
+    QLabel* mLabStatus1;
+    QLabel* mLabStatus2;
+    QLabel* mLabStatus3;
 
 	QScopedPointer<PCapFile> mPCap;
 

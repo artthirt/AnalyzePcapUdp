@@ -92,8 +92,11 @@ public:
      */
     void setTypeOfPCap(TOP val) { mTypeOfPCap = val; }
 
+    double bitrate() const { return mBitrate; }
+
 signals:
     void sendPacketString(quint64 num, quint64 timestamp, uint id, uint size, QString);
+    void sendStatus(QString);
 
 private:
     QSharedPointer<Parser> mParser;
@@ -103,6 +106,10 @@ private:
     qint64 mPrevTimestamp = 0;
     double mAverageDuration1Ms = 1;
     float mPosition = 0;
+
+    qint64 mBytesSendByPeriod = 0;
+    std::chrono::steady_clock::time_point mStartPeriod;
+    double mBitrate = 0;
 
     TOP mTypeOfPCap = ETHERNET_FRAME;
 
@@ -135,6 +142,7 @@ private:
     bool openFile();
 
     void loadToRam();
+    void calcBitrate();
 
 };
 
