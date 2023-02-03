@@ -5,9 +5,9 @@ project(AnalyzePcapUdp VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(AUTOMOC ON)
-set(AUTORCC ON)
-set(AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
 
 if(WIN32)
     find_package(Qt6 COMPONENTS Widgets Network)
@@ -38,17 +38,17 @@ set(SRC
     pcapngparser.cpp
     pcapparser.h
     pcapparser.cpp
+    nodesource.h nodesource.cpp
+    CommonNodeTypes.h
+    CommonNodeTypes.cpp
+    registrydatamodel.h registrydatamodel.cpp
+    mainwindow.h pcapfile.h
+    nodeinfopackets.h nodeinfopackets.cpp
+    nodeudpsender.h nodeudpsender.cpp
+    nodefilter.h nodefilter.cpp
+    CommonTypes.h
     assets.qrc
     )
-
-if (NOT Qt6_FOUND)
-    qt5_wrap_cpp(SRC mainwindow.h pcapfile.h)
-    qt5_wrap_ui(SRC mainwindow.ui)
-else()
-    qt6_wrap_cpp(SRC mainwindow.h pcapfile.h)
-    qt6_wrap_ui(SRC mainwindow.ui)
-endif()
-
 
 if(WIN32)
     add_definitions(
@@ -87,10 +87,12 @@ add_executable(AnalyzePcapUdp WIN32 ${SRC} resource.rc)
 if (NOT Qt6_FOUND)
     target_link_libraries(AnalyzePcapUdp PRIVATE
         Qt5::Core Qt5::Network Qt5::Widgets
+        QtNodes
         ${LIBS} libpcapng)
 else()
     target_link_libraries(AnalyzePcapUdp PRIVATE
         Qt::Core Qt::Network Qt::Widgets
+        QtNodes
         ${LIBS} libpcapng)
 endif()
 

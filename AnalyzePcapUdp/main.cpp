@@ -7,9 +7,10 @@
 #include <chrono>
 #include <thread>
 
+#include "mainwindow.h"
+
 #include "pcapfile.h"
 
-#include "mainwindow.h"
 
 int main(int argc, char *argv[])
 {

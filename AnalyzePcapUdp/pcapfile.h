@@ -10,6 +10,7 @@
 #include <QMap>
 #include <deque>
 
+#include "CommonTypes.h"
 #include "parserfactory.h"
 
 struct Filter{
@@ -68,11 +69,15 @@ public:
 
     void setRepeat(bool b);
 
+    bool isOpen() const;
+
 	bool isPause() const;
 
-	void setFilter(const QMap<ushort, Filter>& filters);
+    //void setFilter(const QMap<ushort, Filter>& filters);
 
     void setTimeout(double val);
+
+    void setUseTimeout(bool val);
 
     size_t packetsCount() const { return mNum; }
 
@@ -94,7 +99,10 @@ public:
 
     double bitrate() const { return mBitrate; }
 
+    void setPacketDataFun(const PacketDataFun& fun){ mPacketDataFun = fun; }
+
 signals:
+    void sendPacket(PacketData);
     void sendPacketString(quint64 num, quint64 timestamp, uint id, uint size, QString);
     void sendStatus(QString);
 
@@ -106,6 +114,7 @@ private:
     qint64 mPrevTimestamp = 0;
     double mAverageDuration1Ms = 1;
     float mPosition = 0;
+    PacketDataFun mPacketDataFun;
 
     qint64 mBytesSendByPeriod = 0;
     std::chrono::steady_clock::time_point mStartPeriod;
@@ -119,7 +128,7 @@ private:
 
 	bool mDone = false;
 	QScopedPointer<QThread> mThread;
-	QMap<ushort, Filter> mFilters;
+    //QMap<ushort, Filter> mFilters;
 
 	QMap<int, IPF> mFragments;
 
@@ -136,6 +145,7 @@ private:
     int64_t mPacketIndex = 0;
 
     double mTimeout = 32;
+    bool mUseTimeout = false;
 
     int sendToPort(const QByteArray &buffer, const Filter &flt, quint64 deltatime);
 	void internalStart();
