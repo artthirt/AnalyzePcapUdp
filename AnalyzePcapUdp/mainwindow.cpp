@@ -85,9 +85,14 @@ MainWindow::MainWindow(QWidget *parent) :
         }
     });
 
-    QTimer::singleShot(0, this, [this](){
-        loadSettings();
-    });
+    loadSettings();
+
+    for(auto it: mModel->allNodeIds()){
+        auto node = mModel->delegateModel<AncestorNode>(it);
+        if(node){
+            qDebug("node id: %d, type %s", node->id(), node->name().toUtf8().data());
+        }
+    }
 }
 
 MainWindow::~MainWindow()

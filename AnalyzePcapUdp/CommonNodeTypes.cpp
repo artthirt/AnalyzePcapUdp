@@ -22,3 +22,12 @@ QJsonObject loadJsonFromString(const QString &name)
 {
     return QJsonDocument::fromJson(name.toUtf8()).object();
 }
+
+//////////////////////////////////////
+
+uint64_t gId = 0;
+
+AncestorNode::AncestorNode()
+{
+    mId = gId++;
+}

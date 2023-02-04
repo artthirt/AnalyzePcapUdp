@@ -7,7 +7,7 @@
 #include "CommonNodeTypes.h"
 #include "qlineedit.h"
 
-class NodeInfoPackets: public QtNodes::NodeDelegateModel
+class NodeInfoPackets: public AncestorNode
 {
     Q_OBJECT
 public:
@@ -29,12 +29,17 @@ signals:
     void sendPacket(const PacketData&);
 
 private:
-    QString mName = "Output1";
+    QString mName;
     std::shared_ptr<QLineEdit> mNameEdit;
     std::shared_ptr<PacketDataNode> mData;
 
     std::list<PacketData> mPackets;
 
+
+    // Serializable interface
+public:
+    QJsonObject save() const;
+    void load(const QJsonObject &o);
 };
 
 #endif // NODEINFOPACKETS_H

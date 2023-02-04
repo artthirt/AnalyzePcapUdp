@@ -4,45 +4,51 @@
 #include "qlineedit.h"
 #include "qspinbox.h"
 
-NodeFilter::NodeFilter()
+NodeFilterDestination::NodeFilterDestination()
 {
-
+    mRes.reset(new PacketDataNode);
 }
 
-
-QString NodeFilter::caption() const
+QString NodeFilterDestination::caption() const
 {
-    return "Address Filter";
+    return "Address Destination Filter";
 }
 
-QString NodeFilter::name() const
+QString NodeFilterDestination::name() const
 {
-    return "Address Filter";
+    return "Address Destination Filter";
 }
 
-unsigned int NodeFilter::nPorts(QtNodes::PortType portType) const
+unsigned int NodeFilterDestination::nPorts(QtNodes::PortType portType) const
 {
     return 1;
 }
 
-QtNodes::NodeDataType NodeFilter::dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
+QtNodes::NodeDataType NodeFilterDestination::dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
 {
     return ByteArrayType;
 }
 
-void NodeFilter::setInData(std::shared_ptr<QtNodes::NodeData> nodeData, const QtNodes::PortIndex portIndex)
+void NodeFilterDestination::setInData(std::shared_ptr<QtNodes::NodeData> nodeData, const QtNodes::PortIndex portIndex)
 {
     auto Data = std::dynamic_pointer_cast<PacketDataNode>(nodeData);
+    if(mData){
+        mData->datafun -= id();
+    }
     mData = Data;
-    apply();
+    if(mData){
+        mData->datafun += SignalData(id(), [this](const PacketData& data){
+            compute(data);
+        });
+    }
 }
 
-std::shared_ptr<QtNodes::NodeData> NodeFilter::outData(const QtNodes::PortIndex port)
+std::shared_ptr<QtNodes::NodeData> NodeFilterDestination::outData(const QtNodes::PortIndex port)
 {
     return mRes;
 }
 
-QWidget *NodeFilter::embeddedWidget()
+QWidget *NodeFilterDestination::embeddedWidget()
 {
     if(!mUi){
         QWidget* w = new QWidget();
@@ -71,17 +77,17 @@ QWidget *NodeFilter::embeddedWidget()
     return mUi.get();
 }
 
-void NodeFilter::apply()
+void NodeFilterDestination::compute(const PacketData &data)
 {
-    mRes.reset();
-    if(!mData){
+    bool condition = (data.dstip == mIpSource && data.dstport == mPortSource)
+            || (mIpSource.isNull() && data.dstport == mPortSource);
+    if(!condition){
         return;
     }
-    mRes.reset(new PacketDataNode);
+    (*mRes)(data);
 }
 
-
-QJsonObject NodeFilter::save() const
+QJsonObject NodeFilterDestination::save() const
 {
     QJsonObject o =QtNodes::NodeDelegateModel::save();
     o["ip"] = mIpSource.toString();
@@ -89,9 +95,34 @@ QJsonObject NodeFilter::save() const
     return o;
 }
 
-void NodeFilter::load(const QJsonObject &o)
+void NodeFilterDestination::load(const QJsonObject &o)
 {
     QtNodes::NodeDelegateModel::load(o);
     mIpSource = QHostAddress(o["ip"].toString());
     mPortSource = o["port"].toInt(2000);
+}
+
+/////////////////////////////////////
+
+QString NodeFilterSource::caption() const
+{
+    return "Address Source Filter";
+}
+
+QString NodeFilterSource::name() const
+{
+    return "Address Source Filter";
+}
+
+void NodeFilterSource::compute(const PacketData &data)
+{
+    bool condition = (data.srcip == mIpSource && data.srcport == mPortSource)
+            || (mIpSource.isNull() && data.srcport == mPortSource);
+    if(!condition){
+        return;
+    }
+    if(!mRes){
+        mRes.reset(new PacketDataNode);
+    }
+    (*mRes)(data);
 }

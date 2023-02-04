@@ -12,7 +12,6 @@
 using namespace QtNodes;
 
 NodeSource::NodeSource()
-    : QtNodes::NodeDelegateModel()
 {
     mData.reset(new PacketDataNode);
 }
@@ -141,14 +140,15 @@ void NodeSource::setFile(const QString &fn)
     mPcap->openFile(fn);
 
     mPcap->setPacketDataFun([this](const PacketData& data){
-
+        if(mData){
+            (*mData)(data);
+        }
     });
 
     QFileInfo fi(fn);
     if(mOutLb){
         mOutLb->setText(fi.completeBaseName());
     }
-
 }
 
 QJsonObject NodeSource::save() const

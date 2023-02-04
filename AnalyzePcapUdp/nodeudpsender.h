@@ -5,7 +5,7 @@
 
 #include <QUdpSocket>
 
-class NodeUdpSender: public QtNodes::NodeDelegateModel
+class NodeUdpSender: public AncestorNode
 {
     Q_OBJECT
 public:

@@ -9,7 +9,7 @@
 
 class QLabel;
 
-class NodeSource: public QtNodes::NodeDelegateModel
+class NodeSource: public AncestorNode
 {
     Q_OBJECT
 public:

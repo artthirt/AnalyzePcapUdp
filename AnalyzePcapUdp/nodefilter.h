@@ -5,10 +5,10 @@
 
 #include <QHostAddress>
 
-class NodeFilter: public QtNodes::NodeDelegateModel
+class NodeFilterDestination: public AncestorNode
 {
 public:
-    NodeFilter();
+    NodeFilterDestination();
 
     // NodeDelegateModel interface
 public:
@@ -20,19 +20,30 @@ public:
     std::shared_ptr<QtNodes::NodeData> outData(const QtNodes::PortIndex port);
     QWidget *embeddedWidget();
 
-private:
+protected:
     std::shared_ptr<PacketDataNode> mData;
     std::shared_ptr<PacketDataNode> mRes;
     std::shared_ptr<QWidget> mUi;
     QHostAddress mIpSource;
     ushort mPortSource = 2000;
 
-    void apply();
+    virtual void compute(const PacketData& data);
 
     // Serializable interface
 public:
     QJsonObject save() const;
     void load(const QJsonObject &);
+};
+
+class NodeFilterSource: public NodeFilterDestination{
+    Q_OBJECT
+public:
+    QString caption() const;
+    QString name() const;
+
+protected:
+    virtual void compute(const PacketData& data);
+
 };
 
 #endif // NODEFILTER_H
