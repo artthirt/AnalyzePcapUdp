@@ -15,7 +15,7 @@ QtNodes::NodeDataType NodeInfoPackets::dataType(QtNodes::PortType portType, QtNo
 
 void NodeInfoPackets::setInData(std::shared_ptr<QtNodes::NodeData> nodeData, const QtNodes::PortIndex portIndex)
 {
-    auto Data = std::dynamic_pointer_cast<ByteArrayData>(nodeData);
+    auto Data = std::dynamic_pointer_cast<PacketDataNode>(nodeData);
     mData = Data;
 }
 

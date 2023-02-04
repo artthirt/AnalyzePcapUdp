@@ -21,10 +21,13 @@ public:
     QWidget *embeddedWidget();
 
 private:
-    std::shared_ptr<ByteArrayData> mData;
+    std::shared_ptr<PacketDataNode> mData;
+    std::shared_ptr<PacketDataNode> mRes;
     std::shared_ptr<QWidget> mUi;
     QHostAddress mIpSource;
     ushort mPortSource = 2000;
+
+    void apply();
 
     // Serializable interface
 public:

@@ -24,7 +24,9 @@ private:
     QUdpSocket mSock;
     QHostAddress mIp = QHostAddress::LocalHost;
     ushort mPort = 3000;
-    std::shared_ptr<ByteArrayData> mData;
+    std::shared_ptr<PacketDataNode> mData;
+
+    void apply();
 
     // Serializable interface
 public:

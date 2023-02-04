@@ -12,12 +12,12 @@ NodeFilter::NodeFilter()
 
 QString NodeFilter::caption() const
 {
-    return "Source Filter";
+    return "Address Filter";
 }
 
 QString NodeFilter::name() const
 {
-    return "Source Filter";
+    return "Address Filter";
 }
 
 unsigned int NodeFilter::nPorts(QtNodes::PortType portType) const
@@ -32,13 +32,14 @@ QtNodes::NodeDataType NodeFilter::dataType(QtNodes::PortType portType, QtNodes::
 
 void NodeFilter::setInData(std::shared_ptr<QtNodes::NodeData> nodeData, const QtNodes::PortIndex portIndex)
 {
-    auto Data = std::dynamic_pointer_cast<ByteArrayData>(nodeData);
+    auto Data = std::dynamic_pointer_cast<PacketDataNode>(nodeData);
     mData = Data;
+    apply();
 }
 
 std::shared_ptr<QtNodes::NodeData> NodeFilter::outData(const QtNodes::PortIndex port)
 {
-    return mData;
+    return mRes;
 }
 
 QWidget *NodeFilter::embeddedWidget()
@@ -70,10 +71,19 @@ QWidget *NodeFilter::embeddedWidget()
     return mUi.get();
 }
 
+void NodeFilter::apply()
+{
+    mRes.reset();
+    if(!mData){
+        return;
+    }
+    mRes.reset(new PacketDataNode);
+}
+
 
 QJsonObject NodeFilter::save() const
 {
-    QJsonObject o;
+    QJsonObject o =QtNodes::NodeDelegateModel::save();
     o["ip"] = mIpSource.toString();
     o["port"] = mPortSource;
     return o;
@@ -81,6 +91,7 @@ QJsonObject NodeFilter::save() const
 
 void NodeFilter::load(const QJsonObject &o)
 {
+    QtNodes::NodeDelegateModel::load(o);
     mIpSource = QHostAddress(o["ip"].toString());
     mPortSource = o["port"].toInt(2000);
 }

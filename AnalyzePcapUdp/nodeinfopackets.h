@@ -25,10 +25,15 @@ public:
 
     QString nameEdit() const { return mName; }
 
+signals:
+    void sendPacket(const PacketData&);
+
 private:
     QString mName = "Output1";
     std::shared_ptr<QLineEdit> mNameEdit;
-    std::shared_ptr<ByteArrayData> mData;
+    std::shared_ptr<PacketDataNode> mData;
+
+    std::list<PacketData> mPackets;
 
 };
 

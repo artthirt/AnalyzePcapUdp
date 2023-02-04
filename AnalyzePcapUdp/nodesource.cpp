@@ -12,8 +12,9 @@
 using namespace QtNodes;
 
 NodeSource::NodeSource()
+    : QtNodes::NodeDelegateModel()
 {
-    mData.reset(new ByteArrayData);
+    mData.reset(new PacketDataNode);
 }
 
 
@@ -81,11 +82,12 @@ QWidget *NodeSource::embeddedWidget()
     hl->addWidget(pbPlay);
     hl->addWidget(pbPause);
     hl->addWidget(pbStop);
-    hl->addWidget(slider);
 
+    vb->addLayout(hl2);
     vb->addWidget(pbO);
     vb->addWidget(lbO);
     vb->addLayout(hl);
+    vb->addWidget(slider);
 
     w->setLayout(vb);
 
@@ -151,7 +153,7 @@ void NodeSource::setFile(const QString &fn)
 
 QJsonObject NodeSource::save() const
 {
-    QJsonObject obj;
+    auto obj = QtNodes::NodeDelegateModel::save();
     obj["file"] = mFileName;
     obj["timeout"] = mTimeout;
     return obj;
@@ -159,6 +161,7 @@ QJsonObject NodeSource::save() const
 
 void NodeSource::load(const QJsonObject &obj)
 {
+    QtNodes::NodeDelegateModel::load(obj);
     mTimeout = obj["timeout"].toInt(32);
     mFileName = obj["file"].toString();
 }

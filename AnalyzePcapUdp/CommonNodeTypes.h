@@ -5,16 +5,21 @@
 #include <QtNodes/NodeDelegateModel>
 #include <QtNodes/NodeDelegateModelRegistry>
 
-const QtNodes::NodeDataType ByteArrayType = {"ByteArray", "ByteArray"};
+#include "CommonTypes.h"
 
-class ByteArrayData: public QtNodes::NodeData{
+const QtNodes::NodeDataType ByteArrayType = {"Packet", "Packet"};
+
+class PacketDataNode: public QtNodes::NodeData{
 public:
-   QByteArray Data;
     // NodeData interface
 public:
     QtNodes::NodeDataType type() const {
         return ByteArrayType;
     }
 };
+
+void saveJsonToFile(const QString& name, const QJsonObject& json);
+QJsonObject loadJsonFromFile(const QString& name);
+QJsonObject loadJsonFromString(const QString& name);
 
 #endif // COMMONNODETYPES_H

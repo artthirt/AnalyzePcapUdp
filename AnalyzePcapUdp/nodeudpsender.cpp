@@ -36,8 +36,9 @@ QtNodes::NodeDataType NodeUdpSender::dataType(QtNodes::PortType portType, QtNode
 
 void NodeUdpSender::setInData(std::shared_ptr<QtNodes::NodeData> nodeData, const QtNodes::PortIndex portIndex)
 {
-    auto Data = std::dynamic_pointer_cast<ByteArrayData>(nodeData);
+    auto Data = std::dynamic_pointer_cast<PacketDataNode>(nodeData);
     mData = Data;
+    apply();
 }
 
 std::shared_ptr<QtNodes::NodeData> NodeUdpSender::outData(const QtNodes::PortIndex port)
@@ -74,10 +75,17 @@ QWidget *NodeUdpSender::embeddedWidget()
     return mUi.get();
 }
 
+void NodeUdpSender::apply()
+{
+    if(!mData){
+        return;
+    }
+
+}
 
 QJsonObject NodeUdpSender::save() const
 {
-    QJsonObject o;
+    auto o = QtNodes::NodeDelegateModel::save();
     o["ip"] = mIp.toString();
     o["port"] = mPort;
     return o;
@@ -85,6 +93,7 @@ QJsonObject NodeUdpSender::save() const
 
 void NodeUdpSender::load(const QJsonObject &o)
 {
+    QtNodes::NodeDelegateModel::load(o);
     mIp = QHostAddress(o["ip"].toString());
     mPort = o["port"].toInt(2000);
 }

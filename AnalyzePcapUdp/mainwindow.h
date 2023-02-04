@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "nodeinfopackets.h"
 #include <QMainWindow>
 #include <QDateTime>
 #include <QScopedPointer>
@@ -62,6 +63,7 @@ public:
 	~MainWindow();
 
 private slots:
+    void onUpdatePackets(const PacketData& data);
 
 private:
 	Ui::MainWindow *ui;
@@ -69,6 +71,8 @@ private:
     std::shared_ptr<QtNodes::DataFlowGraphModel> mModel;
     QtNodes::DataFlowGraphicsScene *mScene;
     QtNodes::GraphicsView *mView;
+    NodeInfoPackets* mCurrentInfo = nullptr;
+    QStandardItemModel mInfoModel;
 
 	void loadSettings();
 	void saveSettings();

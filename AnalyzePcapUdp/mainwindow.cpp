@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "CommonTypes.h"
+#include "nodefilter.h"
 #include "nodeinfopackets.h"
 #include "ui_mainwindow.h"
 
@@ -14,8 +15,11 @@
 #include <QCheckBox>
 
 #include "registrydatamodel.h"
+#include "CommonNodeTypes.h"
 
 using namespace QtNodes;
+
+const QString defaultModel = "{\"connections\":[{\"inPortIndex\":0,\"intNodeId\":2,\"outNodeId\":0,\"outPortIndex\":0},{\"inPortIndex\":0,\"intNodeId\":1,\"outNodeId\":0,\"outPortIndex\":0}],\"nodes\":[{\"id\":0,\"internal-data\":{\"file\":\"\",\"model-name\":\"Source File\",\"timeout\":32},\"position\":{\"x\":-504,\"y\":-126}},{\"id\":1,\"internal-data\":{\"model-name\":\"Info\"},\"position\":{\"x\":7,\"y\":50}},{\"id\":2,\"internal-data\":{\"ip\":\"127.0.0.1\",\"model-name\":\"UDP Sender\",\"port\":2001},\"position\":{\"x\":46,\"y\":-133}}]}";
 
 /////////////////////////////////
 
@@ -50,14 +54,40 @@ MainWindow::MainWindow(QWidget *parent) :
     mView = new QtNodes::GraphicsView(mScene);
     ui->verticalLayout->addWidget(mView);
 
-    connect(mModel.get(), &QtNodes::DataFlowGraphModel::nodeCreated, this, [this](QtNodes::NodeId nodeId){
+    ui->lvOutput->setModel(&mInfoModel);
+
+    connect(mModel.get(), &DataFlowGraphModel::nodeCreated, this, [this](NodeId nodeId){
         auto val = mModel->nodeData(nodeId, NodeRole::Type);
         if(val.toString() == NodeInfoPackets().name()){
 
         }
     });
 
-	loadSettings();
+    connect(mModel.get(), &DataFlowGraphModel::nodeDeleted, this, [this](NodeId nodeId){
+        auto node = mModel->delegateModel<NodeInfoPackets>(nodeId);
+        if(mCurrentInfo == node){
+            mCurrentInfo->disconnect(SIGNAL(sendPacket(PacketData)));
+            mCurrentInfo = nullptr;
+            mInfoModel.clear();
+        }
+
+    });
+
+    connect(mScene, &DataFlowGraphicsScene::nodeSelected, this, [this](NodeId nodeId){
+        auto type = mModel->nodeData(nodeId, NodeRole::Type).toString();
+        if(type == NodeInfoPackets().name()){
+            auto node = mModel->delegateModel<NodeInfoPackets>(nodeId);
+            if(node == mCurrentInfo){
+                mInfoModel.clear();
+            }
+            mCurrentInfo = node;
+            QObject::connect(mCurrentInfo, &NodeInfoPackets::sendPacket, this, &MainWindow::onUpdatePackets);
+        }
+    });
+
+    QTimer::singleShot(0, this, [this](){
+        loadSettings();
+    });
 }
 
 MainWindow::~MainWindow()
@@ -67,14 +97,25 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::loadSettings()
+void MainWindow::onUpdatePackets(const PacketData &data)
 {
 
 }
 
+void MainWindow::loadSettings()
+{
+    auto model = loadJsonFromFile("model.json");
+    if(!model.isEmpty()){
+        mModel->load(model);
+    }else{
+        mModel->load(loadJsonFromString(defaultModel));
+    }
+}
+
 void MainWindow::saveSettings()
 {
-
+    auto model = mModel->save();
+    saveJsonToFile("model.json", model);
 }
 
 

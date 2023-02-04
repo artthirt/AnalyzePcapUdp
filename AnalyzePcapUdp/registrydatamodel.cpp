@@ -18,9 +18,9 @@ std::shared_ptr<QtNodes::NodeDelegateModelRegistry> RegistryDataModel::getRegist
 RegistryDataModel::RegistryDataModel()
 {
     mRegistryModels.reset(new QtNodes::NodeDelegateModelRegistry());
-    mRegistryModels->registerModel<NodeSource>("NodeSource");
-    mRegistryModels->registerModel<NodeInfoPackets>("NodeSource");
-    mRegistryModels->registerModel<NodeFilter>("NodeFilter");
-    mRegistryModels->registerModel<NodeUdpSender>("NodeUdpSender");
+    mRegistryModels->registerModel<NodeSource>("1. Input");
+    mRegistryModels->registerModel<NodeInfoPackets>("2. Output");
+    mRegistryModels->registerModel<NodeFilter>("3. Filters");
+    mRegistryModels->registerModel<NodeUdpSender>("2. Output");
 }
 
