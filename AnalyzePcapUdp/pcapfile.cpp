@@ -527,7 +527,7 @@ int PCapFile::getpacket(const Pkt& pkt)
 			mFragments[ID].add(off, ba);
         }else if(DF){
 			buffer = ba.remove(0, 8);
-            PacketData pd = {buffer, ih->saddr.ip, mSrcPort, ih->daddr.ip, mDstPort};
+            PacketData pd = {mNum, mFragments[ID].timestamp, buffer, ih->saddr.ip, mSrcPort, ih->daddr.ip, mDstPort};
             if(mPacketDataFun){
                 mPacketDataFun(pd);
             }
@@ -546,7 +546,7 @@ int PCapFile::getpacket(const Pkt& pkt)
 
 			buffer = mFragments[ID].buffer.remove(0, 8);
 
-            PacketData pd = {buffer, ih->saddr.ip, mSrcPort, ih->daddr.ip, mDstPort};
+            PacketData pd = {mNum, mFragments[ID].timestamp, buffer, ih->saddr.ip, mSrcPort, ih->daddr.ip, mDstPort};
             if(mPacketDataFun){
                 mPacketDataFun(pd);
             }

@@ -21,6 +21,42 @@ using namespace QtNodes;
 
 const QString defaultModel = "{\"connections\":[{\"inPortIndex\":0,\"intNodeId\":2,\"outNodeId\":0,\"outPortIndex\":0},{\"inPortIndex\":0,\"intNodeId\":1,\"outNodeId\":0,\"outPortIndex\":0}],\"nodes\":[{\"id\":0,\"internal-data\":{\"file\":\"\",\"model-name\":\"Source File\",\"timeout\":32},\"position\":{\"x\":-504,\"y\":-126}},{\"id\":1,\"internal-data\":{\"model-name\":\"Info\"},\"position\":{\"x\":7,\"y\":50}},{\"id\":2,\"internal-data\":{\"ip\":\"127.0.0.1\",\"model-name\":\"UDP Sender\",\"port\":2001},\"position\":{\"x\":46,\"y\":-133}}]}";
 
+/**
+void MainWindow::onTimeout()
+{
+    int id = 0;
+    if(ui->chbShowPackets->isChecked()){
+        while(!mPackets.empty() && id++ < 10000){
+            mModel.appendRow(mPackets.front().get());
+            mPackets.pop_front();
+        }
+        if(mUseScroll){
+            ui->lvOutput->scrollToBottom();
+        }
+    }else{
+
+    }
+
+    if(mPCap){
+        mLabStatus1->setText("Packets left " +QString::number(mPCap->packetsCount()));
+
+        float pos = mPCap->position();
+
+        mLabStatus3->setText(QString("Bitrate %1 Kb/s").arg(mPCap->bitrate() / 1000, 0, 'f', 2));
+
+        ui->hsFilePosition->setValue(pos * ui->hsFilePosition->maximum());
+    }
+
+    QString out;
+    for(int i = 0; i < mNetworker->sizeWorkers(); ++i){
+        auto p = mNetworker->worker(i);
+        out += QString("Destination Port:\t%1\n").arg(p->bindingPort());
+        out += QString("  Received bytes:\t%1\n").arg(getSize(p->receivedSize()));
+        out += QString("  Sended bytes:\t%1\n\n").arg(getSize(p->sendedSize()));
+    }
+    ui->lbNetOut->setText(out);
+}
+*/
 /////////////////////////////////
 
 QString getSize(qint64 size)
@@ -53,6 +89,8 @@ MainWindow::MainWindow(QWidget *parent) :
     mScene = new QtNodes::DataFlowGraphicsScene(*mModel);
     mView = new QtNodes::GraphicsView(mScene);
     ui->verticalLayout->addWidget(mView);
+
+    mInfoModel.setHorizontalHeaderLabels(QStringList() << "num" << "timestamp" << "id" << "size" << "data");
 
     ui->lvOutput->setModel(&mInfoModel);
 
@@ -104,6 +142,19 @@ MainWindow::~MainWindow()
 
 void MainWindow::onUpdatePackets(const PacketData &data)
 {
+    auto get = [](const PacketData &data){
+        QList<QStandardItem*> ret;
+        ret.push_back(new QStandardItem(QString::number(data.ID)));
+        QDateTime t = QDateTime::fromMSecsSinceEpoch(data.timestamp);
+        ret.push_back(new QStandardItem(QString::number(1. * data.timestamp / 1e+3, 'f', 3)
+                                        + QString(" (%1").arg(t.toString("yyyy-MM-dd hh:mm:ss:zzz"))));
+        ret.push_back(new QStandardItem("ID " + QString::number(data.ID)));
+        ret.push_back(new QStandardItem(QString::number(data.data.size())));
+        ret.push_back(new QStandardItem(data.string()));
+        return ret;
+    };
+    auto items = get(data);
+    mInfoModel.appendRow(items);
 
 }
 

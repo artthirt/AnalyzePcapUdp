@@ -21,6 +21,7 @@ RegistryDataModel::RegistryDataModel()
     mRegistryModels->registerModel<NodeSource>("1. Input");
     mRegistryModels->registerModel<NodeInfoPackets>("2. Output");
     mRegistryModels->registerModel<NodeFilterDestination>("3. Filters");
+    mRegistryModels->registerModel<NodeFilterSource>("3. Filters");
     mRegistryModels->registerModel<NodeUdpSender>("2. Output");
 }
 
