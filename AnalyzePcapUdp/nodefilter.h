@@ -2,10 +2,11 @@
 #define NODEFILTER_H
 
 #include "CommonNodeTypes.h"
+#include "nodebasefilter.h"
 
 #include <QHostAddress>
 
-class NodeFilterDestination: public AncestorNode
+class NodeFilterDestination: public NodeBaseFilter
 {
 public:
     NodeFilterDestination();
@@ -14,15 +15,9 @@ public:
 public:
     QString caption() const;
     QString name() const;
-    unsigned int nPorts(QtNodes::PortType portType) const;
-    QtNodes::NodeDataType dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const;
-    void setInData(std::shared_ptr<QtNodes::NodeData> nodeData, const QtNodes::PortIndex portIndex);
-    std::shared_ptr<QtNodes::NodeData> outData(const QtNodes::PortIndex port);
     QWidget *embeddedWidget();
 
 protected:
-    std::shared_ptr<PacketDataNode> mData;
-    std::shared_ptr<PacketDataNode> mRes;
     std::shared_ptr<QWidget> mUi;
     QHostAddress mIpSource;
     ushort mPortSource = 2000;

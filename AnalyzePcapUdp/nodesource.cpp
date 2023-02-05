@@ -16,6 +16,13 @@ NodeSource::NodeSource()
     mData.reset(new PacketDataNode);
 }
 
+NodeSource::~NodeSource()
+{
+    if(mPcap){
+        mPcap->stop();
+        mPcap.reset();
+    }
+}
 
 QString NodeSource::caption() const
 {
@@ -106,6 +113,7 @@ QWidget *NodeSource::embeddedWidget()
     });
     QObject::connect(pbPlay, &QPushButton::clicked, this, [this](){
         if(mPcap && mPcap->isOpen()){
+            mPcap->setTimeout(mTimeout);
             mPcap->start();
             mTimer.start(100);
         }
@@ -128,7 +136,7 @@ QWidget *NodeSource::embeddedWidget()
             float pos = mPcap->position() * 100;
             slider->setValue(pos);
         }
-    });
+    }, Qt::QueuedConnection);
 
     return mUi.get();
 }
@@ -164,4 +172,8 @@ void NodeSource::load(const QJsonObject &obj)
     QtNodes::NodeDelegateModel::load(obj);
     mTimeout = obj["timeout"].toInt(32);
     mFileName = obj["file"].toString();
+
+    if(!mFileName.isEmpty()){
+        setFile(mFileName);
+    }
 }

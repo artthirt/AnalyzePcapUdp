@@ -1,4 +1,7 @@
 #include "nodeinfopackets.h"
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
 
 using namespace QtNodes;
 
@@ -21,9 +24,13 @@ void NodeInfoPackets::setInData(std::shared_ptr<QtNodes::NodeData> nodeData, con
         mData->datafun -= id();
     }
     mData = Data;
+    mElapsed.restart();
     if(mData){
         mData->datafun += SignalData(id(), [this](const PacketData& data){
             Q_EMIT(sendPacket(data));
+            mNumPacks++;
+            mPickSize++;
+            mCommonSize += data.data.size();
         });
     }
 }
@@ -53,16 +60,52 @@ unsigned int NodeInfoPackets::nPorts(QtNodes::PortType portType) const
 
 QWidget *NodeInfoPackets::embeddedWidget()
 {
-    if(!mNameEdit){
-        mNameEdit.reset(new QLineEdit());
+    if(!mUi){
+        mUi.reset(new QWidget());
+        auto w = mUi.get();
+
+        auto vl = new QVBoxLayout(w);
+
+        auto ed = new QLineEdit(w);
+        auto lb = new QLabel(updateStats(), w);
+
+        mLb = lb;
+
+        vl->addWidget(ed);
+        vl->addWidget(lb);
+        w->setLayout(vl);
+
         if(mName.isEmpty())
             mName = QString("Output %1").arg(NodeInfoCounter++);
-        QObject::connect(mNameEdit.get(), &QLineEdit::textChanged, this, [this](const QString &arg){
+        QObject::connect(ed, &QLineEdit::textChanged, this, [this](const QString &arg){
            mName = arg;
+           Q_EMIT(nameEditChanged());
         });
+        ed->setText(mName);
+
+        connect(&mTimer, &QTimer::timeout, this, [this](){
+            if(mLb){
+                mLb->setText(updateStats());
+            }
+        });
+        mTimer.start(400);
     }
-    mNameEdit->setText(mName);
-    return mNameEdit.get();
+    return mUi.get();
+}
+
+QString NodeInfoPackets::updateStats()
+{
+    if(mElapsed.elapsed() > 1000){
+        mBitrate = 1. * mPickSize / mElapsed.elapsed() * 1000 * 8;
+        mPickSize = 0;
+    }
+
+    QString res;
+
+    res += QString(" Packets Count %1\n").arg(mNumPacks);
+    res += QString(" Bitrate       %1 Kb/s").arg(double(mBitrate / 1000.), 0, 'f', 3);
+
+    return res;
 }
 
 QJsonObject NodeInfoPackets::save() const

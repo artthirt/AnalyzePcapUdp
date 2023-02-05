@@ -63,7 +63,10 @@ public:
 	~MainWindow();
 
 private slots:
-    void onUpdatePackets(const PacketData& data);
+    void onInfoClicked(const QModelIndex &index);
+    void onUpdatePackets(const PacketData &data);
+
+    void on_pbClear_clicked();
 
 private:
 	Ui::MainWindow *ui;
@@ -73,6 +76,10 @@ private:
     QtNodes::GraphicsView *mView;
     NodeInfoPackets* mCurrentInfo = nullptr;
     QStandardItemModel mInfoModel;
+    QMap<int, NodeInfoPackets*> mInfoOutputs;
+
+    void updateInfoOutput();
+    void changeInfoOutput(int64_t id);
 
 	void loadSettings();
 	void saveSettings();

@@ -19,43 +19,15 @@ QString NodeFilterDestination::name() const
     return "Address Destination Filter";
 }
 
-unsigned int NodeFilterDestination::nPorts(QtNodes::PortType portType) const
-{
-    return 1;
-}
-
-QtNodes::NodeDataType NodeFilterDestination::dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
-{
-    return ByteArrayType;
-}
-
-void NodeFilterDestination::setInData(std::shared_ptr<QtNodes::NodeData> nodeData, const QtNodes::PortIndex portIndex)
-{
-    auto Data = std::dynamic_pointer_cast<PacketDataNode>(nodeData);
-    if(mData){
-        mData->datafun -= id();
-    }
-    mData = Data;
-    if(mData){
-        mData->datafun += SignalData(id(), [this](const PacketData& data){
-            compute(data);
-        });
-    }
-}
-
-std::shared_ptr<QtNodes::NodeData> NodeFilterDestination::outData(const QtNodes::PortIndex port)
-{
-    return mRes;
-}
-
 QWidget *NodeFilterDestination::embeddedWidget()
 {
     if(!mUi){
         QWidget* w = new QWidget();
         QGridLayout *g = new QGridLayout(w);
-        QLabel *sip = new QLabel("Ip Source", w);
-        QLabel *spr = new QLabel("Port Source", w);
+        QLabel *sip = new QLabel("Ip  ", w);
+        QLabel *spr = new QLabel("Port", w);
         QLineEdit* ip = new QLineEdit(w);
+        ip->setPlaceholderText("IP or Empty if not used");
         ip->setText(mIpSource.toString());
         QSpinBox*  pr = new QSpinBox(w);
         pr->setMaximum(65535);
@@ -66,7 +38,11 @@ QWidget *NodeFilterDestination::embeddedWidget()
         g->addWidget(pr, 1, 1);
 
         QObject::connect(ip, &QLineEdit::textChanged, this, [this](QString text){
-           mIpSource = QHostAddress(text);
+            if(text.isEmpty()){
+                mIpSource = QHostAddress();
+            }else{
+                mIpSource = QHostAddress(text);
+            }
         });
         QObject::connect(pr, qOverload<int>(&QSpinBox::valueChanged), this, [this](int val){
             mPortSource = val;

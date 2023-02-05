@@ -14,6 +14,7 @@ class NodeSource: public AncestorNode
     Q_OBJECT
 public:
     NodeSource();
+    ~NodeSource();
 
     // NodeDelegateModel interface
 public:

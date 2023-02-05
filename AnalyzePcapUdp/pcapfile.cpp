@@ -248,6 +248,7 @@ bool PCapFile::isPause() const
 void PCapFile::setTimeout(double val)
 {
     mTimeout = val;
+    mUseTimeout = val > 0;
 }
 
 void PCapFile::setUseTimeout(bool val)
@@ -273,7 +274,7 @@ void PCapFile::internalStart()
     int res = 0;
     int group_pkts = 1;
 
-    mNum = 0;
+    mNum = 1;
     int DelayMs = 1;
     double timeout = mTimeout;
     getTimeVals(mAverageDuration1Ms, mTimeout, DelayMs, group_pkts);

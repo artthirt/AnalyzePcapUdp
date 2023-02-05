@@ -109,7 +109,7 @@ signals:
 private:
     QSharedPointer<Parser> mParser;
     QString mFileName;
-    quint64 mNum = 0;
+    quint64 mNum = 1;
     qint64 mBeginTimestamp = 0;
     qint64 mPrevTimestamp = 0;
     double mAverageDuration1Ms = 1;

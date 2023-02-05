@@ -7,6 +7,11 @@
 
 #include <functional>
 
+inline unsigned int Endian_DWord_Conversion(unsigned int dword)
+{
+   return ((dword>>24)&0x000000FF) | ((dword>>8)&0x0000FF00) | ((dword<<8)&0x00FF0000) | ((dword<<24)&0xFF000000);
+}
+
 struct PacketData{
     uint64_t ID = 0;
     int64_t timestamp = 0;
@@ -21,8 +26,8 @@ struct PacketData{
         this->ID = ID;
         this->timestamp = timestamp;
         this->data = data;
-        this->srcip = QHostAddress(srcip);
-        this->dstip = QHostAddress(dstip);
+        this->srcip = QHostAddress(Endian_DWord_Conversion(srcip));
+        this->dstip = QHostAddress(Endian_DWord_Conversion(dstip));
         this->srcport = srcport;
         this->dstport = dstport;
     }

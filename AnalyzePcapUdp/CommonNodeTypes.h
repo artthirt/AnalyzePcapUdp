@@ -54,6 +54,7 @@ public:
 class AncestorNode: public QtNodes::NodeDelegateModel{
 public:
     AncestorNode();
+    virtual ~AncestorNode(){}
 
     uint64_t id() const { return mId; }
 

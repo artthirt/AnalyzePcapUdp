@@ -45,6 +45,7 @@ set(SRC
     mainwindow.h pcapfile.h
     nodeinfopackets.h nodeinfopackets.cpp
     nodeudpsender.h nodeudpsender.cpp
+    nodebasefilter.h nodebasefilter.cpp
     nodefilter.h nodefilter.cpp
     CommonTypes.h
     assets.qrc

@@ -5,7 +5,10 @@
 #include <QTimer>
 
 #include "CommonNodeTypes.h"
-#include "qlineedit.h"
+#include <QTimer>
+#include <QElapsedTimer>
+
+class QLabel;
 
 class NodeInfoPackets: public AncestorNode
 {
@@ -27,14 +30,22 @@ public:
 
 signals:
     void sendPacket(const PacketData&);
+    void nameEditChanged();
 
 private:
     QString mName;
-    std::shared_ptr<QLineEdit> mNameEdit;
+    std::shared_ptr<QWidget> mUi;
     std::shared_ptr<PacketDataNode> mData;
+    QTimer mTimer;
+    QElapsedTimer mElapsed;
+    QLabel* mLb = nullptr;
 
-    std::list<PacketData> mPackets;
+    uint64_t mNumPacks = 0;
+    uint64_t mCommonSize = 0;
+    uint64_t mPickSize = 0;
+    double mBitrate = 0;
 
+    QString updateStats();
 
     // Serializable interface
 public:
