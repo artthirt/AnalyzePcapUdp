@@ -12,11 +12,11 @@ set(CMAKE_AUTOUIC ON)
 if(WIN32)
     find_package(Qt6 COMPONENTS Widgets Network)
     if (NOT Qt6_FOUND)
-        find_package(Qt5 5.15 COMPONENTS Core Widgets Network REQUIRED)
+        find_package(Qt5 COMPONENTS Core Widgets Network REQUIRED)
     endif()
 else()
-    find_package(Qt5 5 COMPONENTS Core Widgets Network REQUIRED)
-    set(Qt6_FOUND OFF)
+    find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
+    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets Network REQUIRED)
 endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -91,7 +91,7 @@ if (NOT Qt6_FOUND)
         ${LIBS} libpcapng)
 else()
     target_link_libraries(AnalyzePcapUdp PRIVATE
-        Qt::Core Qt::Network Qt::Widgets
+        Qt6::Core Qt6::Network Qt6::Widgets
         QtNodes
         ${LIBS} libpcapng)
 endif()
