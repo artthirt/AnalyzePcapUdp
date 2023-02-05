@@ -2,6 +2,9 @@
 #define NODEUDPSENDER_H
 
 #include "CommonNodeTypes.h"
+#include "qelapsedtimer.h"
+#include "qlabel.h"
+#include "qtimer.h"
 
 #include <QUdpSocket>
 
@@ -26,7 +29,16 @@ private:
     ushort mPort = 3000;
     std::shared_ptr<PacketDataNode> mData;
 
-    void apply();
+    QTimer mTimer;
+    QElapsedTimer mElapsed;
+    QLabel* mLb = nullptr;
+
+    uint64_t mNumPacks = 0;
+    uint64_t mCommonSize = 0;
+    uint64_t mPickSize = 0;
+    double mBitrate = 0;
+
+    QString updateStats();
 
     // Serializable interface
 public:

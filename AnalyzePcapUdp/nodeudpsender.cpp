@@ -37,8 +37,21 @@ QtNodes::NodeDataType NodeUdpSender::dataType(QtNodes::PortType portType, QtNode
 void NodeUdpSender::setInData(std::shared_ptr<QtNodes::NodeData> nodeData, const QtNodes::PortIndex portIndex)
 {
     auto Data = std::dynamic_pointer_cast<PacketDataNode>(nodeData);
+    if(mData){
+        mData->datafun -= id();
+    }
     mData = Data;
-    apply();
+    mElapsed.restart();
+    if(mData){
+        mData->datafun += SignalData(id(), [this](const PacketData& data){
+            if(!mIp.isNull()){
+                mSock.writeDatagram(data.data, mIp, mPort);
+                mNumPacks++;
+                mPickSize++;
+                mCommonSize += data.data.size();
+            }
+        });
+    }
 }
 
 std::shared_ptr<QtNodes::NodeData> NodeUdpSender::outData(const QtNodes::PortIndex port)
@@ -50,7 +63,7 @@ QWidget *NodeUdpSender::embeddedWidget()
 {
     if(!mUi){
         QWidget* w = new QWidget();
-        QGridLayout *g = new QGridLayout(w);
+        QGridLayout *g = new QGridLayout();
         QLabel *sip = new QLabel("Ip", w);
         QLabel *spr = new QLabel("Port", w);
         QLineEdit* ip = new QLineEdit(w);
@@ -62,6 +75,22 @@ QWidget *NodeUdpSender::embeddedWidget()
         g->addWidget(spr, 1, 0);
         g->addWidget(ip, 0, 1);
         g->addWidget(pr, 1, 1);
+
+        auto lb = new QLabel(updateStats(), w);
+        mLb = lb;
+
+        auto vl = new QVBoxLayout(w);
+        vl->addLayout(g);
+        vl->addWidget(lb);
+
+        w->setLayout(vl);
+
+        connect(&mTimer, &QTimer::timeout, this, [this](){
+            if(mLb){
+                mLb->setText(updateStats());
+            }
+        });
+        mTimer.start(400);
 
         QObject::connect(ip, &QLineEdit::textChanged, this, [this](QString text){
            mIp = QHostAddress(text);
@@ -75,12 +104,19 @@ QWidget *NodeUdpSender::embeddedWidget()
     return mUi.get();
 }
 
-void NodeUdpSender::apply()
+QString NodeUdpSender::updateStats()
 {
-    if(!mData){
-        return;
+    if(mElapsed.elapsed() > 1000){
+        mBitrate = 1. * mPickSize / mElapsed.elapsed() * 1000 * 8;
+        mPickSize = 0;
     }
 
+    QString res;
+
+    res += QString(" Packets Count %1\n").arg(mNumPacks);
+    res += QString(" Bitrate       %1 Kb/s").arg(double(mBitrate / 1000.), 0, 'f', 3);
+
+    return res;
 }
 
 QJsonObject NodeUdpSender::save() const

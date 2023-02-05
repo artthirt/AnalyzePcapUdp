@@ -205,6 +205,10 @@ QList<QStandardItem*> getList(const PacketData &data)
 
 void MainWindow::onUpdatePackets(const PacketData &data)
 {
+    if(data.dstip.isNull()){
+        mInfoModel.appendRow(new QStandardItem("-----"));
+        return;
+    }
     auto items = getList(data);
     mInfoModel.appendRow(items);
     if(ui->lvOutput->verticalScrollBar()->value() == ui->lvOutput->verticalScrollBar()->maximum()){

@@ -23,6 +23,11 @@ void NodeInfoPackets::setInData(std::shared_ptr<QtNodes::NodeData> nodeData, con
     if(mData){
         mData->datafun -= id();
     }
+
+    if(mNumPacks > 0){
+        Q_EMIT(sendPacket(PacketData()));
+    }
+
     mData = Data;
     mElapsed.restart();
     if(mData){
