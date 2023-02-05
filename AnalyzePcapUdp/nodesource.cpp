@@ -155,7 +155,7 @@ void NodeSource::setFile(const QString &fn)
 
     QFileInfo fi(fn);
     if(mOutLb){
-        mOutLb->setText(fi.completeBaseName());
+        mOutLb->setText(fi.fileName());
     }
 }
 
