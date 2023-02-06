@@ -9,6 +9,7 @@
 #include <QMap>
 #include <QSettings>
 #include <QScrollBar>
+#include <QFontDatabase>
 
 #include <QLineEdit>
 #include <QLabel>
