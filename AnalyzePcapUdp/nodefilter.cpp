@@ -11,7 +11,7 @@ NodeFilterDestination::NodeFilterDestination()
 
 QString NodeFilterDestination::caption() const
 {
-    return "Address Destination Filter";
+    return QObject::tr("Address Destination Filter");
 }
 
 QString NodeFilterDestination::name() const
@@ -82,7 +82,7 @@ void NodeFilterDestination::load(const QJsonObject &o)
 
 QString NodeFilterSource::caption() const
 {
-    return "Address Source Filter";
+    return QObject::tr("Address Source Filter");
 }
 
 QString NodeFilterSource::name() const

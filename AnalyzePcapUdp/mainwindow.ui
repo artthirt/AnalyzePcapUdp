@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1132</width>
-    <height>664</height>
+    <width>1266</width>
+    <height>744</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,7 +31,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1132</width>
+     <width>1266</width>
      <height>22</height>
     </rect>
    </property>
@@ -40,7 +40,17 @@
      <string>File</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionScale_Reset"/>
+    <addaction name="actionScalePlus"/>
+    <addaction name="actionScaleMinus"/>
+    <addaction name="actionMove_To_Center"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dwOutput">
@@ -57,6 +67,13 @@
        <property name="topMargin">
         <number>0</number>
        </property>
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Select Info Node</string>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QComboBox" name="cbInfoList">
          <property name="minimumSize">
@@ -130,6 +147,26 @@
     </layout>
    </widget>
   </widget>
+  <action name="actionScale_Reset">
+   <property name="text">
+    <string>Scale Reset</string>
+   </property>
+  </action>
+  <action name="actionScalePlus">
+   <property name="text">
+    <string>Scale +</string>
+   </property>
+  </action>
+  <action name="actionScaleMinus">
+   <property name="text">
+    <string>Scale -</string>
+   </property>
+  </action>
+  <action name="actionMove_To_Center">
+   <property name="text">
+    <string>Move To Center</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

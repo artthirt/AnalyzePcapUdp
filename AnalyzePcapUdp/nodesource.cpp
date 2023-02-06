@@ -26,7 +26,7 @@ NodeSource::~NodeSource()
 
 QString NodeSource::caption() const
 {
-    return "Source File";
+    return QObject::tr("Source File");
 }
 
 QString NodeSource::name() const

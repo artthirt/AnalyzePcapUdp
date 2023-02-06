@@ -34,7 +34,7 @@ void NodeInfoPackets::setInData(std::shared_ptr<QtNodes::NodeData> nodeData, con
         mData->datafun += SignalData(id(), [this](const PacketData& data){
             Q_EMIT(sendPacket(data));
             mNumPacks++;
-            mPickSize++;
+            mPickSize += data.data.size();
             mCommonSize += data.data.size();
         });
     }
@@ -47,7 +47,7 @@ std::shared_ptr<QtNodes::NodeData> NodeInfoPackets::outData(const QtNodes::PortI
 
 QString NodeInfoPackets::caption() const
 {
-    return "Info";
+    return QObject::tr("Info");
 }
 
 QString NodeInfoPackets::name() const
@@ -103,6 +103,7 @@ QString NodeInfoPackets::updateStats()
     if(mElapsed.elapsed() > 1000){
         mBitrate = 1. * mPickSize / mElapsed.elapsed() * 1000 * 8;
         mPickSize = 0;
+        mElapsed.restart();
     }
 
     QString res;

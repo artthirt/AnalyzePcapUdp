@@ -47,6 +47,7 @@ set(SRC
     nodeudpsender.h nodeudpsender.cpp
     nodebasefilter.h nodebasefilter.cpp
     nodefilter.h nodefilter.cpp
+    nodeudpreceiver.h nodeudpreceiver.cpp
     CommonTypes.h
     assets.qrc
     )

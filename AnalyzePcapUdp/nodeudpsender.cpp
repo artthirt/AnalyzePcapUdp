@@ -13,7 +13,7 @@ NodeUdpSender::NodeUdpSender()
 
 QString NodeUdpSender::caption() const
 {
-    return "UDP Sender";
+    return QObject::tr("UDP Sender");
 }
 
 QString NodeUdpSender::name() const
@@ -47,7 +47,7 @@ void NodeUdpSender::setInData(std::shared_ptr<QtNodes::NodeData> nodeData, const
             if(!mIp.isNull()){
                 mSock.writeDatagram(data.data, mIp, mPort);
                 mNumPacks++;
-                mPickSize++;
+                mPickSize += data.data.size();
                 mCommonSize += data.data.size();
             }
         });
@@ -75,6 +75,9 @@ QWidget *NodeUdpSender::embeddedWidget()
         g->addWidget(spr, 1, 0);
         g->addWidget(ip, 0, 1);
         g->addWidget(pr, 1, 1);
+
+        mUiIp   = ip;
+        mUiPort = pr;
 
         auto lb = new QLabel(updateStats(), w);
         mLb = lb;
@@ -109,6 +112,7 @@ QString NodeUdpSender::updateStats()
     if(mElapsed.elapsed() > 1000){
         mBitrate = 1. * mPickSize / mElapsed.elapsed() * 1000 * 8;
         mPickSize = 0;
+        mElapsed.restart();
     }
 
     QString res;
@@ -132,4 +136,11 @@ void NodeUdpSender::load(const QJsonObject &o)
     QtNodes::NodeDelegateModel::load(o);
     mIp = QHostAddress(o["ip"].toString());
     mPort = o["port"].toInt(2000);
+
+    if(mUiPort){
+        mUiPort->setValue(mPort);
+    }
+    if(mUiIp){
+        mUiIp->setText(mIp.toString());
+    }
 }

@@ -92,7 +92,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->verticalLayout->addWidget(mView);
 
     mInfoModel.setColumnCount(5);
-    mInfoModel.setHorizontalHeaderLabels(QStringList() << "num" << "timestamp" << "id" << "size" << "data");
+    mInfoModel.setHorizontalHeaderLabels(QStringList() << QObject::tr("num")
+                                         << QObject::tr("timestamp")
+                                         << QObject::tr("id")
+                                         << QObject::tr("size")
+                                         << QObject::tr("data"));
 
     ui->lvOutput->setModel(&mInfoModel);
 
@@ -240,15 +244,16 @@ void MainWindow::changeInfoOutput(int64_t id)
     if(mCurrentInfo){
         mCurrentInfo->disconnect(SIGNAL(sendPacket(PacketData)));
     }
-    mCurrentInfo = nullptr;
 
     if(mInfoOutputs.contains(id)){
         auto node = mInfoOutputs[id];
-        if(node == mCurrentInfo){
+        if(node != mCurrentInfo){
             mInfoModel.clear();
         }
         mCurrentInfo = node;
         QObject::connect(mCurrentInfo, &NodeInfoPackets::sendPacket, this, &MainWindow::onUpdatePackets, Qt::QueuedConnection);
+    }else{
+        mCurrentInfo = nullptr;
     }
 }
 
@@ -271,5 +276,32 @@ void MainWindow::saveSettings()
 void MainWindow::on_pbClear_clicked()
 {
     mInfoModel.clear();
+}
+
+
+void MainWindow::on_actionScale_Reset_triggered()
+{
+    mView->setupScale(1);
+}
+
+void MainWindow::on_actionScalePlus_triggered()
+{
+    mView->scaleUp();
+}
+
+void MainWindow::on_actionScaleMinus_triggered()
+{
+    mView->scaleDown();
+}
+
+void MainWindow::on_actionMove_To_Center_triggered()
+{
+    mView->centerScene();
+}
+
+void MainWindow::on_cbInfoList_currentIndexChanged(int index)
+{
+    auto id = ui->cbInfoList->itemData(index).toULongLong();
+    changeInfoOutput(id);
 }
 

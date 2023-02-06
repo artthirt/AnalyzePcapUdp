@@ -15,6 +15,9 @@ public:
     SignalData(uint32_t id, PacketDataFun fun): _id(id), _Main(fun){}
 
     SignalData& operator += (const SignalData& sig){
+        if(_Signals.find(sig._id) != _Signals.end()){
+            printf("Warning: signal with id %d already exists\n", sig._id);
+        }
         _Signals[sig._id] = sig._Main;
         return *this;
     }
@@ -25,7 +28,9 @@ public:
 
     void operator()(const PacketData& data) const {
         for(auto it = _Signals.begin(); it != _Signals.end(); ++it){
-            it->second(data);
+            if(it->second){
+                it->second(data);
+            }
         }
     }
     void release(uint32_t id){

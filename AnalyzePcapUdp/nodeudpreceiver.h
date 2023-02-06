@@ -1,22 +1,30 @@
-#ifndef NODEUDPSENDER_H
-#define NODEUDPSENDER_H
+#ifndef NODEUDPRECEIVER_H
+#define NODEUDPRECEIVER_H
 
 #include "CommonNodeTypes.h"
-#include "qelapsedtimer.h"
-#include "qlabel.h"
-#include "qtimer.h"
 
-#include <QUdpSocket>
+#include <QTimer>
+#include <QElapsedTimer>
+
+class QLabel;
+class UdpThread;
 
 class QSpinBox;
 class QLineEdit;
 
-class NodeUdpSender: public AncestorNode
+class NodeUdpReceiver: public AncestorNode
 {
-    Q_OBJECT
 public:
-    NodeUdpSender();
+    NodeUdpReceiver();
+    ~NodeUdpReceiver();
 
+    // Serializable interface
+public:
+    QJsonObject save() const;
+    void load(const QJsonObject &);
+
+    // NodeDelegateModel interface
+public:
     QString caption() const;
     QString name() const;
     unsigned int nPorts(QtNodes::PortType portType) const;
@@ -26,13 +34,15 @@ public:
     QWidget *embeddedWidget();
 
 private:
+    std::shared_ptr<PacketDataNode> mData;
     std::shared_ptr<QWidget> mUi;
     QLineEdit* mUiIp = nullptr;
     QSpinBox*  mUiPort = nullptr;
-    QUdpSocket mSock;
+
+    std::shared_ptr<UdpThread> mUdp;
+
     QHostAddress mIp = QHostAddress::LocalHost;
     ushort mPort = 3000;
-    std::shared_ptr<PacketDataNode> mData;
 
     QTimer mTimer;
     QElapsedTimer mElapsed;
@@ -45,10 +55,6 @@ private:
 
     QString updateStats();
 
-    // Serializable interface
-public:
-    QJsonObject save() const;
-    void load(const QJsonObject &);
 };
 
-#endif // NODEUDPSENDER_H
+#endif // NODEUDPRECEIVER_H

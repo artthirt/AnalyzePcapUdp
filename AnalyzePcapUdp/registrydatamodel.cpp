@@ -4,6 +4,7 @@
 #include "nodefilter.h"
 #include "nodeinfopackets.h"
 #include "nodeudpsender.h"
+#include "nodeudpreceiver.h"
 
 std::shared_ptr<RegistryDataModel> RegistryDataModel::mInstance;
 
@@ -18,10 +19,11 @@ std::shared_ptr<QtNodes::NodeDelegateModelRegistry> RegistryDataModel::getRegist
 RegistryDataModel::RegistryDataModel()
 {
     mRegistryModels.reset(new QtNodes::NodeDelegateModelRegistry());
-    mRegistryModels->registerModel<NodeSource>("1. Input");
-    mRegistryModels->registerModel<NodeInfoPackets>("2. Output");
-    mRegistryModels->registerModel<NodeFilterDestination>("3. Filters");
-    mRegistryModels->registerModel<NodeFilterSource>("3. Filters");
-    mRegistryModels->registerModel<NodeUdpSender>("2. Output");
+    mRegistryModels->registerModel<NodeSource>(QObject::tr("1. Input"));
+    mRegistryModels->registerModel<NodeInfoPackets>(QObject::tr("2. Output"));
+    mRegistryModels->registerModel<NodeFilterDestination>(QObject::tr("3. Filters"));
+    mRegistryModels->registerModel<NodeFilterSource>(QObject::tr("3. Filters"));
+    mRegistryModels->registerModel<NodeUdpSender>(QObject::tr("2. Output"));
+    mRegistryModels->registerModel<NodeUdpReceiver>(QObject::tr("1. Input"));
 }
 

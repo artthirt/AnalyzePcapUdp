@@ -68,6 +68,16 @@ private slots:
 
     void on_pbClear_clicked();
 
+    void on_actionScale_Reset_triggered();
+
+    void on_actionScalePlus_triggered();
+
+    void on_actionScaleMinus_triggered();
+
+    void on_actionMove_To_Center_triggered();
+
+    void on_cbInfoList_currentIndexChanged(int index);
+
 private:
 	Ui::MainWindow *ui;
 
