@@ -48,6 +48,7 @@ set(SRC
     nodebasefilter.h nodebasefilter.cpp
     nodefilter.h nodefilter.cpp
     nodeudpreceiver.h nodeudpreceiver.cpp
+    nodecutter.h nodecutter.cpp
     CommonTypes.h
     assets.qrc
     )

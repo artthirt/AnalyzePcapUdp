@@ -5,6 +5,7 @@
 #include "nodeinfopackets.h"
 #include "nodeudpsender.h"
 #include "nodeudpreceiver.h"
+#include "nodecutter.h"
 
 std::shared_ptr<RegistryDataModel> RegistryDataModel::mInstance;
 
@@ -25,5 +26,6 @@ RegistryDataModel::RegistryDataModel()
     mRegistryModels->registerModel<NodeFilterSource>(QObject::tr("3. Filters"));
     mRegistryModels->registerModel<NodeUdpSender>(QObject::tr("2. Output"));
     mRegistryModels->registerModel<NodeUdpReceiver>(QObject::tr("1. Input"));
+    mRegistryModels->registerModel<NodeCutter>(QObject::tr("3. Filters"));
 }
 
