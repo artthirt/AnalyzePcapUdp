@@ -4,6 +4,12 @@
 #include "qlineedit.h"
 #include "qspinbox.h"
 
+class NetWidget: public QWidget{
+public:
+    QLineEdit* ip = nullptr;
+    QSpinBox*  port = nullptr;
+};
+
 NodeFilterDestination::NodeFilterDestination()
 {
     mRes.reset(new PacketDataNode);
@@ -22,29 +28,29 @@ QString NodeFilterDestination::name() const
 QWidget *NodeFilterDestination::embeddedWidget()
 {
     if(!mUi){
-        QWidget* w = new QWidget();
+        NetWidget* w = new NetWidget();
         QGridLayout *g = new QGridLayout(w);
         QLabel *sip = new QLabel("Ip  ", w);
         QLabel *spr = new QLabel("Port", w);
-        QLineEdit* ip = new QLineEdit(w);
-        ip->setPlaceholderText("IP or Empty if not used");
-        ip->setText(mIpSource.toString());
-        QSpinBox*  pr = new QSpinBox(w);
-        pr->setMaximum(65535);
-        pr->setValue(mPortSource);
+        w->ip = new QLineEdit(w);
+        w->ip->setPlaceholderText("IP or Empty if not used");
+        w->ip->setText(mIpSource.toString());
+        w->port = new QSpinBox(w);
+        w->port->setMaximum(65535);
+        w->port->setValue(mPortSource);
         g->addWidget(sip, 0, 0);
         g->addWidget(spr, 1, 0);
-        g->addWidget(ip, 0, 1);
-        g->addWidget(pr, 1, 1);
+        g->addWidget(w->ip, 0, 1);
+        g->addWidget(w->port, 1, 1);
 
-        QObject::connect(ip, &QLineEdit::textChanged, this, [this](QString text){
+        QObject::connect(w->ip, &QLineEdit::textChanged, this, [this](QString text){
             if(text.isEmpty()){
                 mIpSource = QHostAddress();
             }else{
                 mIpSource = QHostAddress(text);
             }
         });
-        QObject::connect(pr, qOverload<int>(&QSpinBox::valueChanged), this, [this](int val){
+        QObject::connect(w->port, qOverload<int>(&QSpinBox::valueChanged), this, [this](int val){
             mPortSource = val;
         });
 
@@ -76,6 +82,10 @@ void NodeFilterDestination::load(const QJsonObject &o)
     QtNodes::NodeDelegateModel::load(o);
     mIpSource = QHostAddress(o["ip"].toString());
     mPortSource = o["port"].toInt(2000);
+    if(mUi){
+        if(mUi->ip)    mUi->ip->setText(mIpSource.toString());
+        if(mUi->port)  mUi->port->setValue(mPortSource);
+    }
 }
 
 /////////////////////////////////////

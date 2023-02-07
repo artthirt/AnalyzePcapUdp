@@ -6,6 +6,8 @@
 
 #include <QHostAddress>
 
+class NetWidget;
+
 class NodeFilterDestination: public NodeBaseFilter
 {
 public:
@@ -18,7 +20,7 @@ public:
     QWidget *embeddedWidget();
 
 protected:
-    std::shared_ptr<QWidget> mUi;
+    std::shared_ptr<NetWidget> mUi;
     QHostAddress mIpSource;
     ushort mPortSource = 2000;
 
