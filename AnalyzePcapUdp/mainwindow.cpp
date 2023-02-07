@@ -128,6 +128,13 @@ MainWindow::MainWindow(QWidget *parent) :
         if(type == NodeInfoPackets().name()){
             auto node = mModel->delegateModel<NodeInfoPackets>(nodeId);
             changeInfoOutput(node->id());
+            for(int i = 0; i < ui->cbInfoList->count(); ++i){
+                auto iid = ui->cbInfoList->itemData(i).toULongLong();
+                if(iid == node->id()){
+                    ui->cbInfoList->setCurrentIndex(i);
+                    break;
+                }
+            }
         }
     });
 
