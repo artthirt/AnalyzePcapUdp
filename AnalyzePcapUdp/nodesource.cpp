@@ -11,6 +11,13 @@
 
 using namespace QtNodes;
 
+class SourceWidget: public QWidget{
+public:
+    QLabel* lbOut = nullptr;
+    QDoubleSpinBox* dsbTm = nullptr;
+    QSlider *slider = nullptr;
+};
+
 NodeSource::NodeSource()
 {
     mData.reset(new PacketDataNode);
@@ -62,28 +69,28 @@ QWidget *NodeSource::embeddedWidget()
         return mUi.get();
     }
 
-    QWidget* w = new QWidget();
+    SourceWidget* w = new SourceWidget();
     mUi.reset(w);
 
     auto vb = new QVBoxLayout(w);
     auto pbO = new QPushButton("Open file", w);
-    auto lbO = new QLabel("", w);
+    w->lbOut = new QLabel("", w);
     auto hl = new QHBoxLayout(w);
     auto pbPlay  = new QPushButton("►", w);
     auto pbPause = new QPushButton("▌▌", w);
     auto pbStop  = new QPushButton("■", w);
-    auto slider  = new QSlider(w);
-    slider->setOrientation(Qt::Horizontal);
+    w->slider  = new QSlider(w);
+    w->slider->setOrientation(Qt::Horizontal);
 
     auto hl2 = new QHBoxLayout(w);
     auto lbT = new QLabel("Timeout (ms)", w);
-    auto dsbT = new QDoubleSpinBox(w);
-    dsbT->setMaximum(9999999);
-    dsbT->setDecimals(3);
-    dsbT->setValue(mTimeout);
+    w->dsbTm = new QDoubleSpinBox(w);
+    w->dsbTm->setMaximum(9999999);
+    w->dsbTm->setDecimals(3);
+    w->dsbTm->setValue(mTimeout);
 
     hl2->addWidget(lbT);
-    hl2->addWidget(dsbT);
+    hl2->addWidget(w->dsbTm);
 
     hl->addWidget(pbPlay);
     hl->addWidget(pbPause);
@@ -91,15 +98,14 @@ QWidget *NodeSource::embeddedWidget()
 
     vb->addLayout(hl2);
     vb->addWidget(pbO);
-    vb->addWidget(lbO);
+    vb->addWidget(w->lbOut);
     vb->addLayout(hl);
-    vb->addWidget(slider);
+    vb->addWidget(w->slider);
 
     w->setLayout(vb);
 
-    mOutLb = lbO;
-
-    QObject::connect(dsbT, qOverload<double>(&QDoubleSpinBox::valueChanged), this, [this](double arg){
+    QObject::connect(w->dsbTm, qOverload<double>(&QDoubleSpinBox::valueChanged), this, [this](double arg){
+        mTimeout = arg;
         if(mPcap){
             mPcap->setTimeout(arg);
         }
@@ -131,10 +137,10 @@ QWidget *NodeSource::embeddedWidget()
         }
     });
     mTimer.disconnect();
-    QObject::connect(&mTimer, &QTimer::timeout, this, [this, slider](){
+    QObject::connect(&mTimer, &QTimer::timeout, this, [this, w](){
         if(mPcap){
             float pos = mPcap->position() * 100;
-            slider->setValue(pos);
+            w->slider->setValue(pos);
         }
     }, Qt::QueuedConnection);
 
@@ -154,8 +160,8 @@ void NodeSource::setFile(const QString &fn)
     });
 
     QFileInfo fi(fn);
-    if(mOutLb){
-        mOutLb->setText(fi.fileName());
+    if(mUi && mUi->lbOut){
+        mUi->lbOut->setText(fi.fileName());
     }
 }
 
@@ -175,5 +181,8 @@ void NodeSource::load(const QJsonObject &obj)
 
     if(!mFileName.isEmpty()){
         setFile(mFileName);
+    }
+    if(mUi && mUi->dsbTm){
+        mUi->dsbTm->setValue(mTimeout);
     }
 }

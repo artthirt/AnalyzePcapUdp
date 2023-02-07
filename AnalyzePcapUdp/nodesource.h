@@ -7,7 +7,7 @@
 #include "CommonNodeTypes.h"
 #include "pcapfile.h"
 
-class QLabel;
+class SourceWidget;
 
 class NodeSource: public AncestorNode
 {
@@ -29,11 +29,10 @@ public:
 private:
     std::shared_ptr<PacketDataNode> mData;
     std::shared_ptr<PCapFile> mPcap;
-    std::shared_ptr<QWidget> mUi;
+    std::shared_ptr<SourceWidget> mUi;
     QString mFileName;
     QTimer mTimer;
     double mTimeout = 32;
-    QLabel *mOutLb = nullptr;
 
     void setFile(const QString& fileName);
     // Serializable interface
