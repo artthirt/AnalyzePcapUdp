@@ -167,6 +167,9 @@ if(WIN32)
                 $<TARGET_FILE:Qt5::Gui>
                 $<TARGET_FILE_DIR:AnalyzePcapUdp>
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_FILE:QtNodes>
+                $<TARGET_FILE_DIR:AnalyzePcapUdp>
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 $<TARGET_FILE:Qt5::QWindowsIntegrationPlugin>
                 $<TARGET_FILE_DIR:AnalyzePcapUdp>/platforms/
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
