@@ -86,12 +86,12 @@ else()
     set(LIBS ${LIBS} pcap)
 endif()
 
-add_executable(AnalyzePcapUdp WIN32 ${SRC} resource.rc)
+qt5_create_translation(QM_FILES ${SRC} translate_ru.ts)
+add_custom_target(translations ALL DEPENDS ${LNG_FILES})
+
+add_executable(AnalyzePcapUdp WIN32 ${SRC} resource.rc ${QM_FILES})
 
 if (NOT Qt6_FOUND)
-    qt5_create_translation(LNG_FILES ${SRC} translate_ru.ts)
-    add_custom_target(translations ALL DEPENDS ${LNG_FILES})
-
     target_link_libraries(AnalyzePcapUdp PRIVATE
         Qt5::Core Qt5::Network Qt5::Widgets
         QtNodes
