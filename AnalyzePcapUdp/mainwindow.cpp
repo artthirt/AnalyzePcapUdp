@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "CommonTypes.h"
-#include "nodefilter.h"
 #include "nodeinfopackets.h"
 #include "ui_mainwindow.h"
 
@@ -10,6 +9,8 @@
 #include <QSettings>
 #include <QScrollBar>
 #include <QFontDatabase>
+#include <QProcess>
+#include <QMessageBox>
 
 #include <QLineEdit>
 #include <QLabel>
@@ -84,6 +85,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 
+    translator.load(":/translate_ru.qm");
+
     qRegisterMetaType<PacketData>("PacketData");
 
     auto registry = RegistryDataModel::getRegistryModel();
@@ -155,6 +158,11 @@ MainWindow::~MainWindow()
 	saveSettings();
 
     delete ui;
+}
+
+QString MainWindow::settingsFile()
+{
+    return "model.json";
 }
 
 std::vector< QByteArray > split(const QByteArray& in, int len)
@@ -267,18 +275,26 @@ void MainWindow::changeInfoOutput(int64_t id)
 
 void MainWindow::loadSettings()
 {
-    auto model = loadJsonFromFile("model.json");
+    auto model = loadJsonFromFile(settingsFile());
     if(!model.isEmpty()){
         mModel->load(model);
     }else{
         mModel->load(loadJsonFromString(defaultModel));
+    }
+    auto lang = model["language"].toString();
+    if(lang.isEmpty() || lang == "en"){
+        ui->actionEnglish->setChecked(true);
+    }else if(lang == "ru"){
+        ui->actionRussian->setChecked(true);
+    }else{
     }
 }
 
 void MainWindow::saveSettings()
 {
     auto model = mModel->save();
-    saveJsonToFile("model.json", model);
+    model["language"] = ui->actionRussian->isChecked()? "ru" : "en";
+    saveJsonToFile(settingsFile(), model);
 }
 
 void MainWindow::on_pbClear_clicked()
@@ -313,3 +329,24 @@ void MainWindow::on_cbInfoList_currentIndexChanged(int index)
     changeInfoOutput(id);
 }
 
+void MainWindow::on_actionRussian_triggered(bool checked)
+{
+    if(QMessageBox::question(nullptr, tr("Change language"), tr("To change the language need restart the app. Do you want to continue?")) == QMessageBox::Yes){
+        ui->actionEnglish->setChecked(false);
+        ui->actionRussian->setChecked(true);
+        saveSettings();
+        qApp->quit();
+        QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
+    }
+}
+
+void MainWindow::on_actionEnglish_triggered(bool checked)
+{
+    if(QMessageBox::question(nullptr, tr("Change language"), tr("To change the language need restart the app. Do you want to continue?")) == QMessageBox::Yes){
+        ui->actionEnglish->setChecked(true);
+        ui->actionRussian->setChecked(false);
+        saveSettings();
+        qApp->quit();
+        QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
+    }
+}

@@ -39,7 +39,7 @@ QString NodeCutter::caption() const
 
 QString NodeCutter::name() const
 {
-    return tr("Cutter");
+    return ("Cutter");
 }
 
 QWidget *NodeCutter::embeddedWidget()

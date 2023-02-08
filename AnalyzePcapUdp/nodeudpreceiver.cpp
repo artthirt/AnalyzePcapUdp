@@ -168,8 +168,8 @@ QWidget *NodeUdpReceiver::embeddedWidget()
     if(!mUi){
         QWidget* w = new QWidget();
         QGridLayout *g = new QGridLayout();
-        QLabel *sip = new QLabel("Ip", w);
-        QLabel *spr = new QLabel("Port", w);
+        QLabel *sip = new QLabel(tr("Ip"), w);
+        QLabel *spr = new QLabel(tr("Port"), w);
         QLineEdit* ip = new QLineEdit(w);
         ip->setText(mIp.toString());
         QSpinBox*  pr = new QSpinBox(w);
@@ -223,11 +223,11 @@ QString NodeUdpReceiver::updateStats()
 
     QString res;
 
-    res += QString(" Packets Count %1\n").arg(mNumPacks);
+    res += tr(" Packets Count %1").arg(mNumPacks) + "\n";
     if(mBitrate > 1000){
-        res += QString(" Bitrate       %1 Kb/s").arg(double(mBitrate / 1000.), 0, 'f', 3);
+        res += tr(" Bitrate       %1 Kb/s").arg(double(mBitrate / 1000.), 0, 'f', 3);
     }else{
-        res += QString(" Bitrate       %1 b/s").arg(double(mBitrate), 0, 'f', 3);
+        res += tr(" Bitrate       %1 b/s").arg(double(mBitrate), 0, 'f', 3);
     }
 
     return res;

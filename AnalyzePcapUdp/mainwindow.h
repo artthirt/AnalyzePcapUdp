@@ -8,6 +8,7 @@
 #include <QStandardItemModel>
 #include <QTimer>
 #include <QLabel>
+#include <QTranslator>
 
 #include <QtNodes/DataFlowGraphicsScene>
 #include <QtNodes/DataFlowGraphModel>
@@ -62,6 +63,8 @@ public:
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
 
+    static QString settingsFile();
+
 private slots:
     void onInfoClicked(const QModelIndex &index);
     void onUpdatePackets(const PacketData &data);
@@ -78,8 +81,13 @@ private slots:
 
     void on_cbInfoList_currentIndexChanged(int index);
 
+    void on_actionRussian_triggered(bool checked);
+
+    void on_actionEnglish_triggered(bool checked);
+
 private:
 	Ui::MainWindow *ui;
+    QTranslator translator;
 
     std::shared_ptr<QtNodes::DataFlowGraphModel> mModel;
     QtNodes::DataFlowGraphicsScene *mScene;

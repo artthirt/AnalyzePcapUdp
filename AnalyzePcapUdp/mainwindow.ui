@@ -44,10 +44,18 @@
     <property name="title">
      <string>View</string>
     </property>
+    <widget class="QMenu" name="menuLanguage">
+     <property name="title">
+      <string>Language</string>
+     </property>
+     <addaction name="actionEnglish"/>
+     <addaction name="actionRussian"/>
+    </widget>
     <addaction name="actionScale_Reset"/>
     <addaction name="actionScalePlus"/>
     <addaction name="actionScaleMinus"/>
     <addaction name="actionMove_To_Center"/>
+    <addaction name="menuLanguage"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
@@ -165,6 +173,25 @@
   <action name="actionMove_To_Center">
    <property name="text">
     <string>Move To Center</string>
+   </property>
+  </action>
+  <action name="actionEnglish">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>English</string>
+   </property>
+  </action>
+  <action name="actionRussian">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Russian</string>
    </property>
   </action>
  </widget>

@@ -30,10 +30,10 @@ QWidget *NodeFilterDestination::embeddedWidget()
     if(!mUi){
         NetWidget* w = new NetWidget();
         QGridLayout *g = new QGridLayout(w);
-        QLabel *sip = new QLabel("Ip  ", w);
-        QLabel *spr = new QLabel("Port", w);
+        QLabel *sip = new QLabel(tr("Ip"), w);
+        QLabel *spr = new QLabel(tr("Port"), w);
         w->ip = new QLineEdit(w);
-        w->ip->setPlaceholderText("IP or Empty if not used");
+        w->ip->setPlaceholderText(tr("IP or Empty if not used"));
         w->ip->setText(mIpSource.toString());
         w->port = new QSpinBox(w);
         w->port->setMaximum(65535);

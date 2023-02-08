@@ -81,7 +81,7 @@ QWidget *NodeInfoPackets::embeddedWidget()
         w->setLayout(vl);
 
         if(mName.isEmpty())
-            mName = QString("Output %1").arg(NodeInfoCounter++);
+            mName = tr("Output %1").arg(NodeInfoCounter++);
         QObject::connect(ed, &QLineEdit::textChanged, this, [this](const QString &arg){
            mName = arg;
            Q_EMIT(nameEditChanged());
@@ -108,8 +108,8 @@ QString NodeInfoPackets::updateStats()
 
     QString res;
 
-    res += QString(" Packets Count %1\n").arg(mNumPacks);
-    res += QString(" Bitrate       %1 Kb/s").arg(double(mBitrate / 1000.), 0, 'f', 3);
+    res += tr(" Packets Count %1").arg(mNumPacks) + "\n";
+    res += tr(" Bitrate       %1 Kb/s").arg(double(mBitrate / 1000.), 0, 'f', 3);
 
     return res;
 }

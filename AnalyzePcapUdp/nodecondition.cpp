@@ -168,5 +168,5 @@ QString NodeCondition::caption() const
 
 QString NodeCondition::name() const
 {
-    return tr("Condition Filter");
+    return ("Condition Filter");
 }

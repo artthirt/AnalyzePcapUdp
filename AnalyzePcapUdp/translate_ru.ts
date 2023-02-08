@@ -71,46 +71,72 @@
         <translation>Вид</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="58"/>
+        <location filename="mainwindow.ui" line="49"/>
+        <source>Language</source>
+        <translation>Язык</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="66"/>
         <source>Packet info</source>
         <translation>Статистика</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="73"/>
+        <location filename="mainwindow.ui" line="81"/>
         <source>Select Info Node</source>
-        <translation>Выбрать ноду статистики</translation>
+        <translation>Выбор ноды статистики</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="103"/>
+        <location filename="mainwindow.ui" line="111"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="152"/>
+        <location filename="mainwindow.ui" line="160"/>
         <source>Scale Reset</source>
-        <translation>Сбросить масштаб</translation>
+        <translation>Сбро масштаба</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="157"/>
+        <location filename="mainwindow.ui" line="165"/>
         <source>Scale +</source>
         <translation>Увеличить</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="162"/>
+        <location filename="mainwindow.ui" line="170"/>
         <source>Scale -</source>
         <translation>Уменьшить</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="167"/>
+        <location filename="mainwindow.ui" line="175"/>
         <source>Move To Center</source>
         <translation>Центрировать</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="186"/>
+        <source>English</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="194"/>
+        <source>Russian</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="334"/>
+        <location filename="mainwindow.cpp" line="345"/>
+        <source>Change language</source>
+        <translation>Изменить язык</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="334"/>
+        <location filename="mainwindow.cpp" line="345"/>
+        <source>To change the language need restart the app. Do you want to continue?</source>
+        <translation>Чтобы изменить язык необходимо перезапустить приложение? Продолжать?</translation>
     </message>
 </context>
 <context>
     <name>NodeCondition</name>
     <message>
         <location filename="nodecondition.cpp" line="166"/>
-        <location filename="nodecondition.cpp" line="171"/>
         <source>Condition Filter</source>
         <translation>Условие</translation>
     </message>
@@ -119,49 +145,118 @@
     <name>NodeCutter</name>
     <message>
         <location filename="nodecutter.cpp" line="37"/>
-        <location filename="nodecutter.cpp" line="42"/>
         <source>Cutter</source>
-        <translation>Вырезать часть</translation>
+        <translation>Обрезка</translation>
+    </message>
+</context>
+<context>
+    <name>NodeFilterDestination</name>
+    <message>
+        <location filename="nodefilter.cpp" line="33"/>
+        <source>Ip</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="nodefilter.cpp" line="34"/>
+        <source>Port</source>
+        <translation>Порт</translation>
+    </message>
+    <message>
+        <location filename="nodefilter.cpp" line="36"/>
+        <source>IP or Empty if not used</source>
+        <translation>IP или  пусто</translation>
+    </message>
+</context>
+<context>
+    <name>NodeInfoPackets</name>
+    <message>
+        <location filename="nodeinfopackets.cpp" line="84"/>
+        <source>Output %1</source>
+        <translation>Вывод %1</translation>
+    </message>
+    <message>
+        <location filename="nodeinfopackets.cpp" line="111"/>
+        <source> Packets Count %1</source>
+        <translation>Пакетов          %1</translation>
+    </message>
+    <message>
+        <location filename="nodeinfopackets.cpp" line="112"/>
+        <source> Bitrate       %1 Kb/s</source>
+        <translation>Скорость  %1 КБ/с</translation>
     </message>
 </context>
 <context>
     <name>NodeSource</name>
     <message>
-        <location filename="nodesource.cpp" line="76"/>
-        <source>Open file</source>
-        <translation>Открыть файл</translation>
-    </message>
-    <message>
-        <location filename="nodesource.cpp" line="77"/>
-        <source>Name
-Size</source>
-        <translation>Имя\nРазмер</translation>
-    </message>
-    <message>
-        <location filename="nodesource.cpp" line="86"/>
-        <source>Timeout (ms)</source>
-        <translation>Таймаут(мс)</translation>
-    </message>
-    <message>
-        <location filename="nodesource.cpp" line="115"/>
+        <location filename="nodesource.cpp" line="122"/>
         <source>Open File</source>
         <translation>Открыть файл</translation>
     </message>
     <message>
-        <location filename="nodesource.cpp" line="167"/>
-        <source>Name:	&quot;%1&quot;
-</source>
-        <translation>Имя файла:	&quot;%1&quot;\n</translation>
+        <location filename="nodesource.cpp" line="174"/>
+        <source>Name:	&quot;%1&quot;</source>
+        <translation>Имя:	&quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="nodesource.cpp" line="169"/>
+        <location filename="nodesource.cpp" line="176"/>
         <source>Size:	%2 KB</source>
         <translation>Размер:	%2 КБ</translation>
     </message>
     <message>
-        <location filename="nodesource.cpp" line="171"/>
+        <location filename="nodesource.cpp" line="178"/>
         <source>Size:	%2 MB</source>
         <translation>Размер:	%2 МБ</translation>
+    </message>
+</context>
+<context>
+    <name>NodeUdpReceiver</name>
+    <message>
+        <location filename="nodeudpreceiver.cpp" line="171"/>
+        <source>Ip</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="nodeudpreceiver.cpp" line="172"/>
+        <source>Port</source>
+        <translation>Порт</translation>
+    </message>
+    <message>
+        <location filename="nodeudpreceiver.cpp" line="226"/>
+        <source> Packets Count %1</source>
+        <translation>Пакетов          %1</translation>
+    </message>
+    <message>
+        <location filename="nodeudpreceiver.cpp" line="228"/>
+        <source> Bitrate       %1 Kb/s</source>
+        <translation>Скорость  %1 КБ/с</translation>
+    </message>
+    <message>
+        <location filename="nodeudpreceiver.cpp" line="230"/>
+        <source> Bitrate       %1 b/s</source>
+        <translation>Скорость   %1 б/с</translation>
+    </message>
+</context>
+<context>
+    <name>NodeUdpSender</name>
+    <message>
+        <location filename="nodeudpsender.cpp" line="67"/>
+        <source>Ip</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="nodeudpsender.cpp" line="68"/>
+        <source>Port</source>
+        <translation>Порт</translation>
+    </message>
+    <message>
+        <location filename="nodeudpsender.cpp" line="120"/>
+        <source> Packets Count %1</source>
+        <translation>Пакет              %1</translation>
+    </message>
+    <message>
+        <location filename="nodeudpsender.cpp" line="121"/>
+        <source> Bitrate       %1 Kb/s</source>
+        <translation>Скорость  %1 КБ/с</translation>
     </message>
 </context>
 <context>
@@ -169,22 +264,22 @@ Size</source>
     <message>
         <location filename="nodeudpreceiver.cpp" line="136"/>
         <source>UDP Receiver</source>
-        <translation>Сокет приема UDP</translation>
+        <translation>Приемник UDP</translation>
     </message>
     <message>
         <location filename="nodefilter.cpp" line="20"/>
         <source>Address Destination Filter</source>
-        <translation>Фильтр по адресу назначения</translation>
+        <translation>Фильтр по назначению</translation>
     </message>
     <message>
         <location filename="nodefilter.cpp" line="95"/>
         <source>Address Source Filter</source>
-        <translation>Фильтр по адресу отправления</translation>
+        <translation>Фильтр по источнику</translation>
     </message>
     <message>
         <location filename="nodeudpsender.cpp" line="16"/>
         <source>UDP Sender</source>
-        <translation>Трансмиттер UDP</translation>
+        <translation>Отправитель UDP</translation>
     </message>
     <message>
         <location filename="nodeinfopackets.cpp" line="50"/>
@@ -195,13 +290,13 @@ Size</source>
         <location filename="registrydatamodel.cpp" line="40"/>
         <location filename="registrydatamodel.cpp" line="45"/>
         <source>1. Input</source>
-        <translation>1. Входные ноды</translation>
+        <translation>1. Вход</translation>
     </message>
     <message>
         <location filename="registrydatamodel.cpp" line="41"/>
         <location filename="registrydatamodel.cpp" line="44"/>
         <source>2. Output</source>
-        <translation>2. Выходные ноды</translation>
+        <translation>2. Выход</translation>
     </message>
     <message>
         <location filename="registrydatamodel.cpp" line="42"/>
@@ -212,34 +307,54 @@ Size</source>
         <translation>3. Фильтры</translation>
     </message>
     <message>
-        <location filename="nodesource.cpp" line="36"/>
+        <location filename="nodesource.cpp" line="73"/>
         <source>Source File</source>
-        <translation>Файл дампа (pcap, pcapng)</translation>
+        <translation>Файл источника</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="96"/>
+        <location filename="mainwindow.cpp" line="99"/>
         <source>num</source>
-        <translation>#</translation>
+        <translation>№</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="97"/>
+        <location filename="mainwindow.cpp" line="100"/>
         <source>timestamp</source>
         <translation>время</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="98"/>
+        <location filename="mainwindow.cpp" line="101"/>
         <source>id</source>
         <translation>ид</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="99"/>
+        <location filename="mainwindow.cpp" line="102"/>
         <source>size</source>
-        <translation>размер (б)</translation>
+        <translation>размер</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="100"/>
+        <location filename="mainwindow.cpp" line="103"/>
         <source>data</source>
-        <translation>данные о пакете</translation>
+        <translation>информация о пакете</translation>
+    </message>
+</context>
+<context>
+    <name>SourceWidget</name>
+    <message>
+        <location filename="nodesource.cpp" line="26"/>
+        <source>Open file</source>
+        <translation>Открыть файл</translation>
+    </message>
+    <message>
+        <location filename="nodesource.cpp" line="27"/>
+        <source>Name
+Size</source>
+        <translation>Имя
+Размер</translation>
+    </message>
+    <message>
+        <location filename="nodesource.cpp" line="36"/>
+        <source>Timeout (ms)</source>
+        <translation>Таймаут (мс)</translation>
     </message>
 </context>
 </TS>

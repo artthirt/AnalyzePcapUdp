@@ -16,6 +16,43 @@ public:
     QLabel* lbOut = nullptr;
     QDoubleSpinBox* dsbTm = nullptr;
     QSlider *slider = nullptr;
+    QPushButton *pbPlay = nullptr;
+    QPushButton *pbPause = nullptr;
+    QPushButton *pbStop = nullptr;
+    QPushButton *pbO = nullptr;
+
+    SourceWidget(): QWidget(){
+        auto vb = new QVBoxLayout(this);
+        pbO = new QPushButton(tr("Open file"), this);
+        lbOut = new QLabel(tr("Name\nSize"), this);
+        auto hl = new QHBoxLayout(this);
+        pbPlay  = new QPushButton("►", this);
+        pbPause = new QPushButton("▌▌", this);
+        pbStop  = new QPushButton("■", this);
+        slider  = new QSlider(this);
+        slider->setOrientation(Qt::Horizontal);
+
+        auto hl2 = new QHBoxLayout(this);
+        auto lbT = new QLabel(tr("Timeout (ms)"), this);
+        dsbTm = new QDoubleSpinBox(this);
+        dsbTm->setMaximum(9999999);
+        dsbTm->setDecimals(3);
+
+        hl2->addWidget(lbT);
+        hl2->addWidget(dsbTm);
+
+        hl->addWidget(pbPlay);
+        hl->addWidget(pbPause);
+        hl->addWidget(pbStop);
+
+        vb->addLayout(hl2);
+        vb->addWidget(pbO);
+        vb->addWidget(lbOut);
+        vb->addLayout(hl);
+        vb->addWidget(slider);
+
+        setLayout(vb);
+    }
 };
 
 NodeSource::NodeSource()
@@ -72,37 +109,7 @@ QWidget *NodeSource::embeddedWidget()
     SourceWidget* w = new SourceWidget();
     mUi.reset(w);
 
-    auto vb = new QVBoxLayout(w);
-    auto pbO = new QPushButton(tr("Open file"), w);
-    w->lbOut = new QLabel(tr("Name\nSize"), w);
-    auto hl = new QHBoxLayout(w);
-    auto pbPlay  = new QPushButton("►", w);
-    auto pbPause = new QPushButton("▌▌", w);
-    auto pbStop  = new QPushButton("■", w);
-    w->slider  = new QSlider(w);
-    w->slider->setOrientation(Qt::Horizontal);
-
-    auto hl2 = new QHBoxLayout(w);
-    auto lbT = new QLabel(tr("Timeout (ms)"), w);
-    w->dsbTm = new QDoubleSpinBox(w);
-    w->dsbTm->setMaximum(9999999);
-    w->dsbTm->setDecimals(3);
-    w->dsbTm->setValue(mTimeout);
-
-    hl2->addWidget(lbT);
-    hl2->addWidget(w->dsbTm);
-
-    hl->addWidget(pbPlay);
-    hl->addWidget(pbPause);
-    hl->addWidget(pbStop);
-
-    vb->addLayout(hl2);
-    vb->addWidget(pbO);
-    vb->addWidget(w->lbOut);
-    vb->addLayout(hl);
-    vb->addWidget(w->slider);
-
-    w->setLayout(vb);
+    mUi->dsbTm->setValue(mTimeout);
 
     QObject::connect(w->dsbTm, qOverload<double>(&QDoubleSpinBox::valueChanged), this, [this](double arg){
         mTimeout = arg;
@@ -111,26 +118,26 @@ QWidget *NodeSource::embeddedWidget()
         }
     });
 
-    QObject::connect(pbO, &QPushButton::clicked, this, [this](){
+    QObject::connect(mUi->pbO, &QPushButton::clicked, this, [this](){
         auto fn = QFileDialog::getOpenFileName(nullptr, tr("Open File"), "", "*.pcap *.pcapng");
         if(!fn.isEmpty()){
             setFile(fn);
         }
     });
-    QObject::connect(pbPlay, &QPushButton::clicked, this, [this](){
+    QObject::connect(mUi->pbPlay, &QPushButton::clicked, this, [this](){
         if(mPcap && mPcap->isOpen()){
             mPcap->setTimeout(mTimeout);
             mPcap->start();
             mTimer.start(100);
         }
     });
-    QObject::connect(pbPause, &QPushButton::clicked, this, [this](){
+    QObject::connect(mUi->pbPause, &QPushButton::clicked, this, [this](){
         if(mPcap && mPcap->isOpen()){
             mPcap->pause();
             mTimer.stop();
         }
     });
-    QObject::connect(pbStop, &QPushButton::clicked, this, [this](){
+    QObject::connect(mUi->pbStop, &QPushButton::clicked, this, [this](){
         if(mPcap && mPcap->isOpen()){
             mPcap->stop();
             mTimer.stop();
@@ -164,7 +171,7 @@ void NodeSource::setFile(const QString &fn)
         QFile f(fn);
         auto size = f.size();
         QString out;
-        out     =  tr("Name:\t\"%1\"\n").arg(fi.fileName());
+        out     =  tr("Name:\t\"%1\"").arg(fi.fileName()) + "\n";
         if(size < 1024 * 1024){
             out += tr("Size:\t%2 KB").arg(size / 1024.);
         }else{
