@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[])
 {
-	QApplication a(argc, argv);
+    QApplication a(argc, argv);
 
     QTranslator translator_ru;
     translator_ru.load(":/translate_ru.qm");
@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 
     MainWindow w;
 
-	w.show();
+    w.show();
 
 	return a.exec();
 }

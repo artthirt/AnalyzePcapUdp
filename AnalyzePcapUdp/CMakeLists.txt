@@ -86,7 +86,11 @@ else()
     set(LIBS ${LIBS} pcap)
 endif()
 
-qt5_create_translation(QM_FILES ${SRC} translate_ru.ts)
+if (NOT Qt6_FOUND)
+    qt5_create_translation(QM_FILES ${SRC} translate_ru.ts)
+else()
+    qt_create_translation(QM_FILES ${SRC} translate_ru.ts)
+endif()
 add_custom_target(translations ALL DEPENDS ${LNG_FILES})
 
 add_executable(AnalyzePcapUdp WIN32 ${SRC} resource.rc ${QM_FILES})
