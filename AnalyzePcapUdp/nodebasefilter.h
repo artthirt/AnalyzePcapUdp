@@ -13,6 +13,7 @@ protected:
     std::shared_ptr<PacketDataNode> mRes;
 
     virtual void compute(const PacketData& data);
+    virtual void send_next(const PacketData& data);
 
     // NodeDelegateModel interface
 public:

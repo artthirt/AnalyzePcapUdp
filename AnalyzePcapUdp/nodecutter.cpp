@@ -66,7 +66,7 @@ void NodeCutter::compute(const PacketData &data)
     auto newData = data;
     newData.data = data.data.mid(mOff, mLen);
 
-    (*mRes)(newData);
+    send_next(newData);
 }
 
 QJsonObject NodeCutter::save() const

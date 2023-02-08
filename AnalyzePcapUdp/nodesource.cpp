@@ -73,8 +73,8 @@ QWidget *NodeSource::embeddedWidget()
     mUi.reset(w);
 
     auto vb = new QVBoxLayout(w);
-    auto pbO = new QPushButton("Open file", w);
-    w->lbOut = new QLabel("", w);
+    auto pbO = new QPushButton(tr("Open file"), w);
+    w->lbOut = new QLabel(tr("Name\nSize"), w);
     auto hl = new QHBoxLayout(w);
     auto pbPlay  = new QPushButton("►", w);
     auto pbPause = new QPushButton("▌▌", w);
@@ -83,7 +83,7 @@ QWidget *NodeSource::embeddedWidget()
     w->slider->setOrientation(Qt::Horizontal);
 
     auto hl2 = new QHBoxLayout(w);
-    auto lbT = new QLabel("Timeout (ms)", w);
+    auto lbT = new QLabel(tr("Timeout (ms)"), w);
     w->dsbTm = new QDoubleSpinBox(w);
     w->dsbTm->setMaximum(9999999);
     w->dsbTm->setDecimals(3);
@@ -112,7 +112,7 @@ QWidget *NodeSource::embeddedWidget()
     });
 
     QObject::connect(pbO, &QPushButton::clicked, this, [this](){
-        auto fn = QFileDialog::getOpenFileName(nullptr, "Open File", "", "*.pcap *.pcapng");
+        auto fn = QFileDialog::getOpenFileName(nullptr, tr("Open File"), "", "*.pcap *.pcapng");
         if(!fn.isEmpty()){
             setFile(fn);
         }
@@ -161,7 +161,16 @@ void NodeSource::setFile(const QString &fn)
 
     QFileInfo fi(fn);
     if(mUi && mUi->lbOut){
-        mUi->lbOut->setText(fi.fileName());
+        QFile f(fn);
+        auto size = f.size();
+        QString out;
+        out     =  tr("Name:\t\"%1\"\n").arg(fi.fileName());
+        if(size < 1024 * 1024){
+            out += tr("Size:\t%2 KB").arg(size / 1024.);
+        }else{
+            out += tr("Size:\t%2 MB").arg(size / 1024. / 1024.);
+        }
+        mUi->lbOut->setText(out);
     }
 }
 

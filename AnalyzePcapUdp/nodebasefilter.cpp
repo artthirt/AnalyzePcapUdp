@@ -2,12 +2,21 @@
 
 NodeBaseFilter::NodeBaseFilter()
 {
-
+    if(!mRes){
+        mRes.reset(new PacketDataNode);
+    }
 }
 
 void NodeBaseFilter::compute(const PacketData &data)
 {
 
+}
+
+void NodeBaseFilter::send_next(const PacketData &data)
+{
+    if(mRes){
+        (*mRes)(data);
+    }
 }
 
 QString NodeBaseFilter::caption() const

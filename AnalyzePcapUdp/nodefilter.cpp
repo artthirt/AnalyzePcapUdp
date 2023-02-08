@@ -11,8 +11,8 @@ public:
 };
 
 NodeFilterDestination::NodeFilterDestination()
+    : NodeBaseFilter()
 {
-    mRes.reset(new PacketDataNode);
 }
 
 QString NodeFilterDestination::caption() const
@@ -66,7 +66,7 @@ void NodeFilterDestination::compute(const PacketData &data)
     if(!condition){
         return;
     }
-    (*mRes)(data);
+    send_next(data);
 }
 
 QJsonObject NodeFilterDestination::save() const
@@ -107,8 +107,5 @@ void NodeFilterSource::compute(const PacketData &data)
     if(!condition){
         return;
     }
-    if(!mRes){
-        mRes.reset(new PacketDataNode);
-    }
-    (*mRes)(data);
+    send_next(data);
 }
