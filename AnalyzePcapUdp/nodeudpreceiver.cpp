@@ -138,7 +138,7 @@ QString NodeUdpReceiver::caption() const
 
 QString NodeUdpReceiver::name() const
 {
-    return "UDP Receiver";
+    return ("UDP Receiver");
 }
 
 unsigned int NodeUdpReceiver::nPorts(QtNodes::PortType portType) const
@@ -168,8 +168,8 @@ QWidget *NodeUdpReceiver::embeddedWidget()
     if(!mUi){
         QWidget* w = new QWidget();
         QGridLayout *g = new QGridLayout();
-        QLabel *sip = new QLabel(tr("Ip"), w);
-        QLabel *spr = new QLabel(tr("Port"), w);
+        QLabel *sip = new QLabel(QObject::tr("Ip"), w);
+        QLabel *spr = new QLabel(QObject::tr("Port"), w);
         QLineEdit* ip = new QLineEdit(w);
         ip->setText(mIp.toString());
         QSpinBox*  pr = new QSpinBox(w);
@@ -225,9 +225,9 @@ QString NodeUdpReceiver::updateStats()
 
     res += tr(" Packets Count %1").arg(mNumPacks) + "\n";
     if(mBitrate > 1000){
-        res += tr(" Bitrate       %1 Kb/s").arg(double(mBitrate / 1000.), 0, 'f', 3);
+        res += QObject::tr(" Bitrate       %1 Kb/s").arg(double(mBitrate / 1000.), 0, 'f', 3);
     }else{
-        res += tr(" Bitrate       %1 b/s").arg(double(mBitrate), 0, 'f', 3);
+        res += QObject::tr(" Bitrate       %1 b/s").arg(double(mBitrate), 0, 'f', 3);
     }
 
     return res;

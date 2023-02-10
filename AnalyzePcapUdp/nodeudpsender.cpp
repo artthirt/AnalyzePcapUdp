@@ -18,7 +18,7 @@ QString NodeUdpSender::caption() const
 
 QString NodeUdpSender::name() const
 {
-    return "UDP Sender";
+    return ("UDP Sender");
 }
 
 unsigned int NodeUdpSender::nPorts(QtNodes::PortType portType) const

@@ -22,7 +22,7 @@ QString NodeFilterDestination::caption() const
 
 QString NodeFilterDestination::name() const
 {
-    return "Address Destination Filter";
+    return ("Address Destination Filter");
 }
 
 QWidget *NodeFilterDestination::embeddedWidget()
@@ -30,10 +30,10 @@ QWidget *NodeFilterDestination::embeddedWidget()
     if(!mUi){
         NetWidget* w = new NetWidget();
         QGridLayout *g = new QGridLayout(w);
-        QLabel *sip = new QLabel(tr("Ip"), w);
-        QLabel *spr = new QLabel(tr("Port"), w);
+        QLabel *sip = new QLabel(QObject::tr("Ip"), w);
+        QLabel *spr = new QLabel(QObject::tr("Port"), w);
         w->ip = new QLineEdit(w);
-        w->ip->setPlaceholderText(tr("IP or Empty if not used"));
+        w->ip->setPlaceholderText(QObject::tr("IP or Empty if not used"));
         w->ip->setText(mIpSource.toString());
         w->port = new QSpinBox(w);
         w->port->setMaximum(65535);

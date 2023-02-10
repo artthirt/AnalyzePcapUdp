@@ -4,53 +4,43 @@
 <context>
     <name>ConditionWidget</name>
     <message>
-        <location filename="nodecondition.cpp" line="21"/>
         <source>None</source>
-        <translation>Нет</translation>
+        <translation type="vanished">Нет</translation>
     </message>
     <message>
-        <location filename="nodecondition.cpp" line="22"/>
         <source>Equal</source>
-        <translation>Равно</translation>
+        <translation type="vanished">Равно</translation>
     </message>
     <message>
-        <location filename="nodecondition.cpp" line="23"/>
         <source>Less</source>
-        <translation>Меньше</translation>
+        <translation type="vanished">Меньше</translation>
     </message>
     <message>
-        <location filename="nodecondition.cpp" line="24"/>
         <source>Greater</source>
-        <translation>Больше</translation>
+        <translation type="vanished">Больше</translation>
     </message>
     <message>
-        <location filename="nodecondition.cpp" line="26"/>
-        <location filename="nodecondition.cpp" line="32"/>
         <source>Length</source>
-        <translation>Длина</translation>
+        <translation type="vanished">Длина</translation>
     </message>
     <message>
-        <location filename="nodecondition.cpp" line="30"/>
         <source>Condition</source>
-        <translation>Условие</translation>
+        <translation type="vanished">Условие</translation>
     </message>
     <message>
-        <location filename="nodecondition.cpp" line="31"/>
         <source>Type</source>
-        <translation>Тип</translation>
+        <translation type="vanished">Тип</translation>
     </message>
 </context>
 <context>
     <name>CutterWidget</name>
     <message>
-        <location filename="nodecutter.cpp" line="13"/>
         <source>Offset</source>
-        <translation>Смещение</translation>
+        <translation type="vanished">Смещение</translation>
     </message>
     <message>
-        <location filename="nodecutter.cpp" line="18"/>
         <source>Length</source>
-        <translation>Длина</translation>
+        <translation type="vanished">Длина</translation>
     </message>
 </context>
 <context>
@@ -136,39 +126,46 @@
 <context>
     <name>NodeCondition</name>
     <message>
-        <location filename="nodecondition.cpp" line="166"/>
         <source>Condition Filter</source>
-        <translation>Условие</translation>
+        <translation type="vanished">Условие</translation>
     </message>
 </context>
 <context>
     <name>NodeCutter</name>
     <message>
-        <location filename="nodecutter.cpp" line="37"/>
         <source>Cutter</source>
-        <translation>Обрезка</translation>
+        <translation type="vanished">Обрезка</translation>
     </message>
 </context>
 <context>
     <name>NodeFilterDestination</name>
     <message>
-        <location filename="nodefilter.cpp" line="33"/>
-        <source>Ip</source>
-        <translation></translation>
+        <source>Address Destination Filter</source>
+        <translation type="vanished">Фильтр по назначению</translation>
     </message>
     <message>
-        <location filename="nodefilter.cpp" line="34"/>
         <source>Port</source>
-        <translation>Порт</translation>
+        <translation type="vanished">Порт</translation>
     </message>
     <message>
-        <location filename="nodefilter.cpp" line="36"/>
         <source>IP or Empty if not used</source>
-        <translation>IP или  пусто</translation>
+        <translation type="vanished">IP или  пусто</translation>
+    </message>
+</context>
+<context>
+    <name>NodeFilterSource</name>
+    <message>
+        <source>Address Source Filter</source>
+        <translation type="vanished">Фильтр по источнику</translation>
     </message>
 </context>
 <context>
     <name>NodeInfoPackets</name>
+    <message>
+        <location filename="nodeinfopackets.cpp" line="50"/>
+        <source>Info</source>
+        <translation>Статистика</translation>
+    </message>
     <message>
         <location filename="nodeinfopackets.cpp" line="84"/>
         <source>Output %1</source>
@@ -187,6 +184,10 @@
 </context>
 <context>
     <name>NodeSource</name>
+    <message>
+        <source>Source File</source>
+        <translation type="vanished">Файл источника</translation>
+    </message>
     <message>
         <location filename="nodesource.cpp" line="122"/>
         <source>Open File</source>
@@ -211,14 +212,12 @@
 <context>
     <name>NodeUdpReceiver</name>
     <message>
-        <location filename="nodeudpreceiver.cpp" line="171"/>
-        <source>Ip</source>
-        <translation></translation>
+        <source>UDP Receiver</source>
+        <translation type="vanished">Приемник UDP</translation>
     </message>
     <message>
-        <location filename="nodeudpreceiver.cpp" line="172"/>
         <source>Port</source>
-        <translation>Порт</translation>
+        <translation type="vanished">Порт</translation>
     </message>
     <message>
         <location filename="nodeudpreceiver.cpp" line="226"/>
@@ -226,18 +225,20 @@
         <translation>Пакетов          %1</translation>
     </message>
     <message>
-        <location filename="nodeudpreceiver.cpp" line="228"/>
         <source> Bitrate       %1 Kb/s</source>
-        <translation>Скорость  %1 КБ/с</translation>
+        <translation type="vanished">Скорость  %1 КБ/с</translation>
     </message>
     <message>
-        <location filename="nodeudpreceiver.cpp" line="230"/>
         <source> Bitrate       %1 b/s</source>
-        <translation>Скорость   %1 б/с</translation>
+        <translation type="vanished">Скорость   %1 б/с</translation>
     </message>
 </context>
 <context>
     <name>NodeUdpSender</name>
+    <message>
+        <source>UDP Sender</source>
+        <translation type="vanished">Отправитель UDP</translation>
+    </message>
     <message>
         <location filename="nodeudpsender.cpp" line="67"/>
         <source>Ip</source>
@@ -267,9 +268,36 @@
         <translation>Приемник UDP</translation>
     </message>
     <message>
+        <location filename="nodeudpreceiver.cpp" line="171"/>
+        <location filename="nodefilter.cpp" line="33"/>
+        <source>Ip</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="nodeudpreceiver.cpp" line="172"/>
+        <location filename="nodefilter.cpp" line="34"/>
+        <source>Port</source>
+        <translation>Порт</translation>
+    </message>
+    <message>
+        <location filename="nodeudpreceiver.cpp" line="228"/>
+        <source> Bitrate       %1 Kb/s</source>
+        <translation>Скорость  %1 КБ/с</translation>
+    </message>
+    <message>
+        <location filename="nodeudpreceiver.cpp" line="230"/>
+        <source> Bitrate       %1 b/s</source>
+        <translation>Скорость   %1 б/с</translation>
+    </message>
+    <message>
         <location filename="nodefilter.cpp" line="20"/>
         <source>Address Destination Filter</source>
         <translation>Фильтр по назначению</translation>
+    </message>
+    <message>
+        <location filename="nodefilter.cpp" line="36"/>
+        <source>IP or Empty if not used</source>
+        <translation>IP или  пусто</translation>
     </message>
     <message>
         <location filename="nodefilter.cpp" line="95"/>
@@ -282,9 +310,12 @@
         <translation>Отправитель UDP</translation>
     </message>
     <message>
-        <location filename="nodeinfopackets.cpp" line="50"/>
         <source>Info</source>
-        <translation>Статистика</translation>
+        <translation type="vanished">Статистика</translation>
+    </message>
+    <message>
+        <source>Output %1</source>
+        <translation type="obsolete">Вывод %1</translation>
     </message>
     <message>
         <location filename="registrydatamodel.cpp" line="40"/>
@@ -307,9 +338,36 @@
         <translation>3. Фильтры</translation>
     </message>
     <message>
+        <source>Open file</source>
+        <translation type="obsolete">Открыть файл</translation>
+    </message>
+    <message>
+        <source>Name
+Size</source>
+        <translation type="obsolete">Имя
+Размер</translation>
+    </message>
+    <message>
+        <location filename="nodesource.cpp" line="36"/>
+        <source>Timeout (ms)</source>
+        <translation>Таймаут (мс)</translation>
+    </message>
+    <message>
         <location filename="nodesource.cpp" line="73"/>
         <source>Source File</source>
         <translation>Файл источника</translation>
+    </message>
+    <message>
+        <source>Name:	&quot;%1&quot;</source>
+        <translation type="obsolete">Имя:	&quot;%1&quot;</translation>
+    </message>
+    <message>
+        <source>Size:	%2 KB</source>
+        <translation type="obsolete">Размер:	%2 КБ</translation>
+    </message>
+    <message>
+        <source>Size:	%2 MB</source>
+        <translation type="obsolete">Размер:	%2 МБ</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="99"/>
@@ -336,6 +394,58 @@
         <source>data</source>
         <translation>информация о пакете</translation>
     </message>
+    <message>
+        <location filename="nodecondition.cpp" line="21"/>
+        <source>None</source>
+        <translation>Нет</translation>
+    </message>
+    <message>
+        <location filename="nodecondition.cpp" line="22"/>
+        <source>Equal</source>
+        <translation>Равно</translation>
+    </message>
+    <message>
+        <location filename="nodecondition.cpp" line="23"/>
+        <source>Less</source>
+        <translation>Меньше</translation>
+    </message>
+    <message>
+        <location filename="nodecondition.cpp" line="24"/>
+        <source>Greater</source>
+        <translation>Больше</translation>
+    </message>
+    <message>
+        <location filename="nodecondition.cpp" line="26"/>
+        <location filename="nodecondition.cpp" line="32"/>
+        <location filename="nodecutter.cpp" line="18"/>
+        <source>Length</source>
+        <translation>Длина</translation>
+    </message>
+    <message>
+        <location filename="nodecutter.cpp" line="37"/>
+        <source>Cutter</source>
+        <translation>Обрезка</translation>
+    </message>
+    <message>
+        <location filename="nodecondition.cpp" line="30"/>
+        <source>Condition</source>
+        <translation>Условие</translation>
+    </message>
+    <message>
+        <location filename="nodecondition.cpp" line="31"/>
+        <source>Type</source>
+        <translation>Тип</translation>
+    </message>
+    <message>
+        <location filename="nodecondition.cpp" line="166"/>
+        <source>Condition Filter</source>
+        <translation>Условие</translation>
+    </message>
+    <message>
+        <location filename="nodecutter.cpp" line="13"/>
+        <source>Offset</source>
+        <translation>Смещение</translation>
+    </message>
 </context>
 <context>
     <name>SourceWidget</name>
@@ -352,9 +462,8 @@ Size</source>
 Размер</translation>
     </message>
     <message>
-        <location filename="nodesource.cpp" line="36"/>
         <source>Timeout (ms)</source>
-        <translation>Таймаут (мс)</translation>
+        <translation type="vanished">Таймаут (мс)</translation>
     </message>
 </context>
 </TS>

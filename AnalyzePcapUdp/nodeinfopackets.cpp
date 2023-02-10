@@ -47,12 +47,12 @@ std::shared_ptr<QtNodes::NodeData> NodeInfoPackets::outData(const QtNodes::PortI
 
 QString NodeInfoPackets::caption() const
 {
-    return QObject::tr("Info");
+    return tr("Info");
 }
 
 QString NodeInfoPackets::name() const
 {
-    return "Info";
+    return ("Info");
 }
 
 unsigned int NodeInfoPackets::nPorts(QtNodes::PortType portType) const

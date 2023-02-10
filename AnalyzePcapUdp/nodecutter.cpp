@@ -10,12 +10,12 @@ public:
         QGridLayout *g = new QGridLayout(this);
         setLayout(g);
 
-        g->addWidget(new QLabel(tr("Offset")), 0, 0);
+        g->addWidget(new QLabel(QObject::tr("Offset")), 0, 0);
         sbOff = new QSpinBox(this);
         sbOff->setMaximum(65535);
         g->addWidget(sbOff, 0, 1);
 
-        g->addWidget(new QLabel(tr("Length")), 1, 0);
+        g->addWidget(new QLabel(QObject::tr("Length")), 1, 0);
         sbLen = new QSpinBox(this);
         sbLen->setMaximum(65535);
         sbLen->setValue(65535);
@@ -34,7 +34,7 @@ NodeCutter::NodeCutter()
 
 QString NodeCutter::caption() const
 {
-    return tr("Cutter");
+    return QObject::tr("Cutter");
 }
 
 QString NodeCutter::name() const

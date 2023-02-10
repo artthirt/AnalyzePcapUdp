@@ -18,18 +18,18 @@ public:
         QGridLayout* g = new QGridLayout(this);
         setLayout(g);
         cbCn = new QComboBox(this);
-        cbCn->addItem(tr("None"));
-        cbCn->addItem(tr("Equal"));
-        cbCn->addItem(tr("Less"));
-        cbCn->addItem(tr("Greater"));
+        cbCn->addItem(QObject::tr("None"));
+        cbCn->addItem(QObject::tr("Equal"));
+        cbCn->addItem(QObject::tr("Less"));
+        cbCn->addItem(QObject::tr("Greater"));
         cbTp = new QComboBox(this);
-        cbTp->addItem(tr("Length"));
+        cbTp->addItem(QObject::tr("Length"));
         sbLn = new QSpinBox(this);
         sbLn->setMaximum(999999999);
         sbLn->setValue(65535);
-        g->addWidget(new QLabel(tr("Condition")), 0, 0);
-        g->addWidget(new QLabel(tr("Type")), 1, 0);
-        g->addWidget(new QLabel(tr("Length")), 2, 0);
+        g->addWidget(new QLabel(QObject::tr("Condition")), 0, 0);
+        g->addWidget(new QLabel(QObject::tr("Type")), 1, 0);
+        g->addWidget(new QLabel(QObject::tr("Length")), 2, 0);
 
         g->addWidget(cbCn, 0, 1);
         g->addWidget(cbTp, 1, 1);
@@ -163,7 +163,7 @@ QWidget *NodeCondition::embeddedWidget()
 
 QString NodeCondition::caption() const
 {
-    return tr("Condition Filter");
+    return QObject::tr("Condition Filter");
 }
 
 QString NodeCondition::name() const

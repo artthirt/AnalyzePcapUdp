@@ -33,7 +33,7 @@ public:
         slider->setOrientation(Qt::Horizontal);
 
         auto hl2 = new QHBoxLayout(this);
-        auto lbT = new QLabel(tr("Timeout (ms)"), this);
+        auto lbT = new QLabel(QObject::tr("Timeout (ms)"), this);
         dsbTm = new QDoubleSpinBox(this);
         dsbTm->setMaximum(9999999);
         dsbTm->setDecimals(3);
@@ -75,7 +75,7 @@ QString NodeSource::caption() const
 
 QString NodeSource::name() const
 {
-    return "Source File";
+    return ("Source File");
 }
 
 unsigned int NodeSource::nPorts(QtNodes::PortType portType) const
