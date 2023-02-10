@@ -26,6 +26,11 @@ public:
     std::shared_ptr<QtNodes::NodeData> outData(const QtNodes::PortIndex port);
     QWidget *embeddedWidget();
 
+public slots:
+    void onStart();
+    void onStop();
+    void onPause();
+
 private:
     std::shared_ptr<PacketDataNode> mData;
     std::shared_ptr<PCapFile> mPcap;

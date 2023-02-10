@@ -85,6 +85,12 @@ private slots:
 
     void on_actionEnglish_triggered(bool checked);
 
+    void on_actionStart_All_triggered();
+
+    void on_actionPause_All_triggered();
+
+    void on_actionStop_All_triggered();
+
 private:
 	Ui::MainWindow *ui;
     QTranslator translator;
@@ -101,6 +107,12 @@ private:
 
 	void loadSettings();
 	void saveSettings();
+
+    QList<QtNodes::NodeDelegateModel*> tmpListByName(const QString& name);
+
+    void startAll();
+    void stopAll();
+    void pauseAll();
 };
 
 #endif // MAINWINDOW_H

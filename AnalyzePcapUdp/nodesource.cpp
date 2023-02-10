@@ -154,6 +154,27 @@ QWidget *NodeSource::embeddedWidget()
     return mUi.get();
 }
 
+void NodeSource::onStart()
+{
+    if(mUi){
+        mUi->pbPlay->click();
+    }
+}
+
+void NodeSource::onStop()
+{
+    if(mUi){
+        mUi->pbStop->click();
+    }
+}
+
+void NodeSource::onPause()
+{
+    if(mUi){
+        mUi->pbPause->click();
+    }
+}
+
 void NodeSource::setFile(const QString &fn)
 {
     mFileName = fn;

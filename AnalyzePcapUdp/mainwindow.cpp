@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "CommonTypes.h"
 #include "nodeinfopackets.h"
+#include "nodesource.h"
 #include "ui_mainwindow.h"
 
 #include <QFileDialog>
@@ -74,6 +75,22 @@ QString getSize(qint64 size)
         return QString("%1 MB").arg(size / 1.e+6, 0, 'f', 2);
     return QString("%1 GB").arg(size / 1.e+9, 0, 'f', 2);
 
+    return res;
+}
+
+template<typename T>
+QList<T *> getListNodes(DataFlowGraphModel* mModel)
+{
+    QList<T *> res;
+    for(auto it: mModel->allNodeIds()){
+        auto nodeType = mModel->nodeData(it, NodeRole::Type).toString();
+        if(nodeType == T().name()){
+            auto node = mModel->delegateModel<T>(it);
+            if(node){
+                res.push_back(node);
+            }
+        }
+    }
     return res;
 }
 
@@ -297,6 +314,49 @@ void MainWindow::saveSettings()
     saveJsonToFile(settingsFile(), model);
 }
 
+QList<NodeDelegateModel *> MainWindow::tmpListByName(const QString &name)
+{
+    QList<NodeDelegateModel *> res;
+    for(auto it: mModel->allNodeIds()){
+        auto nodeType = mModel->nodeData(it, NodeRole::Type).toString();
+        if(nodeType == name){
+            auto node = mModel->delegateModel<NodeDelegateModel>(it);
+            res.push_back(node);
+        }
+    }
+    return res;
+}
+
+void MainWindow::startAll()
+{
+    auto list = getListNodes<NodeSource>(mModel.get());
+    if(!list.empty()){
+        for(auto it: list){
+            it->onStart();
+        }
+    }
+}
+
+void MainWindow::stopAll()
+{
+    auto list = getListNodes<NodeSource>(mModel.get());
+    if(!list.empty()){
+        for(auto it: list){
+            it->onStop();
+        }
+    }
+}
+
+void MainWindow::pauseAll()
+{
+    auto list = getListNodes<NodeSource>(mModel.get());
+    if(!list.empty()){
+        for(auto it: list){
+            it->onPause();
+        }
+    }
+}
+
 void MainWindow::on_pbClear_clicked()
 {
     mInfoModel.clear();
@@ -350,3 +410,19 @@ void MainWindow::on_actionEnglish_triggered(bool checked)
         QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
     }
 }
+
+void MainWindow::on_actionStart_All_triggered()
+{
+    startAll();
+}
+
+void MainWindow::on_actionPause_All_triggered()
+{
+    pauseAll();
+}
+
+void MainWindow::on_actionStop_All_triggered()
+{
+    stopAll();
+}
+

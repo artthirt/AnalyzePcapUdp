@@ -7,5 +7,8 @@
         <file>assets/images/icon-ethernet-Freepik_black.ico</file>
         <file>translate_ru.ts</file>
         <file>translate_ru.qm</file>
+        <file>assets/images/pause.png</file>
+        <file>assets/images/play.png</file>
+        <file>assets/images/stop.png</file>
     </qresource>
 </RCC>

@@ -82,43 +82,63 @@
     </message>
     <message>
         <location filename="mainwindow.ui" line="160"/>
+        <source>toolBar</source>
+        <translation>главная панель</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="174"/>
         <source>Scale Reset</source>
         <translation>Сбро масштаба</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="165"/>
+        <location filename="mainwindow.ui" line="179"/>
         <source>Scale +</source>
         <translation>Увеличить</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="170"/>
+        <location filename="mainwindow.ui" line="184"/>
         <source>Scale -</source>
         <translation>Уменьшить</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="175"/>
+        <location filename="mainwindow.ui" line="189"/>
         <source>Move To Center</source>
         <translation>Центрировать</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="186"/>
+        <location filename="mainwindow.ui" line="200"/>
         <source>English</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="194"/>
+        <location filename="mainwindow.ui" line="208"/>
         <source>Russian</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="334"/>
-        <location filename="mainwindow.cpp" line="345"/>
+        <location filename="mainwindow.ui" line="217"/>
+        <source>Start All</source>
+        <translation>Запустить все</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="226"/>
+        <source>Stop All</source>
+        <translation>Остановить все</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="235"/>
+        <source>Pause All</source>
+        <translation>Пауза</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="394"/>
+        <location filename="mainwindow.cpp" line="405"/>
         <source>Change language</source>
         <translation>Изменить язык</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="334"/>
-        <location filename="mainwindow.cpp" line="345"/>
+        <location filename="mainwindow.cpp" line="394"/>
+        <location filename="mainwindow.cpp" line="405"/>
         <source>To change the language need restart the app. Do you want to continue?</source>
         <translation>Чтобы изменить язык необходимо перезапустить приложение? Продолжать?</translation>
     </message>
@@ -194,17 +214,17 @@
         <translation>Открыть файл</translation>
     </message>
     <message>
-        <location filename="nodesource.cpp" line="174"/>
+        <location filename="nodesource.cpp" line="195"/>
         <source>Name:	&quot;%1&quot;</source>
         <translation>Имя:	&quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="nodesource.cpp" line="176"/>
+        <location filename="nodesource.cpp" line="197"/>
         <source>Size:	%2 KB</source>
         <translation>Размер:	%2 КБ</translation>
     </message>
     <message>
-        <location filename="nodesource.cpp" line="178"/>
+        <location filename="nodesource.cpp" line="199"/>
         <source>Size:	%2 MB</source>
         <translation>Размер:	%2 МБ</translation>
     </message>
@@ -370,27 +390,27 @@ Size</source>
         <translation type="obsolete">Размер:	%2 МБ</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="99"/>
+        <location filename="mainwindow.cpp" line="116"/>
         <source>num</source>
         <translation>№</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="100"/>
+        <location filename="mainwindow.cpp" line="117"/>
         <source>timestamp</source>
         <translation>время</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="101"/>
+        <location filename="mainwindow.cpp" line="118"/>
         <source>id</source>
         <translation>ид</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="102"/>
+        <location filename="mainwindow.cpp" line="119"/>
         <source>size</source>
         <translation>размер</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="103"/>
+        <location filename="mainwindow.cpp" line="120"/>
         <source>data</source>
         <translation>информация о пакете</translation>
     </message>
