@@ -23,3 +23,9 @@ You can add some filter and output nodes to control process:
 <p align="center">
     <img src="ex2.png" alt= “” width="640" height="480">
 </p>
+
+You can add a few graphs and work with this independently
+
+<p align="center">
+    <img src="ex3.png" alt= “” width="640" height="480">
+</p>
