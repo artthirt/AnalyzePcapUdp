@@ -10,6 +10,8 @@
 
 class QLabel;
 
+class InfoWidget;
+
 class NodeInfoPackets: public AncestorNode
 {
     Q_OBJECT
@@ -34,7 +36,7 @@ signals:
 
 private:
     QString mName;
-    std::shared_ptr<QWidget> mUi;
+    std::shared_ptr<InfoWidget> mUi;
     std::shared_ptr<PacketDataNode> mData;
     QTimer mTimer;
     QElapsedTimer mElapsed;

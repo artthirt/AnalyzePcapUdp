@@ -7,6 +7,23 @@ using namespace QtNodes;
 
 int NodeInfoCounter = 1;
 
+class InfoWidget: public QWidget{
+public:
+    QLabel    *mLb = nullptr;
+    QLineEdit* mEd = nullptr;
+
+    InfoWidget(): QWidget(){
+        QVBoxLayout* vl = new QVBoxLayout(this);
+
+        mEd = new QLineEdit(this);
+        mLb = new QLabel("\n", this);
+
+        vl->addWidget(mEd);
+        vl->addWidget(mLb);
+        this->setLayout(vl);
+    }
+};
+
 NodeInfoPackets::NodeInfoPackets()
 {
 }
@@ -66,27 +83,18 @@ unsigned int NodeInfoPackets::nPorts(QtNodes::PortType portType) const
 QWidget *NodeInfoPackets::embeddedWidget()
 {
     if(!mUi){
-        mUi.reset(new QWidget());
-        auto w = mUi.get();
+        auto w = new InfoWidget();
+        mUi.reset(w);
 
-        auto vl = new QVBoxLayout(w);
-
-        auto ed = new QLineEdit(w);
-        auto lb = new QLabel(updateStats(), w);
-
-        mLb = lb;
-
-        vl->addWidget(ed);
-        vl->addWidget(lb);
-        w->setLayout(vl);
+        w->mLb->setText(updateStats());
 
         if(mName.isEmpty())
             mName = tr("Output %1").arg(NodeInfoCounter++);
-        QObject::connect(ed, &QLineEdit::textChanged, this, [this](const QString &arg){
+        QObject::connect(w->mEd, &QLineEdit::textChanged, this, [this](const QString &arg){
            mName = arg;
            Q_EMIT(nameEditChanged());
         });
-        ed->setText(mName);
+        w->mEd->setText(mName);
 
         connect(&mTimer, &QTimer::timeout, this, [this](){
             if(mLb){
@@ -125,4 +133,7 @@ void NodeInfoPackets::load(const QJsonObject &o)
 {
     NodeDelegateModel::load(o);
     mName = o["outname"].toString(mName);
+    if(mUi){
+        mUi->mEd->setText(mName);
+    }
 }

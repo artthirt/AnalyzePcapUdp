@@ -91,6 +91,14 @@ private slots:
 
     void on_actionStop_All_triggered();
 
+    void on_pbClearView_clicked();
+
+    void on_pbLoadModel_clicked();
+
+    void on_pbSaveCurrentModel_clicked();
+
+    void on_actionSave_Model_triggered();
+
 private:
 	Ui::MainWindow *ui;
     QTranslator translator;
@@ -101,12 +109,18 @@ private:
     NodeInfoPackets* mCurrentInfo = nullptr;
     QStandardItemModel mInfoModel;
     QMap<int, NodeInfoPackets*> mInfoOutputs;
+    QStringList mListModels;
+    QStandardItemModel mItemModels;
 
     void updateInfoOutput();
     void changeInfoOutput(int64_t id);
 
 	void loadSettings();
 	void saveSettings();
+
+    void updateListModels();
+    void clearView();
+    void loadModel(int id);
 
     QList<QtNodes::NodeDelegateModel*> tmpListByName(const QString& name);
 

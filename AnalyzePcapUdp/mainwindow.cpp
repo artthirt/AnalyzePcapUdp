@@ -17,6 +17,7 @@
 #include <QLabel>
 #include <QSpinBox>
 #include <QCheckBox>
+#include <QJsonArray>
 
 #include "registrydatamodel.h"
 #include "CommonNodeTypes.h"
@@ -112,6 +113,10 @@ MainWindow::MainWindow(QWidget *parent) :
     mView = new QtNodes::GraphicsView(mScene);
     ui->verticalLayout->addWidget(mView);
 
+    mItemModels.setColumnCount(2);
+    ui->lvListModels->setModel(&mItemModels);
+    mItemModels.setHorizontalHeaderLabels(QStringList() << tr("Name") << tr("Path"));
+
     mInfoModel.setColumnCount(5);
     mInfoModel.setHorizontalHeaderLabels(QStringList() << QObject::tr("num")
                                          << QObject::tr("timestamp")
@@ -156,6 +161,10 @@ MainWindow::MainWindow(QWidget *parent) :
                 }
             }
         }
+    });
+
+    connect(ui->lvListModels, &QTableView::doubleClicked, this, [this](const QModelIndex &index){
+        loadModel(index.row());
     });
 
     loadSettings();
@@ -305,13 +314,54 @@ void MainWindow::loadSettings()
         ui->actionRussian->setChecked(true);
     }else{
     }
+
+    auto lm = model["list_models"];
+    mListModels.clear();
+    if(lm.isArray()){
+        auto arr = lm.toArray();
+        for(int i = 0; i < arr.count(); ++i){
+            auto val = arr[i];
+            if(val.isString()){
+                auto str = val.toString();
+                if(QFile::exists(str)){
+                    mListModels.push_back(val.toString());
+                }
+            }
+        }
+    }
+    updateListModels();
 }
 
 void MainWindow::saveSettings()
 {
     auto model = mModel->save();
     model["language"] = ui->actionRussian->isChecked()? "ru" : "en";
+
+    if(!mListModels.empty()){
+        QJsonArray arr;
+        for(auto it: mListModels){
+            arr.push_back(it);
+        }
+        model["list_models"] = arr;
+    }
+
     saveJsonToFile(settingsFile(), model);
+}
+
+void MainWindow::updateListModels()
+{
+    mItemModels.clear();
+    for(auto it: mListModels){
+        QFileInfo fi(it);
+        mItemModels.appendRow(QList<QStandardItem*>() << new  QStandardItem(fi.fileName()) << new QStandardItem(it));
+    }
+}
+
+void MainWindow::clearView()
+{
+    mCurrentInfo = nullptr;
+    mScene->clearScene();
+    updateInfoOutput();
 }
 
 QList<NodeDelegateModel *> MainWindow::tmpListByName(const QString &name)
@@ -424,5 +474,66 @@ void MainWindow::on_actionPause_All_triggered()
 void MainWindow::on_actionStop_All_triggered()
 {
     stopAll();
+}
+
+void MainWindow::on_pbClearView_clicked()
+{
+    if(QMessageBox::question(nullptr, tr("Clear View"), tr("This operation remove all nodes from screen. Do you want to continue?")) == QMessageBox::Yes){
+        clearView();
+    }
+}
+
+void MainWindow::on_pbLoadModel_clicked()
+{
+    auto model = ui->lvListModels->selectionModel();
+    if(model){
+        auto indexes = model->selection().indexes();
+        for(auto it: indexes){
+            loadModel(it.row());
+            break;
+        }
+    }
+}
+
+void MainWindow::on_pbSaveCurrentModel_clicked()
+{
+    if(mModel->allNodeIds().empty()){
+        qDebug("View is empty");
+        QMessageBox::information(nullptr, tr("Warning"), tr("View is empty. Nothing to save."));
+        return;
+    }
+    QString fileName = QFileDialog::getSaveFileName(nullptr, tr("Save model as..."), {}, "*.json");
+    if(fileName.isEmpty())
+        return;
+    auto model = mModel->save();
+    saveJsonToFile(fileName, model);
+    if(!mListModels.contains(fileName)){
+        mListModels.push_back(fileName);
+    }
+    updateListModels();
+}
+
+void MainWindow::loadModel(int id)
+{
+    if(id < 0 || id >= mListModels.size()){
+        return;
+    }
+
+    if(QMessageBox::question(nullptr, tr("Clear View"), tr("This operation remove all nodes from screen. Do you want to continue?")) == QMessageBox::Yes){
+    }else{
+        return;
+    }
+    clearView();
+
+    auto fn = mListModels[id];
+    auto json = loadJsonFromFile(fn);
+    mModel->load(json);
+
+    updateInfoOutput();
+}
+
+void MainWindow::on_actionSave_Model_triggered()
+{
+    on_pbSaveCurrentModel_clicked();
 }
 
