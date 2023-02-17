@@ -56,91 +56,149 @@
         <translation>Файл</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="45"/>
+        <location filename="mainwindow.ui" line="46"/>
         <source>View</source>
         <translation>Вид</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="49"/>
+        <location filename="mainwindow.ui" line="50"/>
         <source>Language</source>
         <translation>Язык</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="66"/>
+        <location filename="mainwindow.ui" line="67"/>
         <source>Packet info</source>
         <translation>Статистика</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="81"/>
+        <location filename="mainwindow.ui" line="82"/>
         <source>Select Info Node</source>
         <translation>Выбор ноды статистики</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="111"/>
+        <location filename="mainwindow.ui" line="112"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="160"/>
+        <location filename="mainwindow.ui" line="161"/>
         <source>toolBar</source>
         <translation>главная панель</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="174"/>
+        <location filename="mainwindow.ui" line="175"/>
+        <source>Models</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="185"/>
+        <source>Save Current Model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="192"/>
+        <location filename="mainwindow.cpp" line="481"/>
+        <location filename="mainwindow.cpp" line="522"/>
+        <source>Clear View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="226"/>
+        <source>Load selected model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="237"/>
         <source>Scale Reset</source>
         <translation>Сбро масштаба</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="179"/>
+        <location filename="mainwindow.ui" line="242"/>
         <source>Scale +</source>
         <translation>Увеличить</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="184"/>
+        <location filename="mainwindow.ui" line="247"/>
         <source>Scale -</source>
         <translation>Уменьшить</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="189"/>
+        <location filename="mainwindow.ui" line="252"/>
         <source>Move To Center</source>
         <translation>Центрировать</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="200"/>
+        <location filename="mainwindow.ui" line="263"/>
         <source>English</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="208"/>
+        <location filename="mainwindow.ui" line="271"/>
         <source>Russian</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="217"/>
+        <location filename="mainwindow.ui" line="280"/>
         <source>Start All</source>
         <translation>Запустить все</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="226"/>
+        <location filename="mainwindow.ui" line="289"/>
         <source>Stop All</source>
         <translation>Остановить все</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="235"/>
+        <location filename="mainwindow.ui" line="298"/>
         <source>Pause All</source>
         <translation>Пауза</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="394"/>
-        <location filename="mainwindow.cpp" line="405"/>
+        <location filename="mainwindow.ui" line="303"/>
+        <source>Save Model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="118"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="118"/>
+        <source>Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="444"/>
+        <location filename="mainwindow.cpp" line="455"/>
         <source>Change language</source>
         <translation>Изменить язык</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="394"/>
-        <location filename="mainwindow.cpp" line="405"/>
+        <location filename="mainwindow.cpp" line="444"/>
+        <location filename="mainwindow.cpp" line="455"/>
         <source>To change the language need restart the app. Do you want to continue?</source>
         <translation>Чтобы изменить язык необходимо перезапустить приложение? Продолжать?</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="481"/>
+        <location filename="mainwindow.cpp" line="522"/>
+        <source>This operation remove all nodes from screen. Do you want to continue?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="502"/>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="502"/>
+        <source>View is empty. Nothing to save.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="505"/>
+        <source>Save model as...</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -182,22 +240,22 @@
 <context>
     <name>NodeInfoPackets</name>
     <message>
-        <location filename="nodeinfopackets.cpp" line="50"/>
+        <location filename="nodeinfopackets.cpp" line="67"/>
         <source>Info</source>
         <translation>Статистика</translation>
     </message>
     <message>
-        <location filename="nodeinfopackets.cpp" line="84"/>
+        <location filename="nodeinfopackets.cpp" line="92"/>
         <source>Output %1</source>
         <translation>Вывод %1</translation>
     </message>
     <message>
-        <location filename="nodeinfopackets.cpp" line="111"/>
+        <location filename="nodeinfopackets.cpp" line="119"/>
         <source> Packets Count %1</source>
         <translation>Пакетов          %1</translation>
     </message>
     <message>
-        <location filename="nodeinfopackets.cpp" line="112"/>
+        <location filename="nodeinfopackets.cpp" line="120"/>
         <source> Bitrate       %1 Kb/s</source>
         <translation>Скорость  %1 КБ/с</translation>
     </message>
@@ -390,27 +448,27 @@ Size</source>
         <translation type="obsolete">Размер:	%2 МБ</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="116"/>
+        <location filename="mainwindow.cpp" line="121"/>
         <source>num</source>
         <translation>№</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="117"/>
+        <location filename="mainwindow.cpp" line="122"/>
         <source>timestamp</source>
         <translation>время</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="118"/>
+        <location filename="mainwindow.cpp" line="123"/>
         <source>id</source>
         <translation>ид</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="119"/>
+        <location filename="mainwindow.cpp" line="124"/>
         <source>size</source>
         <translation>размер</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="120"/>
+        <location filename="mainwindow.cpp" line="125"/>
         <source>data</source>
         <translation>информация о пакете</translation>
     </message>

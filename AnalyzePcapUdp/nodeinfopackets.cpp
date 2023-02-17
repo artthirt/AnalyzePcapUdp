@@ -96,9 +96,9 @@ QWidget *NodeInfoPackets::embeddedWidget()
         });
         w->mEd->setText(mName);
 
-        connect(&mTimer, &QTimer::timeout, this, [this](){
-            if(mLb){
-                mLb->setText(updateStats());
+        connect(&mTimer, &QTimer::timeout, this, [this, w](){
+            if(w->mLb){
+                w->mLb->setText(updateStats());
             }
         });
         mTimer.start(400);

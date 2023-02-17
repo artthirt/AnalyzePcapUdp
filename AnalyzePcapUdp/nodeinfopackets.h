@@ -40,7 +40,6 @@ private:
     std::shared_ptr<PacketDataNode> mData;
     QTimer mTimer;
     QElapsedTimer mElapsed;
-    QLabel* mLb = nullptr;
 
     uint64_t mNumPacks = 0;
     uint64_t mCommonSize = 0;
