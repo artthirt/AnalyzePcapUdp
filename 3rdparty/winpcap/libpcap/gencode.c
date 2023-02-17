@@ -362,6 +362,8 @@ syntax()
 	bpf_error("syntax error in filter expression");
 }
 
+extern int checkInitialisedCS();
+
 static bpf_u_int32 netmask;
 static int snaplen;
 int no_optimize;
@@ -375,6 +377,8 @@ pcap_compile(pcap_t *p, struct bpf_program *program,
 	     const char *buf, int optimize, bpf_u_int32 mask)
 {
 	int result;
+
+    checkInitialisedCS();
 
 	EnterCriticalSection(&g_PcapCompileCriticalSection);
 

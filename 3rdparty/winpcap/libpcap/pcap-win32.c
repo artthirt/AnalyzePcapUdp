@@ -85,6 +85,7 @@ struct bpf_hdr {
 };
 
 CRITICAL_SECTION g_PcapCompileCriticalSection;
+int g_isInitialized = 0;
 
 BOOL WINAPI DllMain(
   HANDLE hinstDLL,
@@ -95,9 +96,19 @@ BOOL WINAPI DllMain(
 	if (dwReason == DLL_PROCESS_ATTACH)
 	{
 		InitializeCriticalSection(&g_PcapCompileCriticalSection);
+        g_isInitialized = 1;
 	}
 
 	return TRUE;
+}
+
+int checkInitialisedCS()
+{
+    if(g_isInitialized == 0){
+        InitializeCriticalSection(&g_PcapCompileCriticalSection);
+        g_isInitialized = 1;
+    }
+    return 1;
 }
 
 /* Start winsock */

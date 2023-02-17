@@ -16,7 +16,11 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/artthirt/nodeeditor.git
     SOURCE_DIR ${EXTERNAL_INSTALL_LOCATION}
 )
-FetchContent_MakeAvailable(nodeeditor-git)
+
+set(nodeeditor_BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+
+add_subdirectory(3rdparty/nodeeditor)
 
 if(WIN32)
     add_subdirectory(3rdparty/packet)

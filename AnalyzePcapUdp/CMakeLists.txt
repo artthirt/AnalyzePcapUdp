@@ -56,8 +56,8 @@ set(SRC
 
 if(WIN32)
     add_definitions(
-        "-DLIBPCAP_EXPORTS=__declspec(dllimport)"
-        "-DLIBPACKET_EXPORTS=__declspec(dllimport)"
+        "-DLIBPCAP_EXPORTS="
+        "-DLIBPACKET_EXPORTS="
         )
 else()
     add_definitions(

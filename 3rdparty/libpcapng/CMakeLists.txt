@@ -26,17 +26,21 @@ set(SRC
 include_directories(src/
     include/)
 
-if(WIN32)
-    add_definitions(
-        "-DLIBPACKET_EXPORTS=__declspec(dllexport)"
-        )
-else()
-    add_definitions(
-        "-DLIBPACKET_EXPORTS=__attribute__((visibility(\"default\")))"
-        )
-endif()
+#if(WIN32)
+#    add_definitions(
+#        "-DLIBPACKET_EXPORTS=__declspec(dllexport)"
+#        )
+#else()
+#    add_definitions(
+#        "-DLIBPACKET_EXPORTS=__attribute__((visibility(\"default\")))"
+#        )
+#endif()
 
-add_library(libpcapng SHARED ${SRC})
+add_definitions(
+    "-DLIBPACKET_EXPORTS="
+    )
+
+add_library(libpcapng ${SRC})
 
 #target_link_libraries(libpcapng )
 
