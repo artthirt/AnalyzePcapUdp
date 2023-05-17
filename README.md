@@ -1,3 +1,3 @@
 # AnalyzePcapUdp
 
-Analyze pcap/pcapng files and sending udp packets to choose ports
+Show or/and send packets from pcap/pcapng files to destination address:port
