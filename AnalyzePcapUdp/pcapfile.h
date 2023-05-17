@@ -19,6 +19,8 @@ struct Filter{
 	ushort sndPort;
 };
 
+struct ip_header;
+
 struct IPF{
 	QByteArray buffer;
 	ushort sport;
@@ -144,6 +146,10 @@ private:
     void loadToRam();
     void calcBitrate();
 
+    int sendByPortFilter(const QMap<ushort, Filter>& filters, ushort port,
+                     ip_header *ih, int64_t timestamp,
+                     char saddr[], char daddr[],
+                     ushort SrcPort, ushort DstPort);
 };
 
 void getAverageMsDuration(int count, double desireMs, double& outMs);

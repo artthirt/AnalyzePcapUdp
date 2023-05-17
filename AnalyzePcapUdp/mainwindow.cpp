@@ -22,6 +22,10 @@ void setFilter(QMap<ushort, Filter>& filters, QCheckBox* cb, QLineEdit* dstIp, Q
         flt.sndHost = QHostAddress(ip->text());
         flt.sndPort = dstPort2->value();
         filters[flt.dstPort] = flt;
+
+        if(flt.sndHost.isNull()){
+            flt.sndHost = QHostAddress("127.0.0.1");
+        }
     }
 }
 
@@ -46,6 +50,9 @@ bool getFilterFromSettings(QSettings& settings, const QString& num, CfFilter& fl
     flt.dst_ip = dst_ip;
     flt.filter_port = filter_port;
 
+    if(ip.isEmpty()){
+        ip = "127.0.0.1";
+    }
     flt.ip = ip;
     flt.port = port;
 
@@ -286,7 +293,10 @@ void MainWindow::saveSettings()
 
     settings.setValue("workspace", ui->twWorkspace->currentIndex());
 
-    int cnt = std::min<int>(mUiFilters.size(), mFilters.size());
+    int cnt = mUiFilters.size();
+    if(mFilters.size() < cnt){
+        mFilters.resize(cnt);
+    }
     for(int i = 0; i < cnt; ++i){
         auto &a1 = mUiFilters[i];
         auto &a2 = mFilters[i];
@@ -411,14 +421,15 @@ void MainWindow::initUiFilters(int nums)
 
         gl->addWidget(ui.newQLabel(QString("%1. Use").arg(i + 1)), i, 0);
         gl->addWidget(ui.chk.get(), i, 1);
-        gl->addWidget(ui.newQLabel("DestIp(in packet)"), i, 2);
+        gl->addWidget(ui.newQLabel("PCAP Packet: [DestIp:"), i, 2);
         gl->addWidget(ui.dstIp.get(), i, 3);
-        gl->addWidget(ui.newQLabel("DestPort(in packet)"), i, 4);
+        gl->addWidget(ui.newQLabel("DestPort:"), i, 4);
         gl->addWidget(ui.dstPort.get(), i, 5);
-        gl->addWidget(ui.newQLabel("| OutIp"), i, 6);
+        gl->addWidget(ui.newQLabel("];   <b>|</b>   Send To: [ OutIp:"), i, 6);
         gl->addWidget(ui.outIp.get(), i, 7);
-        gl->addWidget(ui.newQLabel("OutPort"), i, 8);
+        gl->addWidget(ui.newQLabel("OutPort:"), i, 8);
         gl->addWidget(ui.outPort.get(), i, 9);
+        gl->addWidget(ui.newQLabel("]"), i, 10);
 
         ui.chk->setChecked(flt.use);
         ui.dstIp->setText(flt.dst_ip);
