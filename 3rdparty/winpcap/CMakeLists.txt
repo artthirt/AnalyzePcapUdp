@@ -57,7 +57,7 @@ include_directories(
     )
 
 add_definitions(
-    "-DLIBPCAP_EXPORTS=__declspec(dllexport)"
+    "-DLIBPCAP_EXPORTS="
     -DHAVE_ADDRINFO
     -DYY_NEVER_INTERACTIVE
     "-Dyylval=pcap_lval"
@@ -75,10 +75,10 @@ add_definitions(
     -D_CRT_SECURE_NO_WARNINGS
     -DYY_NO_UNISTD_H
     -DHAVE_TC_API
-    "-DLIBPACKET_EXPORTS=__declspec(dllimport)"
+    "-DLIBPACKET_EXPORTS="
     )
 
-add_library(winpcap SHARED ${SRC})
+add_library(winpcap ${SRC})
 
 target_link_libraries(winpcap
     WS2_32 packet setupapi version advapi32 iphlpapi legacy_stdio_definitions)
