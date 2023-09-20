@@ -155,6 +155,7 @@ void getTimeVals(double mAverageDuration1Ms, double mTimeout, int &DelayMs, int 
     }else{
         DelayMs = mTimeout;
     }
+    DelayMs = max(1, DelayMs);
 }
 
 //////////////////////////////////////////////////
@@ -455,6 +456,9 @@ int PCapFile::getpacket(const Pkt& pkt)
 	int len = 0;
 	QByteArray ba;
 	len = tlen - ip_len;
+    if(len > pkt.len){
+        return 0;
+    }
 	char* offs = (char*)uh;
 	ba.append(offs, len);
 
@@ -576,7 +580,7 @@ int PCapFile::sendToPort(const QByteArray& buffer, const Filter& flt, quint64 de
 		socket->moveToThread(mThread.data());
 		socket->bind(30001);
 
-        #define SOCKET_BUFFER_SIZE	2 * 1024 * 1024
+        #define SOCKET_BUFFER_SIZE	7 * 1024 * 1024
 
         int bufLen = SOCKET_BUFFER_SIZE;
         setsockopt(socket->socketDescriptor(), SOL_SOCKET, SO_RCVBUF, (char*)&bufLen, sizeof(bufLen));
