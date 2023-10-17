@@ -130,6 +130,7 @@ private:
     QTimer mTimer;
     QList<udpdata> mPackets;
     QLabel* mLabStatus1;
+    QLabel* mLabStatus10;
     QLabel* mLabStatus2;
     QLabel* mLabStatus3;
 

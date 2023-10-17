@@ -76,7 +76,8 @@ public:
 
     void setTimeout(double val);
 
-    size_t packetsCount() const { return mNum; }
+    size_t sendPkts() const { return mSendNum; }
+    size_t allPkts() const { return mAllPkts; }
 
     float position() const;
     /**
@@ -103,7 +104,8 @@ signals:
 private:
     QSharedPointer<Parser> mParser;
     QString mFileName;
-    quint64 mNum = 0;
+    quint64 mSendNum = 0;
+    quint64 mAllPkts = 0;
     qint64 mBeginTimestamp = 0;
     qint64 mPrevTimestamp = 0;
     double mAverageDuration1Ms = 1;
@@ -146,10 +148,11 @@ private:
     void loadToRam();
     void calcBitrate();
 
-    int sendByPortFilter(const QMap<ushort, Filter>& filters, ushort port,
-                     ip_header *ih, int64_t timestamp,
-                     char saddr[], char daddr[],
-                     ushort SrcPort, ushort DstPort);
+    int sendByPortFilter(quint64 timestamp, ushort port,
+                         ip_header *ih, const QByteArray& buffer);
+
+    int _sendPacketString(quint64 timestamp, uint id, uint size, QString saddr,
+                           QString daddr, ip_header *ih, const QByteArray& buffer);
 };
 
 void getAverageMsDuration(int count, double desireMs, double& outMs);

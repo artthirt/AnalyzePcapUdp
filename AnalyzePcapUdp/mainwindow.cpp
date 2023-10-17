@@ -105,11 +105,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mLabStatus1 = new QLabel(this);
     mLabStatus1->setMinimumWidth(150);
+    mLabStatus10 = new QLabel(this);
+    mLabStatus10->setMinimumWidth(150);
     mLabStatus2 = new QLabel(this);
     mLabStatus2->setMinimumWidth(150);
     mLabStatus3 = new QLabel(this);
     mLabStatus3->setMinimumWidth(150);
     ui->statusbar->addWidget(mLabStatus1);
+    ui->statusbar->addWidget(mLabStatus10);
     ui->statusbar->addWidget(mLabStatus2);
     ui->statusbar->addWidget(mLabStatus3);
 
@@ -222,7 +225,10 @@ void MainWindow::onTimeout()
     }
 
     if(mPCap){
-        mLabStatus1->setText("Packets left " +QString::number(mPCap->packetsCount()));
+        mLabStatus1->setText(QString("Packet overall %1")
+                                 .arg(mPCap->allPkts(), 8, 10, QLatin1Char('0')));
+        mLabStatus10->setText(QString("Packets send %1")
+                                 .arg(mPCap->sendPkts(), 8, 10, QLatin1Char('0')));
 
         float pos = mPCap->position();
 
