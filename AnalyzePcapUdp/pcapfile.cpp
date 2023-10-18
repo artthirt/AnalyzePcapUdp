@@ -390,13 +390,22 @@ int PCapFile::_sendPacketString(quint64 timestamp, uint id, uint size,
 {
     int ret = 0;
     mAllPkts++;
-    emit sendPacketString(mAllPkts, timestamp, ID,  buffer.size(),
-                          QString::asprintf("ipsrc %s ipdst %s sport %d dport %d",
-                                            saddr.toLatin1().data(), daddr.toLatin1().data(), mSrcPort, mDstPort));
+
+    bool show = false;
 
     if(!mFilters.empty()){
         ret = sendByPortFilter(timestamp, mDstPort, ih, buffer);
+        show = ret > 0;
+    }else{
+        show = true;
     }
+
+    if(show){
+        emit sendPacketString(mAllPkts, timestamp, ID,  buffer.size(),
+                              QString::asprintf("ipsrc %s ipdst %s sport %d dport %d",
+                                                saddr.toLatin1().data(), daddr.toLatin1().data(), mSrcPort, mDstPort));
+    }
+
     return ret;
 }
 
